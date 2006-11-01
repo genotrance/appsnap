@@ -179,9 +179,8 @@ class process:
 
         # Get number of distinct version parts
         width = 0
-        for i in range(len(self.versions)):
-            newidth = len(re.split(DELIMITERS, self.versions[i]))
-            if width < newidth: width = newidth
+        for spl in self.splitversions:
+            if width < len(spl): width = len(spl)
         return width
 
     # Convert a letter into a numeric value
@@ -212,7 +211,7 @@ class process:
 
     # Find the maximum value in the split version list of the specified column
     def find_max(self, col):
-        max = '0'
+        max = '-1'
         for row in self.splitversions:
             try:
                 if self.convert_to_number(row[col]) > self.convert_to_number(max): max = row[col]
@@ -234,6 +233,11 @@ class process:
         if self.versions == None: return False
 
         for i in range(self.width):
-            self.filter(i, self.find_max(i))
+            max = self.find_max(i)
+            if max != '-1': self.filter(i, max)
+            else: break
+
+        # Update width to the found version
+        self.width = self.get_width()
 
         return True
