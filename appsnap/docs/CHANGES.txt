@@ -1,0 +1,9 @@
+1.01
+----
+Enhancements
+- Simplified process.get_width().
+
+Bug Fixes
+- Fixed bug where file version filtering algorithm was failing if the latest version
+  had fewer digits than a previous version. E.g. For Firefox, 2.0 had two digits
+  compared to version 1.5.0.7 with four digits.
