@@ -77,7 +77,7 @@ class curl:
         self.web_data += buf
 
     # Download data from the web
-    def download_web_data(self, url, filename):
+    def download_web_data(self, url, filename, referer):
         # Create cache directory
         if not os.path.exists(self.global_config.cache['cache_location']):
             os.mkdir(self.global_config.cache['cache_location'])
@@ -87,6 +87,7 @@ class curl:
         self.download_data = open(cached_filename, 'wb')
 
         # Download data
+        self.curl.setopt(pycurl.REFERER, referer)
         response = self.get_url(url + filename, self.call_back_download)
         if response >= 300:
             # Close and delete download file
