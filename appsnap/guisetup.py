@@ -166,7 +166,7 @@ class Events:
             - name : outline
               method : SetSize
               size : (230, %s)
-        """ % (frame, frame.y - 70, frame.y - 63)
+        """ % (frame, frame.y - 80, frame.y - 73)
         self.resources['gui'].parse_and_run(schema)
 
     # Update the section list when category is changed

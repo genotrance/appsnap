@@ -13,6 +13,7 @@ DELIMITERS         = '[._-]'
 VERSION            = '#VERSION#'
 MAJORMINOR_VERSION = '#MAJORMINOR_VERSION#'
 DOTLESS_VERSION    = '#DOTLESS_VERSION#'
+DASHTODOT_VERSION  = '#DASHTODOT_VERSION#'
 INSTALL_DIR        = '#INSTALL_DIR#'
 
 # Version cache
@@ -64,11 +65,12 @@ class process:
 
         download = self.replace_version(self.app_config['download'])
         filename = self.replace_version(self.app_config['filename'])
+        referer = self.app_config['scrape']
 
         cached_filename = self.curl_instance.get_cached_name(filename)
         if not os.path.exists(cached_filename):
             # Return false if download fails
-            if self.curl_instance.download_web_data(download, filename) != True: return False
+            if self.curl_instance.download_web_data(download, filename, referer) != True: return False
 
         return cached_filename
 
@@ -138,11 +140,13 @@ class process:
         try: majorminor_version = re.findall('^([0-9]+[._-][0-9]+).*', self.latestversion)[0]
         except IndexError: majorminor_version = version
         dotless_version = re.sub(DELIMITERS, '', self.latestversion)
+        dashtodot_version = re.sub('-', '.', self.latestversion)
 
         # Replace in the specified string
         string = re.sub(VERSION, version, string)
         string = re.sub(MAJORMINOR_VERSION, majorminor_version, string)
         string = re.sub(DOTLESS_VERSION, dotless_version, string)
+        string = re.sub(DASHTODOT_VERSION, dashtodot_version, string)
 
         return string
 
