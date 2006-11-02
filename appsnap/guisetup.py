@@ -372,6 +372,7 @@ class Events:
                 self.process[section].download_latest_version()
                 count += stepsize
                 self.resources['gui'].objects['progressbar'].SetValue(count)
+                self.resources['gui'].objects['application'].Yield()
 
                 # Perform the install
                 self.process[section].install_latest_version()
