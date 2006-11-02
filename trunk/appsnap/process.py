@@ -108,8 +108,8 @@ class process:
             _winreg.CloseKey(key)
 
             # Run uninstaller
-            if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('\.exe', '\.exe"', uninstall_string)
-            os.system(uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']))
+            if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('.exe', '.exe"', uninstall_string)
+            os.system('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"')
         except WindowsError:
             print 'Failed'
             return False

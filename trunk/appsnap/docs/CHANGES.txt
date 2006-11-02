@@ -1,9 +1,16 @@
 1.01
 ----
 Enhancements
+- Added CCleaner, ClamWin, Gaim, Thunderbird and VideoLAN.
 - Simplified process.get_width().
 
 Bug Fixes
 - Fixed bug where file version filtering algorithm was failing if the latest version
   had fewer digits than a previous version. E.g. For Firefox, 2.0 had two digits
   compared to version 1.5.0.7 with four digits.
+- Fixed bug where HTTP response codes other than 200 were being treated as failed. This
+  has been changed to codes >= 300.
+- Fixed bug in uninstall code where spurious \ was being introduced into the uninstall
+  command string causing uninstalls to fail.
+- Added a Yield() during installs to update the progress bar after a download
+- Updated scrape URL for Firefox

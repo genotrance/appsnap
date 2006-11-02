@@ -62,7 +62,7 @@ class curl:
 
         # Download the page
         response = self.get_url(url, self.call_back_buffer)
-        if response != 200:
+        if response >= 300:
             if response == 407: print '\nProxy authentication failed. Check config.ini'
             else: print '\nError ' + response.__str__() + ' for URL ' + url
 
@@ -88,7 +88,7 @@ class curl:
 
         # Download data
         response = self.get_url(url + filename, self.call_back_download)
-        if response != 200:
+        if response >= 300:
             # Close and delete download file
             self.download_data.close()
             os.remove(cached_filename)
