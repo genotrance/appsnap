@@ -11,6 +11,7 @@ ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
 # Regular expressions
 DELIMITERS         = '[._-]'
 VERSION            = '#VERSION#'
+MAJOR_VERSION      = '#MAJOR_VERSION#'
 MAJORMINOR_VERSION = '#MAJORMINOR_VERSION#'
 DOTLESS_VERSION    = '#DOTLESS_VERSION#'
 DASHTODOT_VERSION  = '#DASHTODOT_VERSION#'
@@ -65,7 +66,8 @@ class process:
 
         download = self.replace_version(self.app_config['download'])
         filename = self.replace_version(self.app_config['filename'])
-        referer = self.app_config['scrape']
+        try: referer = self.app_config['referer']
+        except KeyError: referer = self.app_config['scrape']
 
         cached_filename = self.curl_instance.get_cached_name(filename)
         if not os.path.exists(cached_filename):
@@ -137,6 +139,7 @@ class process:
 
         # Create the versions
         version = self.latestversion
+        major_version = re.findall('^([0-9]+)', self.latestversion)[0]
         try: majorminor_version = re.findall('^([0-9]+[._-][0-9]+).*', self.latestversion)[0]
         except IndexError: majorminor_version = version
         dotless_version = re.sub(DELIMITERS, '', self.latestversion)
@@ -144,6 +147,7 @@ class process:
 
         # Replace in the specified string
         string = re.sub(VERSION, version, string)
+        string = re.sub(MAJOR_VERSION, major_version, string)
         string = re.sub(MAJORMINOR_VERSION, majorminor_version, string)
         string = re.sub(DOTLESS_VERSION, dotless_version, string)
         string = re.sub(DASHTODOT_VERSION, dashtodot_version, string)

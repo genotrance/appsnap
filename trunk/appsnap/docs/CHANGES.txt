@@ -2,13 +2,16 @@
 ----
 Enhancements
 - Added new applications:
-  - Internet : Azureus, Gaim, Miranda, Thunderbird
+  - Internet : Azureus, Gaim, Miranda, Thunderbird, WinSCP
   - Entertainment : CDex, Songbird, VideoLAN
   - Productivity: Audacity, BurnAtOnce, Nvu, Vim
   - Utilities : AutoHotKey, CCleaner, ClamWin
 - Simplified process.get_width().
 - Increased default height of GUI.
 - Added DASHTODOT_VERSION to convert 1-1-1 versions to 1.1.1.
+- Added MAJOR_VERSION to convert 3.8 to 3.
+- Added referer when downloading applications. If not explicitly specified in db.ini,
+  the scrape URL is used instead.
 
 Bug Fixes
 - Fixed bug where file version filtering algorithm was failing if the latest version
@@ -20,5 +23,4 @@ Bug Fixes
   command string causing uninstalls to fail.
 - Added a Yield() during installs to update the progress bar after a download.
 - Fixed GUI resize code to fit list and outline in window.
-- Needed to set referer to scrape URL when downloading applications.
 - Updated scrape URL for Firefox.
