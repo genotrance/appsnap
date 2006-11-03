@@ -20,6 +20,7 @@ class config:
         # User variables
         self.user = self.convert_to_hash(self.config.items('user'))
         self.cache = self.convert_to_hash(self.config.items('cache'))
+        self.database = self.convert_to_hash(self.config.items('database'))
 
     #####
     # Get

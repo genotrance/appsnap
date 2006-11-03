@@ -8,6 +8,8 @@ GUI Enhancements
   - Productivity: Audacity, BurnAtOnce, Nvu, Vim
   - Utilities : AutoHotKey, CCleaner, ClamWin
 - Added buttons to download and upgrade applications.
+- Added an update database function that gets latest version of db.ini from SVN.
+- AppSnap can now reload the configuration by clicking the reload button.
 - Increased default width and height of GUI to fit toolbar and more applications.
 
 Internal Improvements
