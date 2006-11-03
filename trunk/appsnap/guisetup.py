@@ -1,4 +1,13 @@
+import config
+import curl
+import difflib
+import process
+import threading
+import time
 import wx
+
+WIDTH = 540
+HEIGHT = 400
 
 # GUI schema in YAML format
 schema = """
@@ -72,20 +81,35 @@ schema = """
       - method : CopyFromIcon
         icon : ~uninstallicon
 
-    - name : configicon
+    - name : dbupdateicon
       type : wx.Icon
       ^name : '%%systemroot%%\system32\shell32.dll;35'
       ^type : wx.BITMAP_TYPE_ICO
       desiredWidth: 16
       desiredHeight: 16
 
-    - name : configbmp
+    - name : dbupdatebmp
       type : wx.EmptyBitmap
       width : 16
       height : 16
       methods:
       - method : CopyFromIcon
-        icon : ~configicon
+        icon : ~dbupdateicon
+
+    - name : reloadicon
+      type : wx.Icon
+      ^name : '%%systemroot%%\system32\shell32.dll;69'
+      ^type : wx.BITMAP_TYPE_ICO
+      desiredWidth: 16
+      desiredHeight: 16
+
+    - name : reloadbmp
+      type : wx.EmptyBitmap
+      width : 16
+      height : 16
+      methods:
+      - method : CopyFromIcon
+        icon : ~reloadicon
 
     - name : toolbar
       type : wx.ToolBar
@@ -147,16 +171,16 @@ schema = """
       parent : panel
       range : 1000
       pos : (175, 100)
-      size : (250, 15)
+      size : (%s, 15)
       methods:
       - method : Hide
 
     methods:
     - name : frame
       method : SetSizeHints
-      minW : 450
-      minH : 350
-      maxW : 450
+      minW : %s
+      minH : %s
+      maxW : %s
 
     - name : frame
       method : SetIcon
@@ -170,7 +194,7 @@ schema = """
     - name : frame
       type : wx.EVT_SIZE
       method : resize_all
-""" % ('appsnap.ico')
+""" % ('appsnap.ico', WIDTH - 200, WIDTH, HEIGHT, WIDTH)
 
 # Event processing methods
 class Events:
@@ -183,17 +207,17 @@ class Events:
         self.process = {}
 
         # A lock object to serialize
-        import threading
         self.lock = threading.Lock()
+
+        # Create toolbar only once
+        self.toolbar = False
 
     # Setup the event object
     def setup(self):
         # Load the configuration
-        import config
         self.configuration = config.config()
 
         # Create a pycurl instance
-        import curl
         self.curl_instance = curl.curl(self.configuration)
 
         # Get all categories
@@ -209,8 +233,14 @@ class Events:
         schema = """
             methods:
             - name : dropdown
+              method : Clear
+
+            - name : dropdown
               method : AppendItems
               strings : %s
+
+            - name : sectionlist
+              method : Clear
 
             - name : sectionlist
               method : InsertItems
@@ -220,40 +250,68 @@ class Events:
         self.resources['gui'].parse_and_run(schema)
         self.resources['gui'].execute([{'name' : 'dropdown', 'method' : 'Select', 'n' : 0}])
 
+        if self.toolbar == False:
+            self.create_toolbar()
+
+    # Create the toolbar
+    def create_toolbar(self):
         schema = """
             methods:
             - name : toolbar
               method : AddSeparator
+
             - name : toolbar
               method : AddControl
               control : ~dropdown
+
             - name : toolbar
               method : AddSeparator
+
             - name : toolbar
               method : AddLabelTool
               id : -1
               bitmap : ~downloadbmp
               label : Download
+              shortHelp : Download selected applications
+
             - name : toolbar
               method : AddLabelTool
               id : -1
               bitmap : ~installbmp
               label : Install
+              shortHelp : Download and install selected applications
+
             - name : toolbar
               method : AddLabelTool
               id : -1
               bitmap : ~upgradebmp
               label : Upgrade
+              shortHelp : Upgrade selected applications
+
             - name : toolbar
               method : AddLabelTool
               id : -1
               bitmap : ~uninstallbmp
               label : Uninstall
+              shortHelp : Uninstall selected applications
+
+            - name : toolbar
+              method : AddSeparator
+
             - name : toolbar
               method : AddLabelTool
               id : -1
-              bitmap : ~configbmp
-              label : Configure
+              bitmap : ~dbupdatebmp
+              label : Update DB
+              shortHelp : Update application database
+
+            - name : toolbar
+              method : AddLabelTool
+              id : -1
+              bitmap : ~reloadbmp
+              label : Reload
+              shortHelp : Reload configuration
+
             - name : toolbar
               method : Realize
         """
@@ -263,7 +321,11 @@ class Events:
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[4].GetId(), self.do_install)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[5].GetId(), self.do_upgrade)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[6].GetId(), self.do_uninstall)
-        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[7].GetId(), self.do_configure)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[8].GetId(), self.do_db_update)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[9].GetId(), self.do_reload)
+
+        # Create toolbar only once
+        self.toolbar = True
 
     # Resize the GUI on drag or startup
     def resize_all(self, event):
@@ -282,8 +344,8 @@ class Events:
 
             - name : outline
               method : SetSize
-              size : (280, %s)
-        """ % (frame, frame.y - 87, frame.y - 80)
+              size : (%s, %s)
+        """ % (frame, frame.y - 87, WIDTH - 170, frame.y - 80)
         self.resources['gui'].parse_and_run(schema)
 
     # Update the section list when category is changed
@@ -356,8 +418,8 @@ class Events:
         items = self.configuration.get_section_items(section)
 
         # Trim website link if needed
-        if len(items['website']) > 35:
-            website = items['website'][0:35] + ' ...'
+        if len(items['website']) > 52:
+            website = items['website'][0:52] + ' ...'
             tooltip = items['website']
         else:
             website = items['website']
@@ -397,7 +459,6 @@ class Events:
 
         # Get latest version
         if not self.process.has_key(section):
-            import process
             self.process[section] = process.process(self.configuration, self.curl_instance, section, items)
         latest_version = self.process[section].get_latest_version()
         if latest_version == None:
@@ -415,7 +476,6 @@ class Events:
         section = event.GetString()
 
         # Show the information
-        import threading
         child = threading.Thread(target=self.show_section_info, args=[section])
         child.setDaemon(True)
         child.start()
@@ -426,7 +486,6 @@ class Events:
         section = self.resources['gui'].objects['sectionlist'].GetString(id)
 
         # Show the information
-        import threading
         child = threading.Thread(target=self.show_section_info, args=[section])
         child.setDaemon(True)
         child.start()
@@ -469,7 +528,6 @@ class Events:
 
         # Display progress bar
         self.resources['gui'].objects['progressbar'].Show()
-        self.resources['gui'].objects['application'].Yield()
 
         # Do action for each section
         for section in checked:
@@ -504,38 +562,15 @@ class Events:
         self.reset_section_info()
 
         # Mark as completed
-        schema = """
-            methods:
-            - name : progressbar
-              method : SetValue
-              pos : 1000
-
-            - name : actionname
-              method : SetLabel
-              label : Done
-
-            - name : application
-              method : Yield
-        """
-        self.resources['gui'].parse_and_run(schema)
-        import time
+        self.resources['gui'].objects['progressbar'].SetValue(1000)
+        self.resources['gui'].objects['actionname'].SetLabel('Done')
+        self.resources['gui'].objects['application'].Yield()
         time.sleep(2)
 
         # Reset progressbar and hide
-        schema = """
-            methods:
-            - name : actionname
-              method : SetLabel
-              label : ''
-
-            - name : progressbar
-              method : Hide
-
-            - name : progressbar
-              method : SetValue
-              pos : 0
-        """
-        self.resources['gui'].parse_and_run(schema)
+        self.resources['gui'].objects['actionname'].SetLabel('')
+        self.resources['gui'].objects['progressbar'].Hide()
+        self.resources['gui'].objects['progressbar'].SetValue(0)
 
         # Uncheck all sections
         self.uncheck_all_sections()
@@ -556,6 +591,64 @@ class Events:
     def do_upgrade(self, event):
         self.do_action('upgrade')
 
-    # Configuration
-    def do_configure(self, event):
-        pass
+    # Update database
+    def do_db_update(self, event):
+        # Display progress bar
+        stepsize = 250
+        count = 0
+        self.resources['gui'].objects['progressbar'].Show()
+        self.update_progress_bar(0, 'Downloading DB :')
+
+        # Download latest DB.ini
+        remote = self.curl_instance.get_web_data(self.configuration.database['location']).splitlines()
+
+        # Compare with existing DB
+        count += stepsize
+        self.update_progress_bar(count, 'Comparing :')
+
+        # Perform compare
+        local = open(config.DB).read().splitlines()
+        d = difflib.Differ()
+        changes = False
+        result = list(d.compare(local, remote))
+        for line in result:
+            if line[0] != ' ':
+                changes = True
+                break
+
+        if changes == True:
+            # Update the DB file
+            count += stepsize
+            self.update_progress_bar(count, 'Updating local DB :')
+            db = open(config.DB, 'wb')
+            db.writelines(remote)
+            db.close()
+
+            # Reload settings
+            count += stepsize
+            self.update_progress_bar(count, 'Reloading DB :')
+            self.do_reload(None)
+        else:
+            # No change found
+            count += stepsize
+            self.update_progress_bar(count, 'No changes found :')
+            time.sleep(1)
+
+        # Mark as completed
+        self.update_progress_bar(1000, 'Done')
+        time.sleep(2)
+
+        # Reset progressbar and hide
+        self.update_progress_bar(0, '')
+        self.resources['gui'].objects['progressbar'].Hide()
+
+    # Update progress bar and text
+    def update_progress_bar(self, count, label):
+        self.resources['gui'].objects['progressbar'].SetValue(count)
+        self.resources['gui'].objects['actionname'].SetLabel(label)
+        self.resources['gui'].objects['application'].Yield()
+
+    # Reload the configuration
+    def do_reload(self, event):
+        self.setup()
+        self.reset_section_info()
