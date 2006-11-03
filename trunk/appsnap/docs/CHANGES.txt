@@ -1,13 +1,17 @@
-1.01
-----
-Enhancements
+1.1
+---
+GUI Enhancements
+- Replaced install/uninstall buttons with a nice toolbar.
 - Added new applications:
   - Internet : Azureus, Gaim, Miranda, Thunderbird, WinSCP
   - Entertainment : CDex, Songbird, VideoLAN
   - Productivity: Audacity, BurnAtOnce, Nvu, Vim
   - Utilities : AutoHotKey, CCleaner, ClamWin
+- Added buttons to download and upgrade applications.
+- Increased default width and height of GUI to fit toolbar and more applications.
+
+Internal Improvements
 - Simplified process.get_width().
-- Increased default height of GUI.
 - Added DASHTODOT_VERSION to convert 1-1-1 versions to 1.1.1.
 - Added MAJOR_VERSION to convert 3.8 to 3.
 - Added referer when downloading applications. If not explicitly specified in db.ini,

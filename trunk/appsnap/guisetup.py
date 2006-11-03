@@ -1,3 +1,5 @@
+import wx
+
 # GUI schema in YAML format
 schema = """
     objects:
@@ -10,10 +12,94 @@ schema = """
       type : wx.Panel
       parent : frame
 
+    - name : downloadicon
+      type : wx.Icon
+      ^name : '%%systemroot%%\system32\shell32.dll;18'
+      ^type : wx.BITMAP_TYPE_ICO
+      desiredWidth: 16
+      desiredHeight: 16
+
+    - name : downloadbmp
+      type : wx.EmptyBitmap
+      width : 16
+      height : 16
+      methods:
+      - method : CopyFromIcon
+        icon : ~downloadicon
+
+    - name : installicon
+      type : wx.Icon
+      ^name : '%%systemroot%%\system32\shell32.dll;162'
+      ^type : wx.BITMAP_TYPE_ICO
+      desiredWidth: 16
+      desiredHeight: 16
+
+    - name : installbmp
+      type : wx.EmptyBitmap
+      width : 16
+      height : 16
+      methods:
+      - method : CopyFromIcon
+        icon : ~installicon
+
+    - name : upgradeicon
+      type : wx.Icon
+      ^name : '%%systemroot%%\system32\shell32.dll;19'
+      ^type : wx.BITMAP_TYPE_ICO
+      desiredWidth: 16
+      desiredHeight: 16
+
+    - name : upgradebmp
+      type : wx.EmptyBitmap
+      width : 16
+      height : 16
+      methods:
+      - method : CopyFromIcon
+        icon : ~upgradeicon
+
+    - name : uninstallicon
+      type : wx.Icon
+      ^name : '%%systemroot%%\system32\shell32.dll;32'
+      ^type : wx.BITMAP_TYPE_ICO
+      desiredWidth: 16
+      desiredHeight: 16
+
+    - name : uninstallbmp
+      type : wx.EmptyBitmap
+      width : 16
+      height : 16
+      methods:
+      - method : CopyFromIcon
+        icon : ~uninstallicon
+
+    - name : configicon
+      type : wx.Icon
+      ^name : '%%systemroot%%\system32\shell32.dll;35'
+      ^type : wx.BITMAP_TYPE_ICO
+      desiredWidth: 16
+      desiredHeight: 16
+
+    - name : configbmp
+      type : wx.EmptyBitmap
+      width : 16
+      height : 16
+      methods:
+      - method : CopyFromIcon
+        icon : ~configicon
+
+    - name : toolbar
+      type : wx.ToolBar
+      parent : frame
+      pos : (5, 0)
+      style : wx.TB_TEXT
+      methods:
+      - method : SetMargins
+        size : (5, 0)
+
     - name : dropdown
       type : wx.Choice
-      parent : panel
-      pos : (5, 10)
+      parent : toolbar
+      size : (150, -1)
       events:
       - type : wx.EVT_CHOICE
         method : category_chosen
@@ -21,45 +107,27 @@ schema = """
     - name : sectionlist
       type : wx.CheckListBox
       parent : panel
-      pos : (5, 40)
+      pos : (8, 20)
       events:
       - type : wx.EVT_LISTBOX
         method : show_section_info_event
       - type : wx.EVT_CHECKLISTBOX
         method : selected_section
 
-    - name : install
-      type : wx.Button
-      parent : panel
-      label : Install
-      pos : (160, 10)
-      events:
-      - type : wx.EVT_BUTTON
-        method : do_install
-
-    - name : uninstall
-      type : wx.Button
-      parent : panel
-      label : Uninstall
-      pos : (240, 10)
-      events:
-      - type : wx.EVT_BUTTON
-        method : do_uninstall
-
     - name : outline
       type : wx.StaticBox
       parent : panel
-      pos : (160, 34)
+      pos : (160, 14)
 
     - name : appwebsite
       type : wx.StaticText
       parent : panel
-      pos : (175, 60)
+      pos : (175, 40)
 
     - name : appwebsitelink
       type : wx.lib.hyperlink.HyperLinkCtrl
       parent : panel
-      pos : (225, 60)
+      pos : (225, 40)
       methods:
       - method : SetColours
         visited : wx.Colour(0, 0, 255)
@@ -67,32 +135,36 @@ schema = """
     - name : appversion
       type : wx.StaticText
       parent : panel
-      pos : (175, 75)
+      pos : (175, 55)
 
     - name : actionname
       type : wx.StaticText
       parent : panel
-      pos : (175, 100)
+      pos : (175, 80)
 
     - name : progressbar
       type : wx.Gauge
       parent : panel
       range : 1000
-      pos : (175, 120)
-      size : (200, 15)
+      pos : (175, 100)
+      size : (250, 15)
       methods:
       - method : Hide
 
     methods:
     - name : frame
       method : SetSizeHints
-      minW : 400
-      minH : 300
-      maxW : 400
+      minW : 450
+      minH : 350
+      maxW : 450
 
     - name : frame
       method : SetIcon
       icon : ~icon
+
+    - name : frame
+      method : SetToolBar
+      toolbar : ~toolbar
 
     events:
     - name : frame
@@ -148,6 +220,51 @@ class Events:
         self.resources['gui'].parse_and_run(schema)
         self.resources['gui'].execute([{'name' : 'dropdown', 'method' : 'Select', 'n' : 0}])
 
+        schema = """
+            methods:
+            - name : toolbar
+              method : AddSeparator
+            - name : toolbar
+              method : AddControl
+              control : ~dropdown
+            - name : toolbar
+              method : AddSeparator
+            - name : toolbar
+              method : AddLabelTool
+              id : -1
+              bitmap : ~downloadbmp
+              label : Download
+            - name : toolbar
+              method : AddLabelTool
+              id : -1
+              bitmap : ~installbmp
+              label : Install
+            - name : toolbar
+              method : AddLabelTool
+              id : -1
+              bitmap : ~upgradebmp
+              label : Upgrade
+            - name : toolbar
+              method : AddLabelTool
+              id : -1
+              bitmap : ~uninstallbmp
+              label : Uninstall
+            - name : toolbar
+              method : AddLabelTool
+              id : -1
+              bitmap : ~configbmp
+              label : Configure
+            - name : toolbar
+              method : Realize
+        """
+        (objects, methods, events) = self.resources['gui'].parse(schema)
+        retval = self.resources['gui'].execute(methods)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[3].GetId(), self.do_download)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[4].GetId(), self.do_install)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[5].GetId(), self.do_upgrade)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[6].GetId(), self.do_uninstall)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[7].GetId(), self.do_configure)
+
     # Resize the GUI on drag or startup
     def resize_all(self, event):
         # Get the frame size
@@ -165,8 +282,8 @@ class Events:
 
             - name : outline
               method : SetSize
-              size : (230, %s)
-        """ % (frame, frame.y - 80, frame.y - 73)
+              size : (280, %s)
+        """ % (frame, frame.y - 87, frame.y - 80)
         self.resources['gui'].parse_and_run(schema)
 
     # Update the section list when category is changed
@@ -239,8 +356,8 @@ class Events:
         items = self.configuration.get_section_items(section)
 
         # Trim website link if needed
-        if len(items['website']) > 25:
-            website = items['website'][0:25] + '...'
+        if len(items['website']) > 35:
+            website = items['website'][0:35] + ' ...'
             tooltip = items['website']
         else:
             website = items['website']
@@ -331,6 +448,7 @@ class Events:
             if sectionlist.IsChecked(i):
                 sectionlist.Check(i, False)
 
+    # Perform specified action on the checked applications
     def do_action(self, action):
         # Get all sections selected
         checked = self.get_checked_sections()
@@ -340,47 +458,45 @@ class Events:
 
         # Figure out action
         count = 0
-        if action == 'install':
-            label = 'Installing :'
+        if action == 'download':
+            stepsize = 1000 / len(checked)
+        elif action == 'install':
             stepsize = 500 / len(checked)
         elif action == 'uninstall':
-            label = 'Uninstalling :'
             stepsize = 1000 / len(checked)
+        elif action == 'upgrade':
+            stepsize = 333 / len(checked)
 
-        # Display task being executed and progress bar
-        schema = """
-            methods:
-            - name : progressbar
-              method : Show
-
-            - name : actionname
-              method : SetLabel
-              label : '%s'
-
-            - name : application
-              method : Yield
-        """ % label
-        self.resources['gui'].parse_and_run(schema)
+        # Display progress bar
+        self.resources['gui'].objects['progressbar'].Show()
+        self.resources['gui'].objects['application'].Yield()
 
         # Do action for each section
         for section in checked:
             # Display section information
             self.show_section_info(section)
 
-            if action == 'install':
+            if action == 'download' or action == 'install' or action == 'upgrade':
                 # Download latest version
+                self.resources['gui'].objects['actionname'].SetLabel('Downloading :')
+                self.resources['gui'].objects['application'].Yield()
                 self.process[section].download_latest_version()
                 count += stepsize
                 self.resources['gui'].objects['progressbar'].SetValue(count)
-                self.resources['gui'].objects['application'].Yield()
 
-                # Perform the install
-                self.process[section].install_latest_version()
+            if action == 'uninstall' or action == 'upgrade':
+                # Perform the uninstall
+                self.resources['gui'].objects['actionname'].SetLabel('Uninstalling :')
+                self.resources['gui'].objects['application'].Yield()
+                self.process[section].uninstall_version()
                 count += stepsize
                 self.resources['gui'].objects['progressbar'].SetValue(count)
-            elif action == 'uninstall':
+
+            if action == 'install' or action == 'upgrade':
                 # Perform the install
-                self.process[section].uninstall_version()
+                self.resources['gui'].objects['actionname'].SetLabel('Installing :')
+                self.resources['gui'].objects['application'].Yield()
+                self.process[section].install_latest_version()
                 count += stepsize
                 self.resources['gui'].objects['progressbar'].SetValue(count)
 
@@ -424,8 +540,22 @@ class Events:
         # Uncheck all sections
         self.uncheck_all_sections()
 
+    # Download checked applications
+    def do_download(self, event):
+        self.do_action('download')
+
+    # Download and install checked applications
     def do_install(self, event):
         self.do_action('install')
 
+    # Uninstall checked applications
     def do_uninstall(self, event):
         self.do_action('uninstall')
+
+    # Upgrade checked applications
+    def do_upgrade(self, event):
+        self.do_action('upgrade')
+
+    # Configuration
+    def do_configure(self, event):
+        pass
