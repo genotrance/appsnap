@@ -11,7 +11,9 @@ Enhancements
 - Added DASHTODOT_VERSION to convert 1-1-1 versions to 1.1.1.
 - Added MAJOR_VERSION to convert 3.8 to 3.
 - Added referer when downloading applications. If not explicitly specified in db.ini,
-  the scrape URL is used instead.
+  the scrape URL is used as the referer.
+- Older versions of an application's installer are now deleted when a newer version is
+  downloaded.
 
 Bug Fixes
 - Fixed bug where file version filtering algorithm was failing if the latest version
