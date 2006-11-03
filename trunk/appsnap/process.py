@@ -4,6 +4,7 @@ import string
 import _winreg
 import os
 import os.path
+import glob
 
 # Shortcut to convert versions with letters in them
 ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
@@ -71,10 +72,29 @@ class process:
 
         cached_filename = self.curl_instance.get_cached_name(filename)
         if not os.path.exists(cached_filename):
+            # Delete any older cached versions
+            self.delete_older_versions()
+
             # Return false if download fails
             if self.curl_instance.download_web_data(download, filename, referer) != True: return False
 
         return cached_filename
+
+    # Delete older application installers
+    def delete_older_versions(self):
+        # Create pattern for filename
+        filename = self.app_config['filename']
+        filename = re.sub(VERSION, '*', filename)
+        filename = re.sub(MAJOR_VERSION, '*', filename)
+        filename = re.sub(MAJORMINOR_VERSION, '*', filename)
+        filename = re.sub(DOTLESS_VERSION, '*', filename)
+        filename = re.sub(DASHTODOT_VERSION, '*', filename)
+        filename = self.curl_instance.get_cached_name(filename)
+
+        # Find all older versions
+        older_files = glob.glob(filename)
+        for older_file in older_files:
+            os.remove(older_file)
 
     # Install the latest version of the application
     def install_latest_version(self):
