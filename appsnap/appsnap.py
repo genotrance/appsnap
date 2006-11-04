@@ -14,6 +14,7 @@ Global functions
 -c             List all application categories
 -l             List supported applications
    -f <cat>    Filter list by category
+-U             Update database
 
 Application specific functions
 -n <name>      One or more application names, comma separated
@@ -27,7 +28,7 @@ Application specific functions
 if __name__ == '__main__':
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:ux')
+        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:uUx')
     except getopt.GetoptError:
         print help
         sys.exit(2)
@@ -42,6 +43,7 @@ if __name__ == '__main__':
     list = False
     upgrade = False
     uninstall = False
+    updatedb = False
 
     for o, a in opts:
         if o == '-c': categories = True
@@ -55,10 +57,11 @@ if __name__ == '__main__':
         if o == '-l': list = True
         if o == '-n': names = a.split(',')
         if o == '-u': upgrade = True
+        if o == '-U': updatedb = True
         if o == '-x': uninstall = True
 
     # If no application specified, exit
-    if names == None and list == False and categories == False:
+    if names == None and list == False and categories == False and updatedb == False:
         print help
         sys.exit()
 
@@ -77,6 +80,21 @@ if __name__ == '__main__':
         sys.exit()
     elif list == True:
         configuration.display_available_sections(filter)
+        sys.exit()
+
+    # Update database if requested
+    if updatedb == True:
+        print 'Updating database...'
+        remote = curl_instance.get_web_data(configuration.database['location'])
+        local = open(config.DB, 'rb').read()
+        if local != remote:
+            # Update the DB file
+            print 'Updated!'
+            db = open(config.DB, 'wb')
+            db.write(remote)
+            db.close()
+        else:
+            print 'No changes.'
         sys.exit()
 
     # Perform actions for each application specified
