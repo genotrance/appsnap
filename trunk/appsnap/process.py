@@ -1,10 +1,10 @@
 # Import required libraries
+import glob
+import os
+import os.path
 import re
 import string
 import _winreg
-import os
-import os.path
-import glob
 
 # Shortcut to convert versions with letters in them
 ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
@@ -116,6 +116,9 @@ class process:
         # Run the installer
         os.spawnv(os.P_WAIT, cached_filename, args)
 
+        # Save installed version
+        self.global_config.save_installed_version(self.app, self.latestversion)
+
         # Return
         return True
 
@@ -134,6 +137,9 @@ class process:
             # Run uninstaller
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('.exe', '.exe"', uninstall_string)
             os.system('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"')
+
+            # Delete installed version
+            self.global_config.delete_installed_version(self.app)
         except WindowsError:
             print 'Failed'
             return False

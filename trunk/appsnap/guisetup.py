@@ -160,16 +160,21 @@ schema = """
       parent : panel
       pos : (175, 55)
 
+    - name : installedversion
+      type : wx.StaticText
+      parent : panel
+      pos : (175, 70)
+
     - name : actionname
       type : wx.StaticText
       parent : panel
-      pos : (175, 80)
+      pos : (175, 95)
 
     - name : progressbar
       type : wx.Gauge
       parent : panel
       range : 1000
-      pos : (175, 100)
+      pos : (175, 115)
       size : (%s, 15)
       methods:
       - method : Hide
@@ -223,6 +228,8 @@ class Events:
         categories = self.configuration.get_categories()
         categories.sort()
         categories.insert(0, 'All')
+        categories.insert(1, 'Installed')
+        categories.insert(2, '--')
 
         # Get all sections
         sections = self.configuration.get_sections()
@@ -353,10 +360,14 @@ class Events:
         category = event.GetString()
 
         # Get all sections for this category
-        if category != "All":
-            sections = self.configuration.get_sections_by_category(category)
-        else:
+        if category == 'All':
             sections = self.configuration.get_sections()
+        elif category == 'Installed':
+            sections = self.configuration.installed.sections()
+        elif category == '--':
+            return
+        else:
+            sections = self.configuration.get_sections_by_category(category)
 
         # Sort
         sections.sort()
@@ -403,6 +414,10 @@ class Events:
               method : SetLabel
               label : ''
 
+            - name : installedversion
+              method : SetLabel
+              label : ''
+
             - name : application
               method : Yield
         """
@@ -423,6 +438,11 @@ class Events:
         else:
             website = items['website']
             tooltip = ""
+
+        # Get installed version
+        installedversion = self.configuration.get_installed_version(section)
+        if installedversion != '':
+            installedversion = 'Installed Version : ' + installedversion
 
         # Display text
         schema = """
@@ -451,9 +471,13 @@ class Events:
               method : SetLabel
               label : 'Latest Version : loading...'
 
+            - name : installedversion
+              method : SetLabel
+              label : '%s'
+
             - name : application
               method : Yield
-        """ % (section, items['describe'], items['website'], website, tooltip)
+        """ % (section, items['describe'], items['website'], website, tooltip, installedversion)
         self.resources['gui'].parse_and_run(schema)
 
         # Get latest version

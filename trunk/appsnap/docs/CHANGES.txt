@@ -1,25 +1,33 @@
-1.1
----
+Version 1.1
+-----------
+New Applications
+- Internet : Azureus, Gaim, Miranda, Thunderbird, WinSCP
+- Entertainment : CDex, Songbird, VideoLAN
+- Productivity: Audacity, BurnAtOnce, Nvu, Vim
+- Utilities : AutoHotKey, CCleaner, ClamWin
+
 GUI Enhancements
 - Replaced install/uninstall buttons with a nice toolbar.
-- Added new applications:
-  - Internet : Azureus, Gaim, Miranda, Thunderbird, WinSCP
-  - Entertainment : CDex, Songbird, VideoLAN
-  - Productivity: Audacity, BurnAtOnce, Nvu, Vim
-  - Utilities : AutoHotKey, CCleaner, ClamWin
 - Added buttons to download and upgrade applications.
-- Added an update database function that gets latest version of db.ini from SVN.
+- Added an update database button that gets latest version of db.ini from SVN.
 - AppSnap can now reload the configuration by clicking the reload button.
+- All installed applications can be filtered by selecting the 'Installed' category
+  in the dropdown menu.
 - Increased default width and height of GUI to fit toolbar and more applications.
 
+CLI Enhancements
+- Update database with the latest version of db.ini from SVN using -U.
+- Filter all installed applications using filter -f Installed.
+
 Internal Improvements
-- Simplified process.get_width().
+- AppSnap now remembers the application versions that it installs.
 - Added DASHTODOT_VERSION to convert 1-1-1 versions to 1.1.1.
 - Added MAJOR_VERSION to convert 3.8 to 3.
 - Added referer when downloading applications. If not explicitly specified in db.ini,
   the scrape URL is used as the referer.
 - Older versions of an application's installer are now deleted when a newer version is
   downloaded.
+- Simplified process.get_width().
 
 Bug Fixes
 - Fixed bug where file version filtering algorithm was failing if the latest version
