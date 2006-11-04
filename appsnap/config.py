@@ -5,6 +5,7 @@ import ConfigParser
 # Configuration file
 DB = 'db.ini'
 CONFIG = 'config.ini'
+INSTALLED = 'installed.ini'
 
 # Configuration loading class
 class config:
@@ -21,6 +22,10 @@ class config:
         self.user = self.convert_to_hash(self.config.items('user'))
         self.cache = self.convert_to_hash(self.config.items('cache'))
         self.database = self.convert_to_hash(self.config.items('database'))
+
+        # Load the installed applications
+        self.installed = ConfigParser.SafeConfigParser()
+        self.installed.read(INSTALLED)
 
     #####
     # Get
@@ -79,9 +84,15 @@ class config:
     # Display available sections
     def display_available_sections(self, category=''):
         # Get the sections
-        sections = self.get_sections()
+        if category == 'Installed':
+            sections = self.installed.sections()
+            category = ''
+            print 'Installed Applications\n'
+        else:
+            sections = self.get_sections()
+            print 'Supported Applications\n'
+        sections.sort()
 
-        print 'Supported Applications\n'
         if category != '': print '  Category    : ' + category + '\n'
         for section in sections:
             items = self.get_section_items(section)
@@ -90,6 +101,29 @@ class config:
                 print '  Description : ' + items['describe']
                 print '  Website     : ' + items['website']
                 print ''
+
+    #####
+    # Version
+    #####
+
+    # Get installed version
+    def get_installed_version(self, section):
+        if self.installed.has_section(section) == True:
+            return self.installed.get(section, 'version')
+        return ''
+
+    # Save installed version to file
+    def save_installed_version(self, section, version):
+        if self.installed.has_section(section) == False:
+            self.installed.add_section(section)
+        self.installed.set(section, 'version', version)
+        self.installed.write(open(INSTALLED, 'w'))
+
+    # Delete installed version from file
+    def delete_installed_version(self, section):
+        if self.installed.has_section(section) == True:
+            self.installed.remove_section(section)
+            self.installed.write(open(INSTALLED, 'w'))
 
     #####
     # Helper functions

@@ -104,10 +104,13 @@ if __name__ == '__main__':
             p = process.process(configuration, curl_instance, name, items)
 
             if getversion == True:
-                print 'Application    : ' + name
-                print 'Description    : ' + items['describe']
-                print 'Website        : ' + items['website']
-                print 'Latest Version : ' + p.get_latest_version()
+                print 'Application       : ' + name
+                print 'Description       : ' + items['describe']
+                print 'Website           : ' + items['website']
+                print 'Latest Version    : ' + p.get_latest_version()
+                installed = configuration.get_installed_version(name)
+                if installed != '':
+                    print 'Installed Version : ' + installed
                 print ''
             if download == True:
                 print 'Downloading...'
