@@ -1,6 +1,5 @@
 import config
 import curl
-import difflib
 import process
 import threading
 import time
@@ -507,6 +506,12 @@ class Events:
             if sectionlist.IsChecked(i):
                 sectionlist.Check(i, False)
 
+    # Update progress bar and text
+    def update_progress_bar(self, count, label):
+        self.resources['gui'].objects['progressbar'].SetValue(count)
+        self.resources['gui'].objects['actionname'].SetLabel(label)
+        self.resources['gui'].objects['application'].Yield()
+
     # Perform specified action on the checked applications
     def do_action(self, action):
         # Get all sections selected
@@ -562,15 +567,12 @@ class Events:
         self.reset_section_info()
 
         # Mark as completed
-        self.resources['gui'].objects['progressbar'].SetValue(1000)
-        self.resources['gui'].objects['actionname'].SetLabel('Done')
-        self.resources['gui'].objects['application'].Yield()
+        self.update_progress_bar(1000, 'Done')
         time.sleep(2)
 
         # Reset progressbar and hide
-        self.resources['gui'].objects['actionname'].SetLabel('')
+        self.update_progress_bar(0, '')
         self.resources['gui'].objects['progressbar'].Hide()
-        self.resources['gui'].objects['progressbar'].SetValue(0)
 
         # Uncheck all sections
         self.uncheck_all_sections()
@@ -600,39 +602,34 @@ class Events:
         self.update_progress_bar(0, 'Downloading DB :')
 
         # Download latest DB.ini
-        remote = self.curl_instance.get_web_data(self.configuration.database['location']).splitlines()
+        remote = self.curl_instance.get_web_data(self.configuration.database['location'])
+        time.sleep(0.5)
 
         # Compare with existing DB
         count += stepsize
         self.update_progress_bar(count, 'Comparing :')
+        local = open(config.DB, 'rb').read()
+        time.sleep(0.5)
 
-        # Perform compare
-        local = open(config.DB).read().splitlines()
-        d = difflib.Differ()
-        changes = False
-        result = list(d.compare(local, remote))
-        for line in result:
-            if line[0] != ' ':
-                changes = True
-                break
-
-        if changes == True:
+        if local != remote:
             # Update the DB file
             count += stepsize
             self.update_progress_bar(count, 'Updating local DB :')
             db = open(config.DB, 'wb')
-            db.writelines(remote)
+            db.write(remote)
             db.close()
+            time.sleep(0.5)
 
             # Reload settings
             count += stepsize
             self.update_progress_bar(count, 'Reloading DB :')
             self.do_reload(None)
+            time.sleep(0.5)
         else:
             # No change found
             count += stepsize
             self.update_progress_bar(count, 'No changes found :')
-            time.sleep(1)
+            time.sleep(0.5)
 
         # Mark as completed
         self.update_progress_bar(1000, 'Done')
@@ -641,12 +638,6 @@ class Events:
         # Reset progressbar and hide
         self.update_progress_bar(0, '')
         self.resources['gui'].objects['progressbar'].Hide()
-
-    # Update progress bar and text
-    def update_progress_bar(self, count, label):
-        self.resources['gui'].objects['progressbar'].SetValue(count)
-        self.resources['gui'].objects['actionname'].SetLabel(label)
-        self.resources['gui'].objects['application'].Yield()
 
     # Reload the configuration
     def do_reload(self, event):
