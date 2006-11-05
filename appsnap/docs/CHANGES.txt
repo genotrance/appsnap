@@ -27,6 +27,7 @@ Internal Improvements
   the scrape URL is used as the referer.
 - Older versions of an application's installer are now deleted when a newer version is
   downloaded.
+- Download URL is now optional and defaults to the scrape URL.
 - Simplified process.get_width().
 
 Bug Fixes

@@ -27,6 +27,7 @@ installation directory and can be modified as needed. The options are:-
 - Login for the proxy user
 - Password for the proxy user
 - Location where downloaded installation files should be cached
+- Location to download latest DB from
 
 Proxy Support
 -------------
@@ -48,6 +49,7 @@ Global functions
 -c             List all application categories
 -l             List supported applications
    -f <cat>    Filter list by category
+-U             Update database
 
 Application specific functions
 -n <name>      One or more application names, comma separated
@@ -56,6 +58,15 @@ Application specific functions
    -i          Install latest version   (implies -d)
    -u          Upgrade current version  (implies -i, -x if not upgradeable)
    -x          Uninstall current version
+
+Database
+--------
+
+The AppSnap application database is a simple INI file that contains all the
+information that AppSnap needs in order to download, install and uninstall
+the applications that are supported.
+
+More details about adding new entries to the database can be found in DB.txt.
 
 Uninstallation
 --------------
@@ -77,7 +88,7 @@ Links
 -----
 
 AppSnap website
-http://www.genotrance.com/applications/appsnap
+http://blog.genotrance.com/applications/appsnap
 
 Python
 http://www.python.org

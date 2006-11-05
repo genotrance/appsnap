@@ -571,7 +571,7 @@ class Events:
                 count += stepsize
                 self.resources['gui'].objects['progressbar'].SetValue(count)
 
-            if action == 'uninstall' or action == 'upgrade':
+            if action == 'uninstall' or (action == 'upgrade' and self.process[section].app_config['upgrades'] == 'true'):
                 # Perform the uninstall
                 self.resources['gui'].objects['actionname'].SetLabel('Uninstalling :')
                 self.resources['gui'].objects['application'].Yield()
