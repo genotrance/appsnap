@@ -65,9 +65,15 @@ class process:
         # If still not available, return false
         if self.latestversion == None: return False
 
-        download = self.replace_version(self.app_config['download'])
+        # Get download URL, default to scrape
+        try: download = self.replace_version(self.app_config['download'])
+        except KeyError: download = self.app_config['scrape']
+
+        # Get filename
         filename = self.replace_version(self.app_config['filename'])
-        try: referer = self.app_config['referer']
+
+        # Get referer
+        try: referer = self.replace_version(self.app_config['referer'])
         except KeyError: referer = self.app_config['scrape']
 
         cached_filename = self.curl_instance.get_cached_name(filename)

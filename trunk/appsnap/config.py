@@ -132,7 +132,7 @@ class config:
     # Check if a section has all the expected fields
     def check_section_items(self, section, items):
         keys = (
-            'category scrape version download filename ' +
+            'category scrape version filename ' +
             'instparam upgrades chinstdir uninstall uninstparam'
         ).split(' ')
         for key in keys:
