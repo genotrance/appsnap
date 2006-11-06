@@ -73,6 +73,20 @@ Uninstallation
 
 AppSnap can be uninstalled from "Add or Remove Programs" in the Control Panel.
 
+Source Package
+--------------
+
+AppSnap is also available in a source only package which can be executed
+directly using an existing installation of Python. The following extra Python
+packages will need to be installed prior to running AppSnap:
+
+- wxPython
+- PyCurl
+- PyYAML
+
+Just download the source ZIP file, extract to a directory of your choice and run
+appsnap.py for the command line or appsnapgui.py for the GUI.
+
 License
 -------
 
