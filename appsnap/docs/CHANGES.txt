@@ -11,8 +11,8 @@ GUI Enhancements
 - Added buttons to download and upgrade applications.
 - Added an update database button that gets latest version of db.ini from SVN.
 - AppSnap can now reload the configuration by clicking the reload button.
-- All installed applications can be filtered by selecting the 'Installed' category
-  in the dropdown menu.
+- All installed applications can be filtered by selecting the 'Installed'
+  category in the dropdown menu.
 - Increased default width and height of GUI to fit toolbar and more applications.
 
 CLI Enhancements
@@ -21,23 +21,24 @@ CLI Enhancements
 
 Internal Improvements
 - AppSnap now remembers the application versions that it installs.
+- Older versions of an application's installer are now deleted when a newer
+  version is downloaded.
+- Details about adding new entries to the database can now be found in DB.txt.
+- Added referer when downloading applications. If not explicitly specified in
+  db.ini, the scrape URL is used as the referer.
+- Download URL is now optional and defaults to the scrape URL.
 - Added DASHTODOT_VERSION to convert 1-1-1 versions to 1.1.1.
 - Added MAJOR_VERSION to convert 3.8 to 3.
-- Added referer when downloading applications. If not explicitly specified in db.ini,
-  the scrape URL is used as the referer.
-- Older versions of an application's installer are now deleted when a newer version is
-  downloaded.
-- Download URL is now optional and defaults to the scrape URL.
 - Simplified process.get_width().
 
 Bug Fixes
-- Fixed bug where file version filtering algorithm was failing if the latest version
-  had fewer digits than a previous version. E.g. For Firefox, 2.0 had two digits
-  compared to version 1.5.0.7 with four digits.
-- Fixed bug where HTTP response codes other than 200 were being treated as failed. This
-  has been changed to codes >= 300.
-- Fixed bug in uninstall code where spurious \ was being introduced into the uninstall
-  command string causing uninstalls to fail.
+- Fixed bug where file version filtering algorithm was failing if the latest
+  version had fewer digits than a previous version. E.g. For Firefox, 2.0 had
+  two digits compared to version 1.5.0.7 with four digits.
+- Fixed bug where HTTP response codes other than 200 were being treated as
+  failed. This has been changed to codes >= 300.
+- Fixed bug in uninstall code where spurious \ was being introduced into the
+  uninstall command string causing uninstalls to fail.
 - Added a Yield() during installs to update the progress bar after a download.
 - Fixed GUI resize code to fit list and outline in window.
 - Updated scrape URL for Firefox.
