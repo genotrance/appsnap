@@ -59,6 +59,9 @@ Section "Installer" SEC01
   ; Copy install files
   SetOutPath "$INSTDIR"
   File "${INSTALLATION_FILES_LOCATION}\*.*"
+
+  ; Copy documentation
+  SetOutPath "$INSTDIR\docs"
   File "${DOCUMENTATION_FILES_LOCATION}\*.txt"
 
   ; Copy source
@@ -80,7 +83,7 @@ Section -Post
   CreateShortCut "$SMPROGRAMS\AppSnapGui.lnk" "$INSTDIR\appsnapgui.exe"
 
   ; Display README
-  ExecShell "open" "$INSTDIR\README.txt"
+  ExecShell "open" "$INSTDIR\docs\README.txt"
 SectionEnd
 
 Function un.onUninstSuccess
