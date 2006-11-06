@@ -59,7 +59,7 @@ Section "Installer" SEC01
   ; Copy install files
   SetOutPath "$INSTDIR"
   File "${INSTALLATION_FILES_LOCATION}\*.*"
-  File "${DOCUMENTATION_FILES_LOCATION}\*.*"
+  File "${DOCUMENTATION_FILES_LOCATION}\*.txt"
 
   ; Copy source
   SetOutPath "$INSTDIR\source"
