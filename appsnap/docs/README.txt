@@ -82,7 +82,7 @@ installer.
 Contact
 -------
 
-Contact genosha@genotrance.com for any questions regarding this program.
+Contact ganesh@genotrance.com for any questions regarding this program.
 
 Links
 -----
