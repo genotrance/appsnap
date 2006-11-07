@@ -3,8 +3,9 @@ import sys
 import ConfigParser
 
 # Configuration file
-DB = 'db.ini'
-CONFIG = 'config.ini'
+DB        = 'db.ini'
+USERDB    = 'userdb.ini'
+CONFIG    = 'config.ini'
 INSTALLED = 'installed.ini'
 
 # Configuration loading class
@@ -14,6 +15,11 @@ class config:
         # Load the database information
         self.db = ConfigParser.SafeConfigParser()
         self.db.readfp(open(DB))
+
+        # Load the user database information
+        self.userdb = ConfigParser.SafeConfigParser()
+        self.userdb.read(USERDB)
+        self.merge_user_db()
 
         # Load the user configuration
         self.config = ConfigParser.SafeConfigParser()
@@ -145,3 +151,20 @@ class config:
         items = {}
         for i in list: items[i[0]] = i[1]
         return items
+
+    # Merge the userdb with the main db
+    def merge_user_db(self):
+        # Get user sections
+        user_sections = self.userdb.sections()
+        for user_section in user_sections:
+            # Remove the db version
+            if self.db.has_section(user_section):
+                self.db.remove_section(user_section)
+
+            # Add the section
+            self.db.add_section(user_section)
+
+            # Add each option
+            options = self.userdb.options(user_section)
+            for option in options:
+                self.db.set(user_section, option, self.userdb.get(user_section, option))

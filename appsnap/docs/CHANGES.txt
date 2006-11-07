@@ -1,3 +1,26 @@
+Version 1.2
+-----------
+New Applications
+- Internet : uTorrent
+- Productivity: AbiWord, PDFCreator
+
+GUI Enhancements
+- Checked applications are now unchecked as they are successfully installed or
+  uninstalled. If the install/uninstall fails for any reason, the application
+  will remain checked.
+
+Internal Improvements
+- As recommended by R. Francis Smith, new applications can be added or existing
+  applications modified by making an entry in userdb.ini. This way, changes made
+  by the user are not lost through database updates.
+
+Bug Fixes
+- If install/uninstall failed for whatever reason, AppSnap still assumed that
+  everything worked fine. We now check the return codes of the installer and
+  fail if non-zero.
+- Reload function was not deleting all process objects which were retain the
+  configuration loaded previously.
+
 Version 1.1
 -----------
 New Applications

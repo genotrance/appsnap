@@ -523,12 +523,13 @@ class Events:
 
         return checked
 
-    def uncheck_all_sections(self):
+    def uncheck_section(self, name):
         sectionlist = self.resources['gui'].objects['sectionlist']
 
         for i in range(sectionlist.GetCount()):
-            if sectionlist.IsChecked(i):
+            if sectionlist.GetString(i) == name and sectionlist.IsChecked(i):
                 sectionlist.Check(i, False)
+                break
 
     # Update progress bar and text
     def update_progress_bar(self, count, label):
@@ -575,7 +576,8 @@ class Events:
                 # Perform the uninstall
                 self.resources['gui'].objects['actionname'].SetLabel('Uninstalling :')
                 self.resources['gui'].objects['application'].Yield()
-                self.process[section].uninstall_version()
+                if self.process[section].uninstall_version() == False:
+                    return self.error_out('Uninstall')
                 count += stepsize
                 self.resources['gui'].objects['progressbar'].SetValue(count)
 
@@ -583,9 +585,12 @@ class Events:
                 # Perform the install
                 self.resources['gui'].objects['actionname'].SetLabel('Installing :')
                 self.resources['gui'].objects['application'].Yield()
-                self.process[section].install_latest_version()
+                if self.process[section].install_latest_version() == False:
+                    return self.error_out('Install')
                 count += stepsize
                 self.resources['gui'].objects['progressbar'].SetValue(count)
+
+            self.uncheck_section(section)
 
         # Clear all section info
         self.reset_section_info()
@@ -598,8 +603,22 @@ class Events:
         self.update_progress_bar(0, '')
         self.resources['gui'].objects['progressbar'].Hide()
 
-        # Uncheck all sections
-        self.uncheck_all_sections()
+    # Error out if install/uninstall fails
+    def error_out(self, action):
+        # Mark as failed
+        self.resources['gui'].objects['actionname'].SetLabel('Failed ' + action)
+        self.resources['gui'].objects['application'].Yield()
+        time.sleep(2)
+
+        # Clear all section info
+        self.reset_section_info()
+
+        # Reset progressbar and hide
+        self.update_progress_bar(0, '')
+        self.resources['gui'].objects['progressbar'].Hide()
+
+        # Return
+        return False
 
     # Download checked applications
     def do_download(self, event):
@@ -665,5 +684,11 @@ class Events:
 
     # Reload the configuration
     def do_reload(self, event):
+        # Reload all ini files
         self.setup()
+
+        # Clear the GUI
         self.reset_section_info()
+
+        # Delete all process objects
+        self.process = {}
