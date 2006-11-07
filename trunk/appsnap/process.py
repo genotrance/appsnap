@@ -120,7 +120,8 @@ class process:
             args.append(self.replace_install_dir(self.app_config['chinstdir']))
 
         # Run the installer
-        os.spawnv(os.P_WAIT, cached_filename, args)
+        if os.spawnv(os.P_WAIT, cached_filename, args) != 0:
+            return False
 
         # Save installed version
         self.global_config.save_installed_version(self.app, self.latestversion)
@@ -142,12 +143,12 @@ class process:
 
             # Run uninstaller
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('.exe', '.exe"', uninstall_string)
-            os.system('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"')
+            if os.system('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"') != 0:
+                return False
 
             # Delete installed version
             self.global_config.delete_installed_version(self.app)
         except WindowsError:
-            print 'Failed'
             return False
 
         return True
