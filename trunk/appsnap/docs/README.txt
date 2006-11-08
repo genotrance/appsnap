@@ -104,6 +104,15 @@ Links
 AppSnap website
 http://blog.genotrance.com/applications/appsnap
 
+Discussion Forum
+http://groups.google.com/group/appsnap
+
+Issue Tracker
+http://code.google.com/p/appsnap/issues/list
+
+SVN Repository
+http://code.google.com/p/appsnap/source
+
 Python
 http://www.python.org
 

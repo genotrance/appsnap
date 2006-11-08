@@ -36,6 +36,17 @@ Several applications are already added and serve as examples of how the database
 works. Popular websites such as SourceForge also have many examples which will
 make it very easy to add other applications that are developed there.
 
+User Database
+-------------
+
+After loading the main database from db.ini, AppSnap loads a second database
+from userdb.ini. This optional database overrides any duplicate entries in the
+main database. It allows users to add additional applications or modify existing
+applications without having to modify the main database. This way, changes made
+by the user are not lost through database updates.
+
+The user database follows the same syntax as the main database.
+
 Text Replacements
 -----------------
 
@@ -130,6 +141,10 @@ All the options required in order to configure an application are as below:
    many cases, this is the download page of the application, a change log, a
    directory listing or an FTP directory.
 
+   For applications that do not disclose their versions, this option can be
+   omitted. In that case, the version will show up as 'Not Available'. If this
+   option is omitted, the download URL becomes a required field.
+
    E.g.
 
    scrape = http://releases.mozilla.org/pub/mozilla.org/firefox/releases/
@@ -160,6 +175,9 @@ All the options required in order to configure an application are as below:
 
    - Refer to other examples in db.ini
 
+   For applications that do not disclose their versions, this option can be
+   omitted along with the scrape URL above.
+
    E.g.
 
    version = ([0-9]\.[0-9]+[.0-9]*)/
@@ -168,6 +186,9 @@ All the options required in order to configure an application are as below:
 
    This is the URL from where the application installer can be downloaded. This
    option can be ignored if the download URL is the same as the scrape URL.
+
+   For applications that do not disclose their versions, this option becomes a
+   required field.
 
    This option allows the usage of versioning text replacements.
 
@@ -188,10 +209,13 @@ All the options required in order to configure an application are as below:
 
 9. The referer URL
 
-   This is the URL to be set as the referer for the download URL. When not
-   specified, it defaults to the scrape URL. It is mainly available for
-   applications that only allow you to download the installer when referred from
-   a specific page.
+   This is the URL to be set as the referer for the download URL. It is mainly
+   available for applications that only allow you to download the installer when
+   referred from a specific page.
+
+   When not specified, it defaults to the scrape URL. If the scrape URL is not
+   specified either (for applications that do not disclose their versions), the
+   referer is set to the download URL.
 
    This option allows the usage of versioning text replacements.
 

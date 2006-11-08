@@ -39,7 +39,9 @@ class config:
 
     # Get sections
     def get_sections(self):
-        return self.db.sections()
+        sections = self.db.sections()
+        sections.sort(lambda a,b: cmp(a.upper(), b.upper()))
+        return sections
 
     # Gets all the items for a section
     def get_section_items(self, section):
@@ -60,6 +62,7 @@ class config:
             items = self.get_section_items(section)
             if items['category'] not in categories: categories.append(items['category'])
 
+        categories.sort(lambda a,b: cmp(a.upper(), b.upper()))
         return categories
 
     # Get sections by category
@@ -97,7 +100,6 @@ class config:
         else:
             sections = self.get_sections()
             print 'Supported Applications\n'
-        sections.sort()
 
         if category != '': print '  Category    : ' + category + '\n'
         for section in sections:

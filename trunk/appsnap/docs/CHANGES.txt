@@ -17,12 +17,14 @@ Internal Improvements
 - Added support for MSI packages.
 - Added support for applications which do not disclose their versions such as
   Google WebAccelerator and Desktop.
+- Category and section sorts are now done case insensitively so that iTunes and
+  uTorrent can show up in the right order.
 
 Bug Fixes
 - If install/uninstall failed for whatever reason, AppSnap still assumed that
   everything worked fine. We now check the return codes of the installer and
   fail if non-zero.
-- Reload function was not deleting all process objects which were retain the
+- Reload function was not deleting all process objects which were retaining the
   configuration loaded previously.
 
 Version 1.1
