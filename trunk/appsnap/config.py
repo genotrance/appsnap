@@ -138,13 +138,18 @@ class config:
     # Check if a section has all the expected fields
     def check_section_items(self, section, items):
         keys = (
-            'category scrape version filename ' +
-            'instparam upgrades chinstdir uninstall uninstparam'
+            'category filename instparam upgrades chinstdir uninstall uninstparam'
         ).split(' ')
         for key in keys:
             if not key in items:
                 print "Missing key '" + key + "' in section '" + section + "'"
                 sys.exit()
+        if 'scrape' in items and not 'version' in items:
+            print "Missing key 'version' when 'scrape' specified in section '" + section + "'"
+            sys.exit()
+        if not 'scrape' in items and not 'download' in items:
+            print "Neither 'scrape' nor 'download' specified in section '" + section + "'"
+            sys.exit()
 
     # Convert a config list into a hash
     def convert_to_hash(self, list):

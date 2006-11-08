@@ -18,6 +18,9 @@ DOTLESS_VERSION    = '#DOTLESS_VERSION#'
 DASHTODOT_VERSION  = '#DASHTODOT_VERSION#'
 INSTALL_DIR        = '#INSTALL_DIR#'
 
+# Version not available
+NOT_AVAILABLE      = 'Not Available'
+
 # Version cache
 cached_versions = {}
 
@@ -31,17 +34,26 @@ class process:
         self.app = app
         self.app_config = app_config
 
-        # Version information
-        self.latestversion = None
-        self.versions = self.get_versions()
-        self.splitversions = self.get_split_versions()
-        self.width = self.get_width()
+        # Get version only if scrape specified
+        if 'scrape' in self.app_config and 'version' in self.app_config:
+            self.latestversion = None
+            self.versions = self.get_versions()
+            self.splitversions = self.get_split_versions()
+            self.width = self.get_width()
+        else:
+            self.latestversion = NOT_AVAILABLE
+            self.versions = None
+            self.splitversions = None
+            self.width = 0
 
     # ***
     # External functions
 
     # Get the latest version
     def get_latest_version(self):
+        # No versioning available
+        if self.latestversion == NOT_AVAILABLE: return self.latestversion
+
         # Filter latest
         if self.filter_latest_version() == False: return None
 
@@ -74,7 +86,9 @@ class process:
 
         # Get referer
         try: referer = self.replace_version(self.app_config['referer'])
-        except KeyError: referer = self.app_config['scrape']
+        except KeyError:
+            try: referer = self.app_config['scrape']
+            except KeyError: referer = self.app_config['download']
 
         cached_filename = self.curl_instance.get_cached_name(filename)
         if not os.path.exists(cached_filename):
@@ -168,7 +182,7 @@ class process:
 
     # Replace version strings with appropriate values
     def replace_version(self, string):
-        if self.latestversion == None: return string
+        if self.latestversion == None or self.latestversion == NOT_AVAILABLE: return string
 
         # Create the versions
         version = self.latestversion

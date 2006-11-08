@@ -1,8 +1,8 @@
 Version 1.2
 -----------
 New Applications
-- Internet : uTorrent
-- Productivity: AbiWord, PDFCreator
+- Internet : uTorrent, WebAccelerator
+- Productivity: AbiWord, PDFCreator, Picasa
 
 GUI Enhancements
 - Checked applications are now unchecked as they are successfully installed or
