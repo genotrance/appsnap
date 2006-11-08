@@ -226,14 +226,12 @@ class Events:
 
         # Get all categories
         categories = self.configuration.get_categories()
-        categories.sort()
         categories.insert(0, 'All')
         categories.insert(1, 'Installed')
         categories.insert(2, '--')
 
         # Get all sections
         sections = self.configuration.get_sections()
-        sections.sort()
 
         # Add categories to dropdown and sections to sectionlist
         schema = """
@@ -368,9 +366,6 @@ class Events:
             return
         else:
             sections = self.configuration.get_sections_by_category(category)
-
-        # Sort
-        sections.sort()
 
         # Replace sections
         schema = """
