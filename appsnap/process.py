@@ -137,7 +137,7 @@ class process:
             command += ' ' + self.replace_install_dir(self.app_config['chinstdir'])
 
         # Run the installer, check return value
-        retval = os.system(command)
+        retval = os.system('"' + command + '"')
         if  retval != 0:
             # MSI returns non-zero as success too
             if cached_filename[-3:] == 'msi' and (retval == 1641 or retval == 3010): pass
@@ -151,12 +151,12 @@ class process:
 
     # Uninstall the currently installed version of the application
     def uninstall_version(self):
-        # Get latest version if not already done
-        if self.latestversion == None: self.get_latest_version()
+        # Get installed version
+        installed_version = self.global_config.get_installed_version(self.app)
 
         try:
             # Get uninstall string from registry
-            uninstall = self.replace_version(self.app_config['uninstall'])
+            uninstall = self.replace_version(self.app_config['uninstall'], installed_version)
             key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
             uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
             _winreg.CloseKey(key)
@@ -189,17 +189,20 @@ class process:
     # ***
     # Internal functions for versioning
 
-    # Replace version strings with appropriate values
-    def replace_version(self, string):
-        if self.latestversion == None or self.latestversion == NOT_AVAILABLE: return string
+    # Replace version strings with version value specified or latest version
+    def replace_version(self, string, version=None):
+        if version == None:
+            if self.latestversion == None or self.latestversion == NOT_AVAILABLE: return string
+            version = self.latestversion
+        elif version == '': return string
 
         # Create the versions
-        version = self.latestversion
-        major_version = re.findall('^([0-9]+)', self.latestversion)[0]
-        try: majorminor_version = re.findall('^([0-9]+[._-][0-9]+).*', self.latestversion)[0]
+        try: major_version = re.findall('^([0-9]+)', version)[0]
+        except IndexError: major_version = version
+        try: majorminor_version = re.findall('^([0-9]+[._-][0-9]+).*', version)[0]
         except IndexError: majorminor_version = version
-        dotless_version = re.sub(DELIMITERS, '', self.latestversion)
-        dashtodot_version = re.sub('-', '.', self.latestversion)
+        dotless_version = re.sub(DELIMITERS, '', version)
+        dashtodot_version = re.sub('-', '.', version)
 
         # Replace in the specified string
         string = re.sub(VERSION, version, string)

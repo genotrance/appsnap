@@ -2,8 +2,10 @@ Version 1.2
 -----------
 New Applications
 - Entertainment : iTunes
-- Internet : uTorrent, Google WebAccelerator
+- Internet : uTorrent, Google WebAccelerator, Xming
 - Productivity: AbiWord, Google Desktop, PDFCreator, Picasa
+- Utilities : Stickies
+- Development : ActivePerl, Python, PyCurl, PyYAML, wxPython, XAMPP
 
 GUI Enhancements
 - Checked applications are now unchecked as they are successfully installed or
@@ -26,6 +28,8 @@ Bug Fixes
   fail if non-zero.
 - Reload function was not deleting all process objects which were retaining the
   configuration loaded previously.
+- Uninstallation was using the latest version of an application instead of the
+  installed version during version text replacements.
 
 Version 1.1
 -----------
