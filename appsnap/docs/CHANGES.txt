@@ -1,8 +1,9 @@
 Version 1.2
 -----------
 New Applications
-- Internet : uTorrent, WebAccelerator
-- Productivity: AbiWord, PDFCreator, Picasa
+- Entertainment : iTunes
+- Internet : uTorrent, Google WebAccelerator
+- Productivity: AbiWord, Google Desktop, PDFCreator, Picasa
 
 GUI Enhancements
 - Checked applications are now unchecked as they are successfully installed or
@@ -13,6 +14,9 @@ Internal Improvements
 - As recommended by R. Francis Smith, new applications can be added or existing
   applications modified by making an entry in userdb.ini. This way, changes made
   by the user are not lost through database updates.
+- Added support for MSI packages.
+- Added support for applications which do not disclose their versions such as
+  Google WebAccelerator and Desktop.
 
 Bug Fixes
 - If install/uninstall failed for whatever reason, AppSnap still assumed that

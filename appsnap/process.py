@@ -123,19 +123,25 @@ class process:
         if cached_filename == False: return False
 
         # Create the command to execute
-        args = [cached_filename]
+        if cached_filename[-3:] == 'msi':
+            command = 'msiexec /i "' + cached_filename + '"'
+        else:
+            command = '"' + cached_filename + '"'
 
         # Add instparam flags if available
         if self.app_config['instparam'] != '':
-            args.append(self.replace_install_dir(self.app_config['instparam']))
+            command += ' ' + self.replace_install_dir(self.app_config['instparam'])
 
         # Add the install directory if available
         if self.app_config['chinstdir'] != '':
-            args.append(self.replace_install_dir(self.app_config['chinstdir']))
+            command += ' ' + self.replace_install_dir(self.app_config['chinstdir'])
 
-        # Run the installer
-        if os.spawnv(os.P_WAIT, cached_filename, args) != 0:
-            return False
+        # Run the installer, check return value
+        retval = os.system(command)
+        if  retval != 0:
+            # MSI returns non-zero as success too
+            if cached_filename[-3:] == 'msi' and (retval == 1641 or retval == 3010): pass
+            else: return False
 
         # Save installed version
         self.global_config.save_installed_version(self.app, self.latestversion)
@@ -155,10 +161,13 @@ class process:
             uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
             _winreg.CloseKey(key)
 
-            # Run uninstaller
+            # Run uninstaller, check return value
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('.exe', '.exe"', uninstall_string)
-            if os.system('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"') != 0:
-                return False
+            retval = os.system('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"')
+            if  retval != 0:
+                # MSI returns non-zero as success too
+                if (retval == 1641 or retval == 3010): pass
+                else: return False
 
             # Delete installed version
             self.global_config.delete_installed_version(self.app)
