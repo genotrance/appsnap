@@ -98,10 +98,10 @@ class MakeGui:
                     except (NameError, SyntaxError):
                         code += key + "='" + value.__str__() + "',"
             code = code[:len(code)-1] + " )"
-            print code
 
             # Save in object list
             self.objects[name] = eval(code)
+            print '>>> ' + name + ' = ' + code + '\n... ' + self.objects[name].__str__()
 
     # Run gui object methods
     def execute(self, methods):
@@ -133,10 +133,11 @@ class MakeGui:
                     except (NameError, SyntaxError):
                         code += key + "='" + value.__str__() + "',"
             code = code[:len(code)-1] + " )"
-            print code
 
             # Execute and capture return value
-            retval.append(eval(code))
+            ret = eval(code)
+            retval.append(ret)
+            print '>>> ' + code + '\n... ' + ret.__str__()
 
         # Return captured returned values
         return retval
@@ -155,10 +156,10 @@ class MakeGui:
                 code += "self.objects['frame']," + "self.objects['" + e['name'] + "'].GetId(),"
 
             code += "event_object." + e['method'] + ")"
-            print code
 
             # Bind the event
             eval(code)
+            print '>>> ' + code
 
      # Parse and run a schema
     def parse_and_run(self, schema, event_object=None):
