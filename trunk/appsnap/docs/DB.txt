@@ -73,6 +73,9 @@ the database. The following are a list of supported text replacements.
    #DASHTODOT_VERSION#
    All dashes replaced by dots. E.g. 2-32-2 becomes 2.32.2
 
+   #DOTTOUNDERSCORE_VERSION#
+   All dots replaced by underscores. E.g. 2.72 becomes 2_72
+
 2. Installation Directory
 
    The base installation directory can be forwarded to the install and uninstall

@@ -3,9 +3,10 @@ Version 1.2
 New Applications
 - Entertainment : iTunes
 - Internet : uTorrent, Google WebAccelerator, Xming
-- Productivity: AbiWord, Google Desktop, PDFCreator, Picasa
-- Utilities : Stickies
-- Development : ActivePerl, Python, PyCurl, PyYAML, wxPython, XAMPP
+- Productivity: AbiWord, Google Desktop, Paint.NET, PDFCreator, Picasa
+- Utilities : Command Prompt Here, Stickies
+- Development : ActivePerl, InnoSetup, NSIS, Python, PyCurl, PyYAML, wxPython,
+                XAMPP
 
 GUI Enhancements
 - Checked applications are now unchecked as they are successfully installed or
@@ -21,6 +22,7 @@ Internal Improvements
   Google WebAccelerator and Desktop.
 - Category and section sorts are now done case insensitively so that iTunes and
   uTorrent can show up in the right order.
+- Added DOTTOUNDERSCORE_VERSION to convert 2.72 versions to 2_72.
 
 Bug Fixes
 - If install/uninstall failed for whatever reason, AppSnap still assumed that
