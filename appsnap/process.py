@@ -10,13 +10,14 @@ import _winreg
 ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
 
 # Regular expressions
-DELIMITERS         = '[._-]'
-VERSION            = '#VERSION#'
-MAJOR_VERSION      = '#MAJOR_VERSION#'
-MAJORMINOR_VERSION = '#MAJORMINOR_VERSION#'
-DOTLESS_VERSION    = '#DOTLESS_VERSION#'
-DASHTODOT_VERSION  = '#DASHTODOT_VERSION#'
-INSTALL_DIR        = '#INSTALL_DIR#'
+DELIMITERS              = '[._-]'
+VERSION                 = '#VERSION#'
+MAJOR_VERSION           = '#MAJOR_VERSION#'
+MAJORMINOR_VERSION      = '#MAJORMINOR_VERSION#'
+DOTLESS_VERSION         = '#DOTLESS_VERSION#'
+DASHTODOT_VERSION       = '#DASHTODOT_VERSION#'
+DOTTOUNDERSCORE_VERSION = '#DOTTOUNDERSCORE_VERSION#'
+INSTALL_DIR             = '#INSTALL_DIR#'
 
 # Version not available
 NOT_AVAILABLE      = 'Not Available'
@@ -203,6 +204,7 @@ class process:
         except IndexError: majorminor_version = version
         dotless_version = re.sub(DELIMITERS, '', version)
         dashtodot_version = re.sub('-', '.', version)
+        dottounderscore_version = re.sub('\.', '_', version)
 
         # Replace in the specified string
         string = re.sub(VERSION, version, string)
@@ -210,6 +212,7 @@ class process:
         string = re.sub(MAJORMINOR_VERSION, majorminor_version, string)
         string = re.sub(DOTLESS_VERSION, dotless_version, string)
         string = re.sub(DASHTODOT_VERSION, dashtodot_version, string)
+        string = re.sub(DOTTOUNDERSCORE_VERSION, dottounderscore_version, string)
 
         return string
 
