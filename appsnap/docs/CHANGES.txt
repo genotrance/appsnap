@@ -23,6 +23,8 @@ Internal Improvements
 - Category and section sorts are now done case insensitively so that iTunes and
   uTorrent can show up in the right order.
 - Added DOTTOUNDERSCORE_VERSION to convert 2.72 versions to 2_72.
+- Changed default install directory in config.ini to environment variable 
+  %ProgramFiles% which points to the Windows "Program Files" directory.
 
 Bug Fixes
 - If install/uninstall failed for whatever reason, AppSnap still assumed that

@@ -96,7 +96,7 @@ installer.
 Contact
 -------
 
-Contact ganesh@genotrance.com for any questions regarding this program.
+Contact ganeshjgd AT gmail DOT com for any questions regarding this program.
 
 Links
 -----
