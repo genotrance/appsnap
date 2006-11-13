@@ -66,7 +66,7 @@ goto eof
 		del appsnap-%VERSION%.zip
 
 		%NSIS% appsnapsetup.nsi
-		%SevenZipEXE% a appsnap-%VERSION%.zip *.py *.ini appsnap.ico docs\*.txt
+		%SevenZipEXE% a appsnap-%VERSION%.zip *.py db.ini config.ini appsnap.ico docs\*.txt
 goto eof
 
 :: Generate the setup file
