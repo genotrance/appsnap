@@ -31,7 +31,8 @@ Bug Fixes
 - Reload function was not deleting all process objects which were retaining the
   configuration loaded previously.
 - Uninstallation was using the latest version of an application instead of the
-  installed version during version text replacements.
+  installed version during version text replacements. If installed version is
+  not available, the latest version is used.
 
 Version 1.1
 -----------

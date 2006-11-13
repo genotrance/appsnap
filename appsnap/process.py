@@ -154,6 +154,9 @@ class process:
     def uninstall_version(self):
         # Get installed version
         installed_version = self.global_config.get_installed_version(self.app)
+        if installed_version == '':
+            if self.latestversion == None: self.get_latest_version()
+            installed_version = self.latestversion
 
         try:
             # Get uninstall string from registry
