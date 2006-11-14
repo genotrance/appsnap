@@ -1,0 +1,83 @@
+Version 1.2
+-----------
+New Applications
+- Entertainment : iTunes
+- Internet : uTorrent, Google WebAccelerator, Xming
+- Productivity: AbiWord, Google Desktop, Paint.NET, PDFCreator, Picasa
+- Utilities : Command Prompt Here, Stickies
+- Development : ActivePerl, InnoSetup, NSIS, Python, PyCurl, PyYAML, wxPython,
+                XAMPP
+
+GUI Enhancements
+- Checked applications are now unchecked as they are successfully installed or
+  uninstalled. If the install/uninstall fails for any reason, the application
+  will remain checked.
+
+Internal Improvements
+- As recommended by R. Francis Smith, new applications can be added or existing
+  applications modified by making an entry in userdb.ini. This way, changes made
+  by the user are not lost through database updates.
+- Added support for MSI packages.
+- Added support for applications which do not disclose their versions such as
+  Google WebAccelerator and Desktop.
+- Category and section sorts are now done case insensitively so that iTunes and
+  uTorrent can show up in the right order.
+- Added DOTTOUNDERSCORE_VERSION to convert 2.72 versions to 2_72.
+- Changed default install directory in config.ini to environment variable 
+  %ProgramFiles% which points to the Windows "Program Files" directory.
+- When run with -d, the GUI now logs debugging information to debug.log.
+
+Bug Fixes
+- If install/uninstall failed for whatever reason, AppSnap still assumed that
+  everything worked fine. We now check the return codes of the installer and
+  fail if non-zero.
+- Reload function was not deleting all process objects which were retaining the
+  configuration loaded previously.
+- Uninstallation was using the latest version of an application instead of the
+  installed version during version text replacements. If installed version is
+  not available, the latest version is used.
+
+Version 1.1
+-----------
+New Applications
+- Internet : Azureus, Gaim, Miranda, Thunderbird, WinSCP
+- Entertainment : CDex, Songbird, VideoLAN
+- Productivity: Audacity, BurnAtOnce, Nvu, Vim
+- Utilities : AutoHotKey, CCleaner, ClamWin
+
+GUI Enhancements
+- Replaced install/uninstall buttons with a nice toolbar.
+- Added buttons to download and upgrade applications.
+- Added an update database button that gets latest version of db.ini from SVN.
+- AppSnap can now reload the configuration by clicking the reload button.
+- All installed applications can be filtered by selecting the 'Installed'
+  category in the dropdown menu.
+- Increased default width and height of GUI to fit toolbar and more applications.
+
+CLI Enhancements
+- Update database with the latest version of db.ini from SVN using -U.
+- Filter all installed applications using filter -f Installed.
+
+Internal Improvements
+- AppSnap now remembers the application versions that it installs.
+- Older versions of an application's installer are now deleted when a newer
+  version is downloaded.
+- Details about adding new entries to the database can now be found in DB.txt.
+- Added referer when downloading applications. If not explicitly specified in
+  db.ini, the scrape URL is used as the referer.
+- Download URL is now optional and defaults to the scrape URL.
+- Added DASHTODOT_VERSION to convert 1-1-1 versions to 1.1.1.
+- Added MAJOR_VERSION to convert 3.8 to 3.
+- Simplified process.get_width().
+
+Bug Fixes
+- Fixed bug where file version filtering algorithm was failing if the latest
+  version had fewer digits than a previous version. E.g. For Firefox, 2.0 had
+  two digits compared to version 1.5.0.7 with four digits.
+- Fixed bug where HTTP response codes other than 200 were being treated as
+  failed. This has been changed to codes >= 300.
+- Fixed bug in uninstall code where spurious \ was being introduced into the
+  uninstall command string causing uninstalls to fail.
+- Added a Yield() during installs to update the progress bar after a download.
+- Fixed GUI resize code to fit list and outline in window.
+- Updated scrape URL for Firefox.
