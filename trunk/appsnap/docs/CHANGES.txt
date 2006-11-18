@@ -1,3 +1,9 @@
+Version 1.2.1
+-------------
+Bug Fixes
+- SourceForge just rolled out new changes which broke all applications hosted
+  with them. All impacted application scrape and download URLs updated.
+
 Version 1.2
 -----------
 New Applications
