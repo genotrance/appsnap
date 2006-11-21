@@ -4,7 +4,9 @@ import os
 import os.path
 import re
 import string
+import StringIO
 import _winreg
+import zipfile
 
 # Shortcut to convert versions with letters in them
 ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
@@ -116,6 +118,8 @@ class process:
         older_files = glob.glob(filename)
         for older_file in older_files:
             os.remove(older_file)
+            if older_file[-3:] == 'zip':
+                self.delete_tree(older_file[:-4])
 
     # Install the latest version of the application
     def install_latest_version(self):
@@ -126,6 +130,10 @@ class process:
         # Create the command to execute
         if cached_filename[-3:] == 'msi':
             command = 'msiexec /i "' + cached_filename + '"'
+        elif cached_filename[-3:] == 'zip':
+            self.unzip_file(cached_filename)
+            try: command = '"' + os.path.join(cached_filename[:-4], self.replace_version(self.app_config['installer'])) + '"'
+            except KeyError: return False
         else:
             command = '"' + cached_filename + '"'
 
@@ -314,3 +322,41 @@ class process:
         self.width = self.get_width()
 
         return True
+    
+    # Unzip a ZIP file to specified directory
+    def unzip_file(self, file):
+        # Check if a supported zipfile
+        if not zipfile.is_zipfile(file):
+            return False
+        
+        # Create directory to extract to
+        directory = file[:-4]
+        if os.path.isdir(directory):
+            self.delete_tree(directory)
+        os.mkdir(directory)
+        
+        zip = zipfile.ZipFile(file, 'r')
+        for cfile in zip.namelist():
+            if cfile[-1] == '/':
+                os.mkdir(os.path.join(directory, cfile[:-1]))
+            else:
+                ufile = open(os.path.join(directory, cfile), 'wb')
+                buffer = StringIO.StringIO(zip.read(cfile))
+                buflen = 2 ** 20
+                data = buffer.read(buflen)
+                while data:
+                    ufile.write(data)
+                    data = buffer.read(buflen)
+                ufile.close()
+            
+        return True
+    
+    # Delete a directory tree
+    def delete_tree(self, directory):
+        files = glob.glob(os.path.join(directory, '*'))
+        for file in files:
+            if os.path.isdir(file):
+                self.delete_tree(file)
+            else:
+                os.remove(file)
+        os.rmdir(directory)

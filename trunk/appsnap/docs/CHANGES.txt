@@ -3,6 +3,10 @@ Version 1.2.1
 New Applications
 - Internet : TightVNC
 
+Internal Improvements
+- Added support for zipped installers. AppSnap now extracts the ZIP and then 
+  executes the installer.
+
 Bug Fixes
 - SourceForge just rolled out new changes which broke all applications hosted
   with them. All impacted application scrape and download URLs updated.

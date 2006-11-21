@@ -199,10 +199,14 @@ All the options required in order to configure an application are as below:
 
    download = ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/#VERSION#/win32/en-US/
 
-8. Application installer file name
+8. Application download file name
 
-   This is the filename of the application installer which can be found at the
-   above download URL.
+   This is the filename of the application package which can be found at the 
+   above download URL. 
+   
+   In most cases, this is the installer executable as well. In the case of 
+   zipped installers, this is the ZIP file name and the installer filename below
+   is the actual installer executable.
 
    This option allows the usage of versioning text replacements.
 
@@ -226,7 +230,20 @@ All the options required in order to configure an application are as below:
 
    referer = http://prdownloads.sourceforge.net/winscp/
 
-10. Installer parameters
+10. Installer Filename
+
+    This is the name of the installer executable that AppSnap should execute
+    instead of the downloaded application file name. It is useful when the 
+    application is shipped as a zipped installer. AppSnap first extracts the ZIP
+    archive and then executes this file to kick off the install.
+    
+    This option allows the usage of versioning text replacements.
+
+    E.g.
+    
+    installer = Setup.exe
+
+11. Installer parameters
 
     These are the flags to append to the installer when executed. Primarily,
     this allows you to run the installer in silent mode.
@@ -235,7 +252,7 @@ All the options required in order to configure an application are as below:
 
     instparam = -ms
 
-11. Application upgradeable flag
+12. Application upgradeable flag
 
     Set this to true if the application is capable of upgrading itself when a
     newer installer is executed, false otherwise. When set to false, AppSnap
@@ -245,7 +262,7 @@ All the options required in order to configure an application are as below:
 
     upgrades = false
 
-12. Install directory parameter
+13. Install directory parameter
 
     This flag is appended to the installer when executed so as to change the
     default installation directory. You will need the #INSTALL_DIR# text
@@ -256,7 +273,7 @@ All the options required in order to configure an application are as below:
 
     chinstdir = /D=#INSTALL_DIR#
 
-13. Uninstall information
+14. Uninstall information
 
     This is the name of the folder in the registry containing uninstall
     information. The folder should be a sub-folder of:
@@ -273,7 +290,7 @@ All the options required in order to configure an application are as below:
 
     uninstall = Mozilla Firefox (#MAJORMINOR_VERSION#)
 
-14. Uninstaller parameters
+15. Uninstaller parameters
 
     These are the flags to append to the uninstaller when executed. Primarily,
     this allows you to run the uninstall in silent mode.
