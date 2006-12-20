@@ -10,6 +10,9 @@ Internal Improvements
 Bug Fixes
 - SourceForge just rolled out new changes which broke all applications hosted
   with them. All impacted application scrape and download URLs updated.
+- Fixed bug where AppSnap GUI was crashing in Windows 2000 since the install
+  icon was not available in shell32.dll. Issue was not seen on XP and 2003 which
+  had added a whole bunch of new icons.
 
 Version 1.2
 -----------
