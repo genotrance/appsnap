@@ -1,7 +1,7 @@
 @echo off
 
 :: Version
-set VERSION=1.2
+set VERSION=1.2.1
 
 ::Set personal Path to the Apps:
 set PythonEXE=D:\Mess\Python24\python.exe

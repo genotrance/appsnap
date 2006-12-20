@@ -37,7 +37,7 @@ schema = """
 
     - name : installicon
       type : wx.Icon
-      ^name : '%%systemroot%%\system32\shell32.dll;162'
+      ^name : '%%systemroot%%\system32\shell32.dll;15'
       ^type : wx.BITMAP_TYPE_ICO
       desiredWidth: 16
       desiredHeight: 16
