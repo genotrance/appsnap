@@ -532,6 +532,24 @@ class Events:
         self.resources['gui'].objects['actionname'].SetLabel(label)
         self.resources['gui'].objects['application'].Yield()
 
+    # Disable GUI elements
+    def disable_gui(self):
+        self.resources['gui'].objects['toolbar'].Disable()
+        self.resources['gui'].objects['dropdown'].Disable()
+        self.resources['gui'].objects['sectionlist'].Disable()
+
+    # Enable GUI elements
+    def enable_gui(self):
+        self.resources['gui'].objects['toolbar'].Enable()
+        self.resources['gui'].objects['dropdown'].Enable()
+        self.resources['gui'].objects['sectionlist'].Enable()
+
+    # Start an action thread
+    def do_threaded_action(self, action):
+        child = threading.Thread(target=self.do_action, args=[action])
+        child.setDaemon(True)
+        child.start()
+        
     # Perform specified action on the checked applications
     def do_action(self, action):
         # Get all sections selected
@@ -539,7 +557,10 @@ class Events:
 
         # Return if nothing checked
         if not len(checked): return
-
+        
+        # Disable GUI
+        self.disable_gui()
+        
         # Figure out action
         count = 0
         if action == 'download':
@@ -598,6 +619,9 @@ class Events:
         self.update_progress_bar(0, '')
         self.resources['gui'].objects['progressbar'].Hide()
 
+        # Enable GUI
+        self.enable_gui()
+        
     # Error out if install/uninstall fails
     def error_out(self, action):
         # Mark as failed
@@ -612,27 +636,34 @@ class Events:
         self.update_progress_bar(0, '')
         self.resources['gui'].objects['progressbar'].Hide()
 
+        # Enable GUI
+        self.enable_gui()
+        
         # Return
         return False
 
     # Download checked applications
     def do_download(self, event):
-        self.do_action('download')
+        self.do_threaded_action('download')
 
     # Download and install checked applications
     def do_install(self, event):
-        self.do_action('install')
+        self.do_threaded_action('install')
 
     # Uninstall checked applications
     def do_uninstall(self, event):
-        self.do_action('uninstall')
+        self.do_threaded_action('uninstall')
 
     # Upgrade checked applications
     def do_upgrade(self, event):
-        self.do_action('upgrade')
+        self.do_threaded_action('upgrade')
 
     # Update database
     def do_db_update(self, event):
+        self.do_threaded_db_update()
+        
+    # Update database
+    def do_threaded_db_update(self):
         # Display progress bar
         stepsize = 250
         count = 0

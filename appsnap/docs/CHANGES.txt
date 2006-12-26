@@ -6,6 +6,8 @@ New Applications
 Internal Improvements
 - Added support for zipped installers. AppSnap now extracts the ZIP and then 
   executes the installer.
+- All background actions are now performed in a separate thread to prevent the 
+  AppSnap GUI from locking up.
 
 Bug Fixes
 - SourceForge just rolled out new changes which broke all applications hosted
