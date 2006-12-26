@@ -584,7 +584,8 @@ class Events:
                 # Download latest version
                 self.resources['gui'].objects['actionname'].SetLabel('Downloading :')
                 self.resources['gui'].objects['application'].Yield()
-                self.process[section].download_latest_version()
+                if self.process[section].download_latest_version() == False:
+                    return self.error_out('Download')
                 count += stepsize
                 self.resources['gui'].objects['progressbar'].SetValue(count)
 
