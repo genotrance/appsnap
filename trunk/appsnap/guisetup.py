@@ -664,6 +664,9 @@ class Events:
         
     # Update database
     def do_threaded_db_update(self):
+        # Disable GUI
+        self.disable_gui()
+        
         # Display progress bar
         stepsize = 250
         count = 0
@@ -708,6 +711,9 @@ class Events:
         self.update_progress_bar(0, '')
         self.resources['gui'].objects['progressbar'].Hide()
 
+        # Enable GUI
+        self.enable_gui()
+        
     # Reload the configuration
     def do_reload(self, event):
         # Reload all ini files
