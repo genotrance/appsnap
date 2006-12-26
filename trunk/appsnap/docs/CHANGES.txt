@@ -2,6 +2,12 @@ Version 1.2.1
 -------------
 New Applications
 - Internet : TightVNC
+- Fun and Games : BZFlag, Celestia, Stellarium, TuxPaint, TuxPaint Stamps
+- Development : MySQL
+- Productivity : Blender3D, DeepBurner Free, Dia, Gimp
+- Utilities : Ant Renamer, KeePass
+- Libraries : GTK+
+- Entertainment : Juice Receiver
 
 Internal Improvements
 - Added support for zipped installers. AppSnap now extracts the ZIP and then 
@@ -15,6 +21,8 @@ Bug Fixes
 - Fixed bug where AppSnap GUI was crashing in Windows 2000 since the install
   icon was not available in shell32.dll. Issue was not seen on XP and 2003 which
   had added a whole bunch of new icons.
+- Fixed a bug where URLs with ?, & or = were returning 404 errors by PyCURL.
+- Fixed bug of failed downloads being returned as successful in the GUI.
 
 Version 1.2
 -----------

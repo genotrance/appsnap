@@ -8,7 +8,7 @@ import os
 import sys
 
 # Don't quote these characters
-QUOTE = ':./'
+QUOTE = ':./?=&'
 
 class curl:
     # Constructor
@@ -50,7 +50,9 @@ class curl:
         self.curl.setopt(pycurl.WRITEFUNCTION, callback)
 
         # Perform the get
-        self.curl.perform()
+        try: self.curl.perform()
+        except pycurl.error:
+            return 404
 
         # Return the response code
         return self.curl.getinfo(pycurl.RESPONSE_CODE)
