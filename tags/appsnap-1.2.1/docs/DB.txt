@@ -1,0 +1,363 @@
+The Problem
+-----------
+
+One of the main issues solved by AppSnap is figuring out the latest version of
+an application.
+
+In the Windows world, there is no central body that maintains a database
+containing the latest versions of various applications, such as APT and RPM in
+the Linux world. Even if some efforts exist, more time might end up getting
+spent in keeping the database current than in enhancing the application itself.
+
+AppSnap solves this problem by providing an API that automates figuring out such
+versioning information rather than depending on a mechanical process. While this
+method also suffers from potential breaks (an application may change its website
+or versioning scheme), it is less likely to break as often (websites don't
+change so often and versioning schemes seldom waver after a certain point of
+project maturity) and, most importantly, it does not need the effort to add
+every new release of every single application to a central database.
+
+For many large and consistent applications, you would add it once to the AppSnap
+database and be set for life.
+
+The Database
+------------
+
+The AppSnap application database is stored in db.ini. This is a simple INI file
+that contains all the information that AppSnap needs in order to download,
+install and uninstall the applications that are supported.
+
+Adding an application is as simple as adding a new section to db.ini with all
+the required sections populated as needed. The bottom of db.ini provides a dummy
+section and information that helps setup popular installer packages such as NSIS
+and InnoSetup.
+
+Several applications are already added and serve as examples of how the database
+works. Popular websites such as SourceForge also have many examples which will
+make it very easy to add other applications that are developed there.
+
+User Database
+-------------
+
+After loading the main database from db.ini, AppSnap loads a second database
+from userdb.ini. This optional database overrides any duplicate entries in the
+main database. It allows users to add additional applications or modify existing
+applications without having to modify the main database. This way, changes made
+by the user are not lost through database updates.
+
+The user database follows the same syntax as the main database.
+
+Text Replacements
+-----------------
+
+AppSnap provides a simple syntax to represent various pieces of information in
+the database. The following are a list of supported text replacements.
+
+1. Versioning
+
+   AppSnap gets the latest version of an application from the web. After this
+   point, the version information can be utilized in various ways as follows:
+
+   #VERSION#
+   The version information as collected from the web
+
+   #MAJOR_VERSION#
+   The first chunk of the version. E.g. 3.4.2 becomes 3
+
+   #MAJORMINOR_VERSION#
+   The first two chunks of the version. E.g. 3-1-1 becomes 3-1
+
+   #DOTLESS_VERSION#
+   The version information stripped of any delimiters. E.g. 4.2.2 becomes 422
+
+   #DASHTODOT_VERSION#
+   All dashes replaced by dots. E.g. 2-32-2 becomes 2.32.2
+
+   #DOTTOUNDERSCORE_VERSION#
+   All dots replaced by underscores. E.g. 2.72 becomes 2_72
+
+2. Installation Directory
+
+   The base installation directory can be forwarded to the install and uninstall
+   commands if the application's installer supports installing to an alternate
+   directory. This directory string is created by appending the installation
+   directory configured in config.ini with the application name (section name).
+
+   #INSTALL_DIR#
+   The 'install_dir' as configured in config.ini plus the application name
+
+Configuration Options
+---------------------
+
+All the options required in order to configure an application are as below:
+
+1. The section name
+
+   The section name is essentially the name of the application. This has to be a
+   unique name and has to start with a letter. The section name is used as part
+   of the installation directory text replacement (#INSTALL_DIR#).
+
+   Section names are case sensitive.
+
+   E.g.
+
+   [Firefox]
+
+2. The category
+
+   The category option specifies which category of applications this particular
+   application belongs to. This helps classify applications into relevant groups
+   and simplifies finding an application within AppSnap. At this time, only a
+   single category per application is supported.
+
+   A set of categories are already in use in the version of db.ini shipped along
+   with AppSnap.
+
+   Two special categories are created by AppSnap automatically:
+   - All : Selects all the applications in db.ini
+   - Installed : Selects all applications currently installed by AppSnap
+
+   E.g.
+
+   category = Internet
+
+3. Application description
+
+   This option provides a short description of the application.
+
+   E.g.
+
+   describe = Web Browser
+
+4. Application website
+
+   This option provides a direct link to the application website.
+
+   E.g.
+
+   website = http://www.getfirefox.com
+
+5. The scrape URL
+
+   This is a URL that lists the latest version of the application. This could be
+   any kind of HTML page with the version information listed in plain text. In
+   many cases, this is the download page of the application, a change log, a
+   directory listing or an FTP directory.
+
+   For applications that do not disclose their versions, this option can be
+   omitted. In that case, the version will show up as 'Not Available'. If this
+   option is omitted, the download URL becomes a required field.
+
+   E.g.
+
+   scrape = http://releases.mozilla.org/pub/mozilla.org/firefox/releases/
+
+6. The version string
+
+   This is a regular expression that matches the format of the application's
+   version on the scrape URL page defined above. Knowledge of regular expressions
+   in Python will prove very helpful but here's some tips:
+
+   - Just the version portion should be enclosed in () in order to be picked up
+
+     clumpsetup-v([0-9]\.[0-9]*).exe
+
+   - Dots outside [] should be escaped using a \
+
+     [0-9]\.[0-9]+    matches    2.44, 1.1, 8.888
+
+   - It should be as specific as possible so as not to pick up irrelevant strings
+
+     7z([0-9][0-9][0-9]).exe    instead of    ([0-9][0-9][0-9])
+
+   - Sample expressions
+
+     One number : [0-9]
+     One or more numbers : [0-9]+
+     Zero or more numbers : [0-9]*
+
+   - Refer to other examples in db.ini
+
+   For applications that do not disclose their versions, this option can be
+   omitted along with the scrape URL above.
+
+   E.g.
+
+   version = ([0-9]\.[0-9]+[.0-9]*)/
+
+7. The download URL
+
+   This is the URL from where the application installer can be downloaded. This
+   option can be ignored if the download URL is the same as the scrape URL.
+
+   For applications that do not disclose their versions, this option becomes a
+   required field.
+
+   This option allows the usage of versioning text replacements.
+
+   E.g.
+
+   download = ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/#VERSION#/win32/en-US/
+
+8. Application download file name
+
+   This is the filename of the application package which can be found at the 
+   above download URL. 
+   
+   In most cases, this is the installer executable as well. In the case of 
+   zipped installers, this is the ZIP file name and the installer filename below
+   is the actual installer executable.
+
+   This option allows the usage of versioning text replacements.
+
+   E.g.
+
+   filename = Firefox Setup #VERSION#.exe
+
+9. The referer URL
+
+   This is the URL to be set as the referer for the download URL. It is mainly
+   available for applications that only allow you to download the installer when
+   referred from a specific page.
+
+   When not specified, it defaults to the scrape URL. If the scrape URL is not
+   specified either (for applications that do not disclose their versions), the
+   referer is set to the download URL.
+
+   This option allows the usage of versioning text replacements.
+
+   E.g.
+
+   referer = http://prdownloads.sourceforge.net/winscp/
+
+10. Installer Filename
+
+    This is the name of the installer executable that AppSnap should execute
+    instead of the downloaded application file name. It is useful when the 
+    application is shipped as a zipped installer. AppSnap first extracts the ZIP
+    archive and then executes this file to kick off the install.
+    
+    This option allows the usage of versioning text replacements.
+
+    E.g.
+    
+    installer = Setup.exe
+
+11. Installer parameters
+
+    These are the flags to append to the installer when executed. Primarily,
+    this allows you to run the installer in silent mode.
+
+    E.g.
+
+    instparam = -ms
+
+12. Application upgradeable flag
+
+    Set this to true if the application is capable of upgrading itself when a
+    newer installer is executed, false otherwise. When set to false, AppSnap
+    uninstalls the existing install and then installers the newer version.
+
+    E.g.
+
+    upgrades = false
+
+13. Install directory parameter
+
+    This flag is appended to the installer when executed so as to change the
+    default installation directory. You will need the #INSTALL_DIR# text
+    replacement here. Leave this blank if the installer does not support such an
+    option.
+
+    E.g.
+
+    chinstdir = /D=#INSTALL_DIR#
+
+14. Uninstall information
+
+    This is the name of the folder in the registry containing uninstall
+    information. The folder should be a sub-folder of:
+
+    HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\
+
+    The folder should contain an 'UninstallString' key containing the uninstall
+    command to execute. If an application is listed in Add/Remove Programs, this
+    should be easy to find.
+
+    This option allows the usage of versioning text replacements.
+
+    E.g.
+
+    uninstall = Mozilla Firefox (#MAJORMINOR_VERSION#)
+
+15. Uninstaller parameters
+
+    These are the flags to append to the uninstaller when executed. Primarily,
+    this allows you to run the uninstall in silent mode.
+
+    The #INSTALL_DIR# text replacement is available here.
+
+    E.g.
+
+    uninstparam = -ms
+
+Testing
+-------
+
+To ensure that a newly added application works as expected, you can perform the
+following tests on the command line:
+
+1. appsnap -c
+
+   Application's category should be displayed
+
+2. appsnap -l
+
+   Application details should be displayed
+
+3. appsnap -l -f Category
+
+   Application details should be displayed
+
+4. appsnap -n Application
+
+   Application details and the latest available version should be displayed
+
+5. appsnap -n Application -d
+
+   The latest installer should be downloaded to the cache directory
+
+6. appsnap -n Application -i
+
+   The application should get silently installed
+
+7. appsnap -l -f Installed
+
+   Application details should be displayed
+
+8. appsnap -n Application
+
+   Application details, the latest available version and the installed version
+   should be displayed
+
+9. appsnap -n Application -u
+
+   If the application is upgradeable: the application should get silently
+   installed
+
+   Else: it should get silently uninstalled and then silently installed
+
+10. appsnap -n Application -x
+
+    Application should get silently uninstalled
+
+11. appsnap -l -f Installed
+
+    Application should not be listed
+
+12. appsnap -n Application
+
+    Application details and the latest available version should be displayed
+
+NOTE: Application details include - the name, description and website
+
