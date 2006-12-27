@@ -23,6 +23,7 @@ Bug Fixes
   had added a whole bunch of new icons.
 - Fixed a bug where URLs with ?, & or = were returning 404 errors by PyCURL.
 - Fixed bug of failed downloads being returned as successful in the GUI.
+- Fixed Paint.NET and Picasa version scraping.
 
 Version 1.2
 -----------
