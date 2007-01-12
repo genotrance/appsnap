@@ -5,6 +5,7 @@ import os.path
 import re
 import string
 import StringIO
+import time
 import _winreg
 import zipfile
 
@@ -93,8 +94,17 @@ class process:
             try: referer = self.app_config['scrape']
             except KeyError: referer = self.app_config['download']
 
+        # Get cached location to save file to
         cached_filename = self.curl_instance.get_cached_name(filename)
-        if not os.path.exists(cached_filename):
+        
+        # Download if new version not already downloaded or if filename does not
+        # contain version information and more than a day old (we have no way to
+        # know if the file has changed)
+        if not os.path.exists(cached_filename) or (
+                                                   filename == self.app_config['filename'] and
+                                                   os.path.exists(cached_filename) and
+                                                   (time.time() - os.stat(cached_filename).st_ctime > 86400)
+                                                   ):
             # Delete any older cached versions
             self.delete_older_versions()
 
