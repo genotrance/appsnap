@@ -543,7 +543,16 @@ class Events:
         self.resources['gui'].objects['toolbar'].Enable()
         self.resources['gui'].objects['dropdown'].Enable()
         self.resources['gui'].objects['sectionlist'].Enable()
+        
+    # Reset GUI
+    def reset_gui(self):
+        # Reset progressbar and hide
+        self.update_progress_bar(0, '')
+        self.resources['gui'].objects['progressbar'].Hide()
 
+        # Enable GUI
+        self.enable_gui()
+        
     # Start an action thread
     def do_threaded_action(self, action):
         child = threading.Thread(target=self.do_action, args=[action])
@@ -616,12 +625,8 @@ class Events:
         self.update_progress_bar(1000, 'Done')
         time.sleep(2)
 
-        # Reset progressbar and hide
-        self.update_progress_bar(0, '')
-        self.resources['gui'].objects['progressbar'].Hide()
-
-        # Enable GUI
-        self.enable_gui()
+        # Reset the GUI
+        self.reset_gui()
         
     # Error out if install/uninstall fails
     def error_out(self, action):
@@ -633,12 +638,8 @@ class Events:
         # Clear all section info
         self.reset_section_info()
 
-        # Reset progressbar and hide
-        self.update_progress_bar(0, '')
-        self.resources['gui'].objects['progressbar'].Hide()
-
-        # Enable GUI
-        self.enable_gui()
+        # Reset the GUI
+        self.reset_gui()
         
         # Return
         return False
@@ -677,6 +678,10 @@ class Events:
         # Download latest DB.ini
         remote = self.curl_instance.get_web_data(self.configuration.database['location'])
         time.sleep(0.5)
+        
+        # If download failed
+        if remote == None:
+            return self.error_out('Download DB')
 
         # Compare with existing DB
         count += stepsize
@@ -708,12 +713,8 @@ class Events:
         self.update_progress_bar(1000, 'Done')
         time.sleep(2)
 
-        # Reset progressbar and hide
-        self.update_progress_bar(0, '')
-        self.resources['gui'].objects['progressbar'].Hide()
-
-        # Enable GUI
-        self.enable_gui()
+        # Reset the GUI
+        self.reset_gui()
         
     # Reload the configuration
     def do_reload(self, event):

@@ -36,6 +36,23 @@ AppSnap will automatically use the proxy settings configured for Internet
 Explorer. If you are behind a proxy, configure the proxy user and password in
 the AppSnap configuration file.
 
+Protocol Support
+----------------
+
+AppSnap uses libcurl to perform the actual downloads. As a result, it inherits
+libcurl's long list of supported protocols:
+
+  FTP, FTPS, HTTP, HTTPS, SCP, SFTP, TFTP, TELNET, DICT, FILE and LDAP
+
+AppSnap has been tested with the FTP, HTTP and FILE protocols. These protocols
+can be used anywhere in the database as well as in the configuration file.
+
+Examples:
+
+  FTP:  ftp://ftp.example.com/path/to/file
+  HTTP: http://www.example.com/path/to/file
+  FILE: file:\\localhost\d$\path\to\file, file:\\servername\sharename\path\to\file
+
 Usage
 -----
 
