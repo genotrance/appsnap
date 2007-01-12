@@ -4,6 +4,8 @@ New Applications
 - Internet : Google Talk, Maxthon, Opera, Skype
 
 Bug Fixes
+- Fixed bug in "Update DB" where a failed DB download was wiping out the current
+  DB and killing AppSnap.
 - Installer filenames which do not contain any version information are now 
   redownloaded (if more than a day since the last download) since we have no way
   to know if the file has changed.
