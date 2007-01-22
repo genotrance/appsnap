@@ -2,6 +2,8 @@ Version 1.2.2
 -------------
 New Applications
 - Internet : Google Talk, Maxthon, Opera, Skype
+- Fun and Games : Battle for Wesnoth, Tremulous
+- Utilities : Synergy
 
 Bug Fixes
 - Fixed bug in "Update DB" where a failed DB download was wiping out the current
