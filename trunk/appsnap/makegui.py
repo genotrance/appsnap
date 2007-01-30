@@ -1,6 +1,6 @@
 import re
+import widgets
 import wx
-import wx.lib.hyperlink
 import yaml
 
 class MakeGui:

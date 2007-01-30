@@ -1,24 +1,106 @@
 import config
 import curl
 import process
+import re
 import threading
 import time
 import wx
 
-WIDTH = 540
-HEIGHT = 400
+WIDTH = 400
+HEIGHT = 590
+
+TBWIDTH = 60
 
 # GUI schema in YAML format
 schema = """
     objects:
+    - name : whitecolour
+      type : wx.Colour
+      red : 255
+      green : 255
+      blue : 255
+      
+    - name : lightgreycolour
+      type : wx.Colour
+      red : 240
+      green : 240
+      blue : 240
+
+    - name : darkgreycolour
+      type : wx.Colour
+      red : 200
+      green : 200
+      blue : 200
+      
+    - name : lightredcolour
+      type : wx.Colour
+      red : 255
+      green : 180
+      blue : 180
+      
+    - name : lightbluecolour
+      type : wx.Colour
+      red : 180
+      green : 200
+      blue : 255
+      
+    - name : sectionfont
+      type : wx.Font
+      pointSize : 10
+      family : wx.FONTFAMILY_DECORATIVE
+      style : wx.FONTSTYLE_NORMAL
+      weight : wx.FONTWEIGHT_BOLD
+
+    - name : tbpanel
+      type : wx.Panel
+      parent : frame
+      pos : (0, 0)
+      methods:
+      - method : SetBackgroundColour
+        colour : ~whitecolour
+      
+    - name : panel
+      type : wx.Panel
+      parent : frame
+      pos : (%s, 1)
+      methods:
+      - method : SetBackgroundColour
+        colour : ~whitecolour
+
+    - name : dropdown
+      type : wx.Choice
+      parent : panel
+      size : (150, -1)
+      pos : (170, -1)
+      events:
+      - type : wx.EVT_CHOICE
+        method : category_chosen
+        
+    - name : bsizer
+      type : wx.BoxSizer
+      orient : wx.VERTICAL
+      
+    - name : scrollwindow
+      type : wx.ScrolledWindow
+      parent : panel
+      pos : (0, 25)
+      methods:
+      - method : SetBackgroundColour
+        colour : ~whitecolour
+      - method : SetScrollRate
+        xstep : 0
+        ystep : 10
+      - method : SetSizer
+        sizer : ~bsizer
+      - method : EnableScrolling
+        x_scrolling : False
+        y_scrolling : True
+      - method : SetFocus
+      
     - name : icon
       type : wx.Icon
       ^name : '%s'
       ^type : wx.BITMAP_TYPE_ICO
-
-    - name : panel
-      type : wx.Panel
-      parent : frame
 
     - name : downloadicon
       type : wx.Icon
@@ -112,73 +194,12 @@ schema = """
 
     - name : toolbar
       type : wx.ToolBar
-      parent : frame
-      pos : (5, 0)
-      style : wx.TB_TEXT
+      parent : tbpanel
+      style : wx.TB_TEXT | wx.TB_VERTICAL
       methods:
-      - method : SetMargins
-        size : (5, 0)
-
-    - name : dropdown
-      type : wx.Choice
-      parent : toolbar
-      size : (150, -1)
-      events:
-      - type : wx.EVT_CHOICE
-        method : category_chosen
-
-    - name : sectionlist
-      type : wx.CheckListBox
-      parent : panel
-      pos : (8, 20)
-      events:
-      - type : wx.EVT_LISTBOX
-        method : show_section_info_event
-      - type : wx.EVT_CHECKLISTBOX
-        method : selected_section
-
-    - name : outline
-      type : wx.StaticBox
-      parent : panel
-      pos : (160, 14)
-
-    - name : appwebsite
-      type : wx.StaticText
-      parent : panel
-      pos : (175, 40)
-
-    - name : appwebsitelink
-      type : wx.lib.hyperlink.HyperLinkCtrl
-      parent : panel
-      pos : (225, 40)
-      methods:
-      - method : SetColours
-        visited : wx.Colour(0, 0, 255)
-
-    - name : appversion
-      type : wx.StaticText
-      parent : panel
-      pos : (175, 55)
-
-    - name : installedversion
-      type : wx.StaticText
-      parent : panel
-      pos : (175, 70)
-
-    - name : actionname
-      type : wx.StaticText
-      parent : panel
-      pos : (175, 95)
-
-    - name : progressbar
-      type : wx.Gauge
-      parent : panel
-      range : 1000
-      pos : (175, 115)
-      size : (%s, 15)
-      methods:
-      - method : Hide
-
+      - method : SetBackgroundColour
+        colour : ~whitecolour
+  
     methods:
     - name : frame
       method : SetSizeHints
@@ -193,12 +214,12 @@ schema = """
     - name : frame
       method : SetToolBar
       toolbar : ~toolbar
-
+  
     events:
     - name : frame
       type : wx.EVT_SIZE
       method : resize_all
-""" % ('appsnap.ico', WIDTH - 200, WIDTH, HEIGHT, WIDTH)
+""" % (TBWIDTH, 'appsnap.ico', WIDTH, HEIGHT, WIDTH)
 
 # Event processing methods
 class Events:
@@ -230,9 +251,6 @@ class Events:
         categories.insert(1, 'Installed')
         categories.insert(2, '--')
 
-        # Get all sections
-        sections = self.configuration.get_sections()
-
         # Add categories to dropdown and sections to sectionlist
         schema = """
             methods:
@@ -242,18 +260,14 @@ class Events:
             - name : dropdown
               method : AppendItems
               strings : %s
-
-            - name : sectionlist
-              method : Clear
-
-            - name : sectionlist
-              method : InsertItems
-              items : %s
-              pos : 0
-        """ % (categories, sections)
+        """ % (categories)
         self.resources['gui'].parse_and_run(schema)
         self.resources['gui'].execute([{'name' : 'dropdown', 'method' : 'Select', 'n' : 0}])
 
+        # Get all sections
+        self.initialize_section_list()
+        self.update_section_list('All')
+        
         if self.toolbar == False:
             self.create_toolbar()
 
@@ -265,8 +279,7 @@ class Events:
               method : AddSeparator
 
             - name : toolbar
-              method : AddControl
-              control : ~dropdown
+              method : AddSeparator
 
             - name : toolbar
               method : AddSeparator
@@ -279,6 +292,9 @@ class Events:
               shortHelp : Download selected applications
 
             - name : toolbar
+              method : AddSeparator
+
+            - name : toolbar
               method : AddLabelTool
               id : -1
               bitmap : ~installbmp
@@ -286,11 +302,17 @@ class Events:
               shortHelp : Download and install selected applications
 
             - name : toolbar
+              method : AddSeparator
+
+            - name : toolbar
               method : AddLabelTool
               id : -1
               bitmap : ~upgradebmp
               label : Upgrade
               shortHelp : Upgrade selected applications
+
+            - name : toolbar
+              method : AddSeparator
 
             - name : toolbar
               method : AddLabelTool
@@ -303,11 +325,20 @@ class Events:
               method : AddSeparator
 
             - name : toolbar
+              method : AddSeparator
+
+            - name : toolbar
+              method : AddSeparator
+
+            - name : toolbar
               method : AddLabelTool
               id : -1
               bitmap : ~dbupdatebmp
               label : Update DB
               shortHelp : Update application database
+
+            - name : toolbar
+              method : AddSeparator
 
             - name : toolbar
               method : AddLabelTool
@@ -322,11 +353,11 @@ class Events:
         (objects, methods, events) = self.resources['gui'].parse(schema)
         retval = self.resources['gui'].execute(methods)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[3].GetId(), self.do_download)
-        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[4].GetId(), self.do_install)
-        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[5].GetId(), self.do_upgrade)
-        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[6].GetId(), self.do_uninstall)
-        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[8].GetId(), self.do_db_update)
-        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[9].GetId(), self.do_reload)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[5].GetId(), self.do_install)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[7].GetId(), self.do_upgrade)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[9].GetId(), self.do_uninstall)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[13].GetId(), self.do_db_update)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[15].GetId(), self.do_reload)
 
         # Create toolbar only once
         self.toolbar = True
@@ -338,26 +369,59 @@ class Events:
 
         schema = """
             methods:
-            - name : panel
-              method : SetSize
-              size : %s
-
-            - name : sectionlist
-              method : SetSize
-              size : (150, %s)
-
-            - name : outline
+            - name : tbpanel
               method : SetSize
               size : (%s, %s)
-        """ % (frame, frame.y - 87, WIDTH - 170, frame.y - 80)
+              
+            - name : panel
+              method : SetSize
+              size : (%s, %s)
+
+            - name : scrollwindow
+              method : SetSize
+              size : (%s, %s)
+              
+            - name : bsizer
+              method : SetMinSize
+              size : (%s, %s)
+        """ % (TBWIDTH, frame.y, frame.x - TBWIDTH + 1, frame.y, WIDTH - 80, frame.y - 80, WIDTH - TBWIDTH, frame.y - 80)
         self.resources['gui'].parse_and_run(schema)
-
-    # Update the section list when category is changed
-    def category_chosen(self, event):
-        # Get the category selected
-        category = event.GetString()
-
-        # Get all sections for this category
+    
+    # Get the title of a section
+    def get_section_title(self, section):
+        return "section_" + re.sub(' ', '', section)
+    
+    # Initialize section list
+    def initialize_section_list(self):
+        # Section list
+        sections = self.configuration.get_sections()
+        
+        for section in sections:
+            section_title = self.get_section_title(section)
+            items = self.configuration.get_section_items(section)
+            schema = """
+                objects:
+                - name : %s
+                  type : widgets.ApplicationPanel
+                  parent : scrollwindow
+                  label : %s
+                  description : %s
+                  url : %s
+                  size : %s
+                  gui : self
+                  
+                methods:
+                - name : bsizer
+                  method : Add
+                  item : ~%s
+                  flag : wx.GROW
+            """ % (section_title, section, items['describe'], items['website'], (WIDTH-TBWIDTH-100, 50), section_title)
+            self.resources['gui'].parse_and_run(schema)
+            self.resources['gui'].objects[section_title].set_event(self)
+    
+    # Update the section list
+    def update_section_list(self, category):
+        # Get sections by category
         if category == 'All':
             sections = self.configuration.get_sections()
         elif category == 'Installed':
@@ -367,164 +431,60 @@ class Events:
         else:
             sections = self.configuration.get_sections_by_category(category)
 
-        # Replace sections
+        # Construct section list
+        section_objs = []
+        for section in sections:
+            section_objs.append(self.resources['gui'].objects[self.get_section_title(section)])
+
+        row = 0
+        for item in self.resources['gui'].objects['bsizer'].GetChildren():
+            if item.GetWindow() in section_objs:
+                item.Show(True)
+                item.GetWindow().set_colour_by_row(row)
+                row = row + 1
+            else:
+                item.Show(False)
+            item.GetWindow().reset()
+
+        # Final setup
         schema = """
             methods:
-            - name : sectionlist
-              method : Clear
+            - name : bsizer
+              method : Layout
 
-            - name : sectionlist
-              method : InsertItems
-              items : %s
-              pos : 0
-        """ % sections
-        self.resources['gui'].parse_and_run(schema)
+            - name : bsizer
+              method : FitInside
+              window : ~scrollwindow
 
-    # Reset all section information
-    def reset_section_info(self):
-        # Display text
-        schema = """
-            methods:
-            - name : outline
-              method : SetLabel
-              label : ''
-
-            - name : appwebsite
-              method : SetLabel
-              label : ''
-
-            - name : appwebsitelink
-              method : SetURL
-              URL : ''
-
-            - name : appwebsitelink
-              method : SetLabel
-              label : ''
-
-            - name : appwebsitelink
-              method : SetToolTipString
-              tip : ''
-
-            - name : appversion
-              method : SetLabel
-              label : ''
-
-            - name : installedversion
-              method : SetLabel
-              label : ''
-
-            - name : application
-              method : Yield
+            - name : scrollwindow
+              method : Refresh
         """
         self.resources['gui'].parse_and_run(schema)
 
-    # Show information for the selected section
-    def show_section_info(self, section):
-        # Acquire lock
-        self.lock.acquire()
-
-        # Get configuration
-        items = self.configuration.get_section_items(section)
-
-        # Trim website link if needed
-        if len(items['website']) > 52:
-            website = items['website'][0:52] + ' ...'
-            tooltip = items['website']
-        else:
-            website = items['website']
-            tooltip = ""
-
-        # Get installed version
-        installedversion = self.configuration.get_installed_version(section)
-        if installedversion != '':
-            installedversion = 'Installed Version : ' + installedversion
-
-        # Display text
+    # Update the section list when category is changed
+    def category_chosen(self, event):
+        # Get the category selected
+        category = event.GetString()
+        self.update_section_list(category)
         schema = """
             methods:
-            - name : outline
-              method : SetLabel
-              label : '%s - %s'
-
-            - name : appwebsite
-              method : SetLabel
-              label : 'Website :'
-
-            - name : appwebsitelink
-              method : SetURL
-              URL : '%s'
-
-            - name : appwebsitelink
-              method : SetLabel
-              label : '%s'
-
-            - name : appwebsitelink
-              method : SetToolTipString
-              tip : '%s'
-
-            - name : appversion
-              method : SetLabel
-              label : 'Latest Version : loading...'
-
-            - name : installedversion
-              method : SetLabel
-              label : '%s'
-
-            - name : application
-              method : Yield
-        """ % (section, items['describe'], items['website'], website, tooltip, installedversion)
+            - name : scrollwindow
+              method : SetFocus
+        """
         self.resources['gui'].parse_and_run(schema)
-
-        # Get latest version
-        if not self.process.has_key(section):
-            self.process[section] = process.process(self.configuration, self.curl_instance, section, items)
-        latest_version = self.process[section].get_latest_version()
-        if latest_version == None:
-            latest_version = 'failed to connect'
-
-        # Update version
-        self.resources['gui'].objects['appversion'].SetLabel('Latest Version : ' + latest_version)
-
-        # Release lock
-        self.lock.release()
-
-    # Show information for the selected section
-    def show_section_info_event(self, event):
-        # Get the section selected
-        section = event.GetString()
-
-        # Show the information
-        child = threading.Thread(target=self.show_section_info, args=[section])
-        child.setDaemon(True)
-        child.start()
-
-    def selected_section(self, event):
-        # Get the section clicked
-        id = event.GetSelection()
-        section = self.resources['gui'].objects['sectionlist'].GetString(id)
-
-        # Show the information
-        child = threading.Thread(target=self.show_section_info, args=[section])
-        child.setDaemon(True)
-        child.start()
-
+        
     def get_checked_sections(self):
-        sectionlist = self.resources['gui'].objects['sectionlist']
-
         checked = []
-        for i in range(sectionlist.GetCount()):
-            if sectionlist.IsChecked(i):
-                checked.append(sectionlist.GetString(i))
+        items = self.resources['gui'].objects['bsizer'].GetChildren()
+        for item in items:
+            if item.GetWindow().checkbox.IsChecked() == True:
+                checked.append(item.GetWindow().app_name)
 
         return checked
 
     def uncheck_section(self, name):
-        sectionlist = self.resources['gui'].objects['sectionlist']
-
-        for i in range(sectionlist.GetCount()):
-            if sectionlist.GetString(i) == name and sectionlist.IsChecked(i):
-                sectionlist.Check(i, False)
-                break
+        section_obj = self.resources['gui'].objects[self.get_section_title(name)]
+        section_obj.select(False)
 
     # Update progress bar and text
     def update_progress_bar(self, count, label):
@@ -536,13 +496,13 @@ class Events:
     def disable_gui(self):
         self.resources['gui'].objects['toolbar'].Disable()
         self.resources['gui'].objects['dropdown'].Disable()
-        self.resources['gui'].objects['sectionlist'].Disable()
+        self.resources['gui'].objects['scrollwindow'].Disable()
 
     # Enable GUI elements
     def enable_gui(self):
         self.resources['gui'].objects['toolbar'].Enable()
         self.resources['gui'].objects['dropdown'].Enable()
-        self.resources['gui'].objects['sectionlist'].Enable()
+        self.resources['gui'].objects['scrollwindow'].Enable()
         
     # Reset GUI
     def reset_gui(self):

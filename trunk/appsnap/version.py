@@ -1,2 +1,2 @@
-APPVERSION = '1.2.2'
+APPVERSION = '1.3'
 APPNAME    = 'AppSnap'

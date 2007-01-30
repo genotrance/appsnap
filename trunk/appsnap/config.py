@@ -28,6 +28,7 @@ class config:
         self.user = self.convert_to_hash(self.config.items('user'))
         self.cache = self.convert_to_hash(self.config.items('cache'))
         self.database = self.convert_to_hash(self.config.items('database'))
+        self.network = self.convert_to_hash(self.config.items('network'))
 
         # Load the installed applications
         self.installed = ConfigParser.SafeConfigParser()
