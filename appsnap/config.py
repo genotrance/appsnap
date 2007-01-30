@@ -33,6 +33,11 @@ class config:
         # Load the installed applications
         self.installed = ConfigParser.SafeConfigParser()
         self.installed.read(INSTALLED)
+        
+        # Filter out sections that aren't in main db
+        for section in self.installed.sections():
+            if not self.db.has_section(section):
+                self.installed.remove_section(section)
 
     #####
     # Get
