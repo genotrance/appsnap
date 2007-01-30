@@ -19,6 +19,7 @@ Bug Fixes
   redownloaded (if more than a day since the last download) since we have no way
   to know if the file has changed.
 - Fixed Adobe Reader scraping and download link.
+- Obsolete sections in installed.ini are now filtered out.
 
 Version 1.2.1
 -------------

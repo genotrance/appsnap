@@ -51,6 +51,20 @@ schema = """
       style : wx.FONTSTYLE_NORMAL
       weight : wx.FONTWEIGHT_BOLD
 
+    - name : dropdownfont
+      type : wx.Font
+      pointSize : 10
+      family : wx.FONTFAMILY_SWISS
+      style : wx.FONTSTYLE_NORMAL
+      weight : wx.FONTWEIGHT_NORMAL
+
+    - name : urlfont
+      type : wx.Font
+      pointSize : 6
+      family : wx.FONTFAMILY_TELETYPE
+      style : wx.FONTSTYLE_NORMAL
+      weight : wx.FONTWEIGHT_BOLD
+
     - name : tbpanel
       type : wx.Panel
       parent : frame
@@ -70,8 +84,11 @@ schema = """
     - name : dropdown
       type : wx.Choice
       parent : panel
-      size : (150, -1)
-      pos : (170, -1)
+      size : (120, -1)
+      pos : (200, -1)
+      methods:
+      - method : SetFont
+        font : ~dropdownfont
       events:
       - type : wx.EVT_CHOICE
         method : category_chosen
@@ -396,6 +413,18 @@ class Events:
         # Section list
         sections = self.configuration.get_sections()
         
+        # Clear sizer and hide scrollwindow
+        schema = """
+            methods:
+            - name : bsizer
+              method : Clear
+              deleteWindows : True
+              
+            - name : scrollwindow
+              method : Hide
+        """
+        self.resources['gui'].parse_and_run(schema)
+        
         for section in sections:
             section_title = self.get_section_title(section)
             items = self.configuration.get_section_items(section)
@@ -418,7 +447,7 @@ class Events:
             """ % (section_title, section, items['describe'], items['website'], (WIDTH-TBWIDTH-100, 50), section_title)
             self.resources['gui'].parse_and_run(schema)
             self.resources['gui'].objects[section_title].set_event(self)
-    
+
     # Update the section list
     def update_section_list(self, category):
         # Get sections by category
@@ -435,6 +464,14 @@ class Events:
         section_objs = []
         for section in sections:
             section_objs.append(self.resources['gui'].objects[self.get_section_title(section)])
+
+        # Show scrollwindow
+        schema = """
+            methods:
+            - name : scrollwindow
+              method : Hide
+        """
+        self.resources['gui'].parse_and_run(schema)
 
         row = 0
         for item in self.resources['gui'].objects['bsizer'].GetChildren():
@@ -458,6 +495,9 @@ class Events:
 
             - name : scrollwindow
               method : Refresh
+
+            - name : scrollwindow
+              method : Show
         """
         self.resources['gui'].parse_and_run(schema)
 
@@ -496,13 +536,11 @@ class Events:
     def disable_gui(self):
         self.resources['gui'].objects['toolbar'].Disable()
         self.resources['gui'].objects['dropdown'].Disable()
-        self.resources['gui'].objects['scrollwindow'].Disable()
 
     # Enable GUI elements
     def enable_gui(self):
         self.resources['gui'].objects['toolbar'].Enable()
         self.resources['gui'].objects['dropdown'].Enable()
-        self.resources['gui'].objects['scrollwindow'].Enable()
         
     # Reset GUI
     def reset_gui(self):
@@ -680,9 +718,6 @@ class Events:
     def do_reload(self, event):
         # Reload all ini files
         self.setup()
-
-        # Clear the GUI
-        self.reset_section_info()
 
         # Delete all process objects
         self.process = {}

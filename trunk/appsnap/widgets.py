@@ -24,10 +24,11 @@ class ApplicationPanel(wx.Panel):
         self.version = wx.StaticText(self, -1, '')
         self.installed_version = wx.StaticText(self, -1, '')
         
-        #hl = wx.lib.hyperlink.HyperLinkCtrl(self, pos=(40, 10))
-        #self.label.SetLabel(label)
-        #self.label.SetURL(url)
-        #self.label.SetToolTipString(url)
+        self.url = wx.lib.hyperlink.HyperLinkCtrl(self, pos=(45 + self.label.GetSize().GetWidth(), 10))
+        self.url.SetFont(self.gui.objects['urlfont'])
+        self.url.SetLabel(">>")
+        self.url.SetURL(url)
+        self.url.SetToolTipString(url)
         
         # Size
         self.SetMinSize(size)
@@ -38,7 +39,7 @@ class ApplicationPanel(wx.Panel):
         wx.EVT_CHECKBOX(self.gui.objects['frame'], self.checkbox.GetId(), self.on_checkbox_click)
     
     #####
-    # Helpers
+    # Setup helpers
 
     # Set event object
     def set_event(self, event):
@@ -61,6 +62,9 @@ class ApplicationPanel(wx.Panel):
             self.row_colour = self.gui.objects['whitecolour']
         self.SetBackgroundColour(self.row_colour)
 
+    #####
+    # Display helpers
+
     # Display version information
     def set_version(self, version):
         if self.selected == True:
@@ -82,28 +86,6 @@ class ApplicationPanel(wx.Panel):
     def unset_installed_version(self):
         self.installed_version.SetLabel('')
         self.installed_version.SetPosition((0, 0))
-
-    # Select application
-    def select(self, value):
-        if value == True:
-            self.selected = True
-            self.SetBackgroundColour(self.gui.objects['lightredcolour'])
-            child = threading.Thread(target=self.show_info)
-            child.setDaemon(True)
-            child.start()
-        else:
-            self.selected = False
-            self.SetBackgroundColour(self.row_colour)
-            self.checkbox.SetValue(False)
-            self.hide_info()
-        self.Refresh()
-        
-    # Reset state
-    def reset(self):
-        self.selected = False
-        self.checkbox.SetValue(False)
-        self.unset_version()
-        self.unset_installed_version()
 
     # Show version information
     def show_info(self):
@@ -147,6 +129,31 @@ class ApplicationPanel(wx.Panel):
         self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])
     
     #####
+    # State helpers
+
+    # Select application
+    def select(self, value):
+        if value == True:
+            self.selected = True
+            self.SetBackgroundColour(self.gui.objects['lightredcolour'])
+            child = threading.Thread(target=self.show_info)
+            child.setDaemon(True)
+            child.start()
+        else:
+            self.selected = False
+            self.SetBackgroundColour(self.row_colour)
+            self.checkbox.SetValue(False)
+            self.hide_info()
+        self.Refresh()
+        
+    # Reset state
+    def reset(self):
+        self.selected = False
+        self.checkbox.SetValue(False)
+        self.unset_version()
+        self.unset_installed_version()
+
+    #####
     # Event methods
     
     # When panel or text is clicked
@@ -167,3 +174,45 @@ class ApplicationPanel(wx.Panel):
             self.select(True)
         else:
             self.select(False)
+
+    # Perform specified action
+    def do_action(self, action):
+        # Display action field
+        
+        if action == 'download' or action == 'install' or action == 'upgrade':
+            # Download latest version
+            self.resources['gui'].objects['actionname'].SetLabel('Downloading :')
+            self.resources['gui'].objects['application'].Yield()
+            if self.process[section].download_latest_version() == False:
+                return self.error_out('Download')
+            count += stepsize
+            self.resources['gui'].objects['progressbar'].SetValue(count)
+
+        if action == 'uninstall' or (action == 'upgrade' and self.process[section].app_config['upgrades'] == 'true'):
+            # Perform the uninstall
+            self.resources['gui'].objects['actionname'].SetLabel('Uninstalling :')
+            self.resources['gui'].objects['application'].Yield()
+            if self.process[section].uninstall_version() == False:
+                return self.error_out('Uninstall')
+            count += stepsize
+            self.resources['gui'].objects['progressbar'].SetValue(count)
+
+        if action == 'install' or action == 'upgrade':
+            # Perform the install
+            self.resources['gui'].objects['actionname'].SetLabel('Installing :')
+            self.resources['gui'].objects['application'].Yield()
+            if self.process[section].install_latest_version() == False:
+                return self.error_out('Install')
+            count += stepsize
+            self.resources['gui'].objects['progressbar'].SetValue(count)
+
+        # Clear all section info
+        self.reset_section_info()
+
+        # Mark as completed
+        self.update_progress_bar(1000, 'Done')
+        time.sleep(2)
+
+        # Reset the GUI
+        self.reset_gui()
+        
