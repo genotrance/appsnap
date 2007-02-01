@@ -53,13 +53,7 @@ class ApplicationPanel(wx.Panel):
         
     # Set the colour of panel based on row number
     def set_colour_by_row(self, row):
-        # Color
-        if (row % 4 == 0):
-            self.row_colour = self.gui.objects['darkgreycolour']
-        elif (row % 2 == 0):
-            self.row_colour = self.gui.objects['lightgreycolour']
-        else:
-            self.row_colour = self.gui.objects['whitecolour']
+        self.save_colour_by_row(row)
         self.SetBackgroundColour(self.row_colour)
 
     #####
@@ -140,7 +134,6 @@ class ApplicationPanel(wx.Panel):
         if installed_version == latest_version:
             self.select(False)
             sizeritem.Show(False)
-            self.event.refresh_section_list()
 
     #####
     # State helpers
@@ -166,6 +159,17 @@ class ApplicationPanel(wx.Panel):
         self.checkbox.SetValue(False)
         self.unset_version()
         self.unset_installed_version()
+        self.SetMinSize((self.GetMinWidth(), 50))
+        
+    # Save row colour
+    def save_colour_by_row(self, row):
+        # Color
+        if (row % 4 == 0):
+            self.row_colour = self.gui.objects['darkgreycolour']
+        elif (row % 2 == 0):
+            self.row_colour = self.gui.objects['lightgreycolour']
+        else:
+            self.row_colour = self.gui.objects['whitecolour']
 
     #####
     # Event methods
