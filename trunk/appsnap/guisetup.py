@@ -266,7 +266,8 @@ class Events:
         categories = self.configuration.get_categories()
         categories.insert(0, 'All')
         categories.insert(1, 'Installed')
-        categories.insert(2, '--')
+        categories.insert(2, 'Upgradeable')
+        categories.insert(3, '--')
 
         # Add categories to dropdown and sections to sectionlist
         schema = """
@@ -453,12 +454,15 @@ class Events:
         # Get sections by category
         if category == 'All':
             sections = self.configuration.get_sections()
-        elif category == 'Installed':
+        elif category == 'Installed' or category == 'Upgradeable':
             sections = self.configuration.installed.sections()
         elif category == '--':
             return
         else:
             sections = self.configuration.get_sections_by_category(category)
+
+        # Disable GUI
+        self.disable_gui()
 
         # Construct section list
         section_objs = []
@@ -481,9 +485,21 @@ class Events:
                 row = row + 1
             else:
                 item.Show(False)
-            item.GetWindow().reset()
+            
+            # Update the section as required
+            if category == 'Upgradeable':
+                child = threading.Thread(target=item.GetWindow().display_if_upgradeable, args=[item])
+                child.setDaemon(True)
+                child.start()
+            else:
+                item.GetWindow().reset()
 
-        # Final setup
+        # Refresh section list and enable GUI
+        self.refresh_section_list()
+        self.enable_gui()
+
+    # Refresh the section list
+    def refresh_section_list(self):
         schema = """
             methods:
             - name : bsizer
@@ -505,7 +521,10 @@ class Events:
     def category_chosen(self, event):
         # Get the category selected
         category = event.GetString()
-        self.update_section_list(category)
+        child = threading.Thread(target=self.update_section_list, args=[category])
+        child.setDaemon(True)
+        child.start()
+
         schema = """
             methods:
             - name : scrollwindow
@@ -540,6 +559,7 @@ class Events:
     # Enable GUI elements
     def enable_gui(self):
         self.resources['gui'].objects['toolbar'].Enable()
+        self.resources['gui'].objects['toolbar'].Refresh()
         self.resources['gui'].objects['dropdown'].Enable()
         
     # Reset GUI
