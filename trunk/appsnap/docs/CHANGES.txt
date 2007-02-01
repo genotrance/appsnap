@@ -4,6 +4,9 @@ New Applications
 - Internet : Google Talk, Maxthon, Opera, Skype
 - Fun and Games : Battle for Wesnoth, Tremulous
 - Utilities : Synergy
+- Productivity : DVD-Flick, ImgBurn
+- Libraries : K-Lite Mega Codec Pack
+- Development : wxPython Documentation
 
 GUI Enhancements
 - Brand new look and feel sporting a vertical layout and colors.

@@ -478,24 +478,36 @@ class Events:
         self.resources['gui'].parse_and_run(schema)
 
         row = 0
+        children = []
         for item in self.resources['gui'].objects['bsizer'].GetChildren():
+            item.GetWindow().reset()
             if item.GetWindow() in section_objs:
                 item.Show(True)
-                item.GetWindow().set_colour_by_row(row)
+                if category == 'Upgradeable':
+                    self.refresh_section_list()
+                    children.append(threading.Thread(target=item.GetWindow().display_if_upgradeable, args=[item]))
+                    children[row].start()
+                else:
+                    item.GetWindow().set_colour_by_row(row)
                 row = row + 1
             else:
                 item.Show(False)
-            
-            # Update the section as required
-            if category == 'Upgradeable':
-                child = threading.Thread(target=item.GetWindow().display_if_upgradeable, args=[item])
-                child.setDaemon(True)
-                child.start()
-            else:
-                item.GetWindow().reset()
 
-        # Refresh section list and enable GUI
-        self.refresh_section_list()
+        # Wait for children to be done
+        if category == 'Upgradeable':
+            for child in children:
+                child.join()
+                self.refresh_section_list()
+            # Recolour rows
+            row = 0
+            for item in self.resources['gui'].objects['bsizer'].GetChildren():
+                if item.IsShown():
+                    item.GetWindow().save_colour_by_row(row)
+                    row = row + 1
+        else:
+            self.refresh_section_list()
+        
+        # Enable GUI
         self.enable_gui()
 
     # Refresh the section list
