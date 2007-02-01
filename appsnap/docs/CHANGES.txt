@@ -7,6 +7,8 @@ New Applications
 
 GUI Enhancements
 - Brand new look and feel sporting a vertical layout and colors.
+- Added the Upgradeable category that lists all installed applications with
+  available upgrades.
 
 Internal Improvements
 - Support for parallel downloading in order to make best use of the available

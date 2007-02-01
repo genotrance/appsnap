@@ -127,7 +127,21 @@ class ApplicationPanel(wx.Panel):
         self.Refresh()
         self.gui.objects['bsizer'].Layout()
         self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])
-    
+
+    # Select if upgradeable
+    def display_if_upgradeable(self, sizeritem):
+        # Get the version information populated
+        self.selected = True
+        self.SetBackgroundColour(self.gui.objects['lightbluecolour'])
+        self.show_info()
+        
+        installed_version = self.event.configuration.get_installed_version(self.app_name)
+        latest_version = self.event.process[self.app_name].get_latest_version()
+        if installed_version == latest_version:
+            self.select(False)
+            sizeritem.Show(False)
+            self.event.refresh_section_list()
+
     #####
     # State helpers
 
