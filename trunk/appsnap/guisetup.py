@@ -216,6 +216,13 @@ schema = """
       methods:
       - method : SetBackgroundColour
         colour : ~whitecolour
+        
+    - name : statusbar
+      type : wx.StatusBar
+      parent : frame
+      methods:
+      - method : SetFieldsCount
+        number : 2
   
     methods:
     - name : frame
@@ -231,6 +238,10 @@ schema = """
     - name : frame
       method : SetToolBar
       toolbar : ~toolbar
+      
+    - name : frame
+      method : SetStatusBar
+      statBar : ~statusbar
   
     events:
     - name : frame
@@ -244,9 +255,6 @@ class Events:
     def __init__(self, resources):
         # Save any resources provided
         self.resources = resources
-
-        # Save process objects
-        self.process = {}
 
         # A lock object to serialize
         self.lock = threading.Lock()
@@ -402,7 +410,7 @@ class Events:
             - name : bsizer
               method : SetMinSize
               size : (%s, %s)
-        """ % (TBWIDTH, frame.y, frame.x - TBWIDTH + 1, frame.y, WIDTH - 80, frame.y - 80, WIDTH - TBWIDTH, frame.y - 80)
+        """ % (TBWIDTH, frame.y, frame.x - TBWIDTH + 1, frame.y, WIDTH - 80, frame.y - 90, WIDTH - TBWIDTH, frame.y - 90)
         self.resources['gui'].parse_and_run(schema)
     
     # Get the title of a section
@@ -504,8 +512,8 @@ class Events:
                 if item.IsShown():
                     item.GetWindow().save_colour_by_row(row)
                     row = row + 1
-        else:
-            self.refresh_section_list()
+
+        self.refresh_section_list()
         
         # Enable GUI
         self.enable_gui()
@@ -526,6 +534,9 @@ class Events:
 
             - name : scrollwindow
               method : Show
+              
+            - name : statusbar
+              method : Refresh
         """
         self.resources['gui'].parse_and_run(schema)
 
@@ -750,6 +761,3 @@ class Events:
     def do_reload(self, event):
         # Reload all ini files
         self.setup()
-
-        # Delete all process objects
-        self.process = {}
