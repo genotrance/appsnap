@@ -16,6 +16,7 @@ GUI Enhancements
 Internal Improvements
 - Support for parallel downloading in order to make best use of the available
   net speed.
+- Added MAJORMINORSUB_VERSION in order to support ImageMagick uninstallation.
 
 Bug Fixes
 - Fixed bug in "Update DB" where a failed DB download was wiping out the current
