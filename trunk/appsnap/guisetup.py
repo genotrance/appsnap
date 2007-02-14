@@ -382,7 +382,7 @@ class Events:
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[5].GetId(), self.do_install)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[7].GetId(), self.do_upgrade)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[9].GetId(), self.do_uninstall)
-        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[13].GetId(), self.do_db_update)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[13].GetId(), self.do_threaded_db_update)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[15].GetId(), self.do_reload)
 
         # Create toolbar only once
@@ -555,44 +555,75 @@ class Events:
         """
         self.resources['gui'].parse_and_run(schema)
         
+    # Get all visible and checked sections
     def get_checked_sections(self):
         checked = []
         items = self.resources['gui'].objects['bsizer'].GetChildren()
         for item in items:
-            if item.GetWindow().checkbox.IsChecked() == True:
-                checked.append(item.GetWindow().app_name)
+            if item.IsShown() and item.GetWindow().checkbox.IsChecked() == True:
+                checked.append(item.GetWindow())
 
         return checked
 
-    def uncheck_section(self, name):
-        section_obj = self.resources['gui'].objects[self.get_section_title(name)]
-        section_obj.select(False)
+    # Update status bar text
+    def update_status_bar(self, first, second):
+        schema = """
+            methods:
+            - name : statusbar
+              method : SetFields
+              items : %s
+              
+            - name : statusbar
+              method : Refresh
+        """ % ([first, second])
+        self.resources['gui'].parse_and_run(schema)
 
-    # Update progress bar and text
-    def update_progress_bar(self, count, label):
-        self.resources['gui'].objects['progressbar'].SetValue(count)
-        self.resources['gui'].objects['actionname'].SetLabel(label)
-        self.resources['gui'].objects['application'].Yield()
+    # Update status bar sub-status text
+    def update_status_bar_substatus(self, second):
+        schema = """
+            methods:
+            - name : statusbar
+              method : SetStatusText
+              text : "%s"
+              number : 1
+              
+            - name : statusbar
+              method : Refresh
+        """ % (second)
+        self.resources['gui'].parse_and_run(schema)
 
     # Disable GUI elements
     def disable_gui(self):
-        self.resources['gui'].objects['toolbar'].Disable()
-        self.resources['gui'].objects['dropdown'].Disable()
+        schema = """
+            methods:
+            - name : toolbar
+              method : Disable
+              
+            - name : toolbar
+              method : Refresh
+              
+            - name : dropdown
+              method : Disable
+        """
+        self.resources['gui'].parse_and_run(schema)
 
     # Enable GUI elements
     def enable_gui(self):
-        self.resources['gui'].objects['toolbar'].Enable()
-        self.resources['gui'].objects['toolbar'].Refresh()
-        self.resources['gui'].objects['dropdown'].Enable()
-        
-    # Reset GUI
-    def reset_gui(self):
-        # Reset progressbar and hide
-        self.update_progress_bar(0, '')
-        self.resources['gui'].objects['progressbar'].Hide()
+        schema = """
+            methods:
+            - name : toolbar
+              method : Enable
+              
+            - name : toolbar
+              method : Refresh
+              
+            - name : dropdown
+              method : Enable
 
-        # Enable GUI
-        self.enable_gui()
+            - name : statusbar
+              method : Refresh
+        """
+        self.resources['gui'].parse_and_run(schema)
         
     # Start an action thread
     def do_threaded_action(self, action):
@@ -611,80 +642,37 @@ class Events:
         # Disable GUI
         self.disable_gui()
         
-        # Figure out action
-        count = 0
-        if action == 'download':
-            stepsize = 1000 / len(checked)
-        elif action == 'install':
-            stepsize = 500 / len(checked)
-        elif action == 'uninstall':
-            stepsize = 1000 / len(checked)
-        elif action == 'upgrade':
-            stepsize = 333 / len(checked)
-
-        # Display progress bar
-        self.resources['gui'].objects['progressbar'].Show()
+        # Update status bar
+        self.update_status_bar(action[0].capitalize() + action[1:], '')
 
         # Do action for each section
+        children = []
         for section in checked:
-            # Display section information
-            self.show_section_info(section)
-
-            if action == 'download' or action == 'install' or action == 'upgrade':
-                # Download latest version
-                self.resources['gui'].objects['actionname'].SetLabel('Downloading :')
-                self.resources['gui'].objects['application'].Yield()
-                if self.process[section].download_latest_version() == False:
-                    return self.error_out('Download')
-                count += stepsize
-                self.resources['gui'].objects['progressbar'].SetValue(count)
-
-            if action == 'uninstall' or (action == 'upgrade' and self.process[section].app_config['upgrades'] == 'true'):
-                # Perform the uninstall
-                self.resources['gui'].objects['actionname'].SetLabel('Uninstalling :')
-                self.resources['gui'].objects['application'].Yield()
-                if self.process[section].uninstall_version() == False:
-                    return self.error_out('Uninstall')
-                count += stepsize
-                self.resources['gui'].objects['progressbar'].SetValue(count)
-
-            if action == 'install' or action == 'upgrade':
-                # Perform the install
-                self.resources['gui'].objects['actionname'].SetLabel('Installing :')
-                self.resources['gui'].objects['application'].Yield()
-                if self.process[section].install_latest_version() == False:
-                    return self.error_out('Install')
-                count += stepsize
-                self.resources['gui'].objects['progressbar'].SetValue(count)
-
-            self.uncheck_section(section)
-
-        # Clear all section info
-        self.reset_section_info()
-
-        # Mark as completed
-        self.update_progress_bar(1000, 'Done')
-        time.sleep(2)
+            child = threading.Thread(target=section.do_action, args=[action])
+            children.append(child)
+            child.start()
+            
+        # Wait for children to be done
+        for child in children:
+            child.join()
 
         # Reset the GUI
-        self.reset_gui()
+        self.update_status_bar('', '')
+        self.enable_gui()
         
-    # Error out if install/uninstall fails
-    def error_out(self, action):
+    # Error out if an action fails
+    def error_out(self, action, message):
         # Mark as failed
-        self.resources['gui'].objects['actionname'].SetLabel('Failed ' + action)
-        self.resources['gui'].objects['application'].Yield()
-        time.sleep(2)
-
-        # Clear all section info
-        self.reset_section_info()
+        self.update_status_bar(action, message)
+        time.sleep(3)
+        self.update_status_bar('', '')
 
         # Reset the GUI
-        self.reset_gui()
+        self.enable_gui()
         
         # Return
         return False
-
+    
     # Download checked applications
     def do_download(self, event):
         self.do_threaded_action('download')
@@ -702,19 +690,21 @@ class Events:
         self.do_threaded_action('upgrade')
 
     # Update database
-    def do_db_update(self, event):
-        self.do_threaded_db_update()
+    def do_threaded_db_update(self, event):
+        child = threading.Thread(target=self.do_db_update)
+        child.setDaemon(True)
+        child.start()
         
     # Update database
-    def do_threaded_db_update(self):
+    def do_db_update(self):
+        # Action name
+        action = 'Update DB'
+        
         # Disable GUI
         self.disable_gui()
         
-        # Display progress bar
-        stepsize = 250
-        count = 0
-        self.resources['gui'].objects['progressbar'].Show()
-        self.update_progress_bar(0, 'Downloading DB :')
+        # Update statusbar
+        self.update_status_bar(action, 'Downloading ...')
 
         # Download latest DB.ini
         remote = self.curl_instance.get_web_data(self.configuration.database['location'])
@@ -722,42 +712,45 @@ class Events:
         
         # If download failed
         if remote == None:
-            return self.error_out('Download DB')
+            return self.error_out(action, 'Download Failed')
 
         # Compare with existing DB
-        count += stepsize
-        self.update_progress_bar(count, 'Comparing :')
+        self.update_status_bar(action, 'Comparing ...')
         local = open(config.DB, 'rb').read()
         time.sleep(0.5)
 
         if local != remote:
             # Update the DB file
-            count += stepsize
-            self.update_progress_bar(count, 'Updating local DB :')
+            self.update_status_bar(action, 'Updating Local DB ...')
             db = open(config.DB, 'wb')
             db.write(remote)
             db.close()
             time.sleep(0.5)
 
             # Reload settings
-            count += stepsize
-            self.update_progress_bar(count, 'Reloading DB :')
-            self.do_reload(None)
+            self.update_status_bar(action, 'Reloading DB ...')
+            self.setup()
             time.sleep(0.5)
+            self.update_status_bar(action, 'Done')
+            time.sleep(3)
         else:
             # No change found
-            count += stepsize
-            self.update_progress_bar(count, 'No changes found :')
-            time.sleep(0.5)
-
-        # Mark as completed
-        self.update_progress_bar(1000, 'Done')
-        time.sleep(2)
+            self.update_status_bar(action, 'No Changes Found')
+            time.sleep(3)
 
         # Reset the GUI
-        self.reset_gui()
+        self.update_status_bar('', '')
+        self.enable_gui()
         
     # Reload the configuration
     def do_reload(self, event):
+        # Disable the GUI
+        self.disable_gui()
+        self.update_status_bar('Reloading', '')
+        
         # Reload all ini files
         self.setup()
+        
+        # Reset the GUI
+        self.update_status_bar('', '')
+        self.enable_gui()

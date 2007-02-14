@@ -31,6 +31,8 @@ class ApplicationPanel(wx.Panel):
         self.url.SetURL(url)
         self.url.SetToolTipString(url)
         
+        self.status = wx.StaticText(self, -1, '')
+        
         # Size
         self.SetMinSize(size)
         self.SetMaxSize(size)
@@ -81,30 +83,42 @@ class ApplicationPanel(wx.Panel):
     def unset_installed_version(self):
         self.installed_version.SetLabel('')
         self.installed_version.SetPosition((0, 0))
+        
+    # Set status text
+    def set_status_text(self, text):
+        self.status.SetLabel('Status : ' + text)
+
+    # Display status information
+    def display_status(self):
+        if self.selected == True:
+            if self.installed_version.GetLabel() != '':
+                self.status.SetPosition((40, 75))
+            else:
+                self.status.SetPosition((40, 60))
+            self.set_status_text('Starting ...')
+            self.update_layout()
+            
+    # Hide status information
+    def hide_status(self):
+        self.status.SetLabel('')
+        self.status.SetPosition((0, 0))
 
     # Show version information
     def show_info(self):
         # Get configuration
         items = self.event.configuration.get_section_items(self.app_name)
-        height = 50
 
         # Get installed version
         installed_version = self.event.configuration.get_installed_version(self.app_name)
         if installed_version != '':
             installed_version = 'Installed Version : ' + installed_version
             self.set_installed_version(installed_version)
-            height = height + 15
 
         # Display latest version text
         self.set_version('Latest Version : loading...')
-        height = height + 15
         
         # Update layout
-        self.SetMinSize((self.GetMinWidth(), height))
-        self.SetMaxSize((self.GetMinWidth(), height))
-        self.gui.objects['scrollwindow'].Refresh()
-        self.gui.objects['bsizer'].Layout()
-        self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])
+        self.update_layout()
         
         # Get the latest version
         if not self.process:
@@ -118,10 +132,21 @@ class ApplicationPanel(wx.Panel):
     def hide_info(self):
         self.unset_version()
         self.unset_installed_version()
-        self.SetMinSize((self.GetMinWidth(), 50))
-        self.Refresh()
+        self.hide_status()
+        self.update_layout()
+
+    # Update the layout of this panel
+    def update_layout(self):
+        height = 50
+        if self.version.GetLabel() != '': height += 15
+        if self.installed_version.GetLabel() != '': height += 15
+        if self.status.GetLabel() != '': height += 15
+        
+        self.SetMinSize((self.GetMinWidth(), height))
+        self.SetMaxSize((self.GetMinWidth(), height))
+        self.gui.objects['scrollwindow'].Refresh()
         self.gui.objects['bsizer'].Layout()
-        self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])
+        self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])        
 
     # Select if upgradeable
     def display_if_upgradeable(self, sizeritem):
@@ -152,7 +177,6 @@ class ApplicationPanel(wx.Panel):
             self.SetBackgroundColour(self.row_colour)
             self.checkbox.SetValue(False)
             self.hide_info()
-        self.Refresh()
         
     # Reset state
     def reset(self):
@@ -160,6 +184,7 @@ class ApplicationPanel(wx.Panel):
         self.checkbox.SetValue(False)
         self.unset_version()
         self.unset_installed_version()
+        self.hide_status()
         self.SetMinSize((self.GetMinWidth(), 50))
         
     # Save row colour
@@ -185,7 +210,6 @@ class ApplicationPanel(wx.Panel):
             child = threading.Thread(target=self.show_info)
             child.setDaemon(True)
             child.start()
-        self.Refresh()
         
     # When checkbox is clicked
     def on_checkbox_click(self, event):
@@ -196,42 +220,34 @@ class ApplicationPanel(wx.Panel):
 
     # Perform specified action
     def do_action(self, action):
-        # Display action field
+        # Display status field
+        self.display_status()
         
         if action == 'download' or action == 'install' or action == 'upgrade':
             # Download latest version
-            self.resources['gui'].objects['actionname'].SetLabel('Downloading :')
-            self.resources['gui'].objects['application'].Yield()
-            if self.process[section].download_latest_version() == False:
+            self.set_status_text('Downloading ...')
+            if self.process.download_latest_version() == False:
                 return self.error_out('Download')
-            count += stepsize
-            self.resources['gui'].objects['progressbar'].SetValue(count)
 
-        if action == 'uninstall' or (action == 'upgrade' and self.process[section].app_config['upgrades'] == 'true'):
+        if action == 'uninstall' or (action == 'upgrade' and self.process.app_config['upgrades'] == 'true'):
             # Perform the uninstall
-            self.resources['gui'].objects['actionname'].SetLabel('Uninstalling :')
-            self.resources['gui'].objects['application'].Yield()
-            if self.process[section].uninstall_version() == False:
+            self.set_status_text('Uninstalling ...')
+            if self.process.uninstall_version() == False:
                 return self.error_out('Uninstall')
-            count += stepsize
-            self.resources['gui'].objects['progressbar'].SetValue(count)
 
         if action == 'install' or action == 'upgrade':
             # Perform the install
-            self.resources['gui'].objects['actionname'].SetLabel('Installing :')
-            self.resources['gui'].objects['application'].Yield()
-            if self.process[section].install_latest_version() == False:
+            self.set_status_text('Installing ...')
+            if self.process.install_latest_version() == False:
                 return self.error_out('Install')
-            count += stepsize
-            self.resources['gui'].objects['progressbar'].SetValue(count)
 
-        # Clear all section info
-        self.reset_section_info()
+        # Succeeded so unselect
+        self.select(False)
 
-        # Mark as completed
-        self.update_progress_bar(1000, 'Done')
-        time.sleep(2)
-
-        # Reset the GUI
-        self.reset_gui()
+    # Error out if any action fails
+    def error_out(self, action):
+        # Mark as failed
+        self.set_status_text('Failed ' + action)
         
+        # Return
+        return False
