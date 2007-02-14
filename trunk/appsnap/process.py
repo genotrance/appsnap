@@ -13,14 +13,15 @@ import zipfile
 ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
 
 # Regular expressions
-DELIMITERS              = '[._-]'
-VERSION                 = '#VERSION#'
-MAJOR_VERSION           = '#MAJOR_VERSION#'
-MAJORMINOR_VERSION      = '#MAJORMINOR_VERSION#'
-DOTLESS_VERSION         = '#DOTLESS_VERSION#'
-DASHTODOT_VERSION       = '#DASHTODOT_VERSION#'
-DOTTOUNDERSCORE_VERSION = '#DOTTOUNDERSCORE_VERSION#'
-INSTALL_DIR             = '#INSTALL_DIR#'
+DELIMITERS                 = '[._-]'
+VERSION                    = '#VERSION#'
+MAJOR_VERSION              = '#MAJOR_VERSION#'
+MAJORMINOR_VERSION         = '#MAJORMINOR_VERSION#'
+MAJORMINORSUB_VERSION      = '#MAJORMINORSUB_VERSION#'
+DOTLESS_VERSION            = '#DOTLESS_VERSION#'
+DASHTODOT_VERSION          = '#DASHTODOT_VERSION#'
+DOTTOUNDERSCORE_VERSION    = '#DOTTOUNDERSCORE_VERSION#'
+INSTALL_DIR                = '#INSTALL_DIR#'
 
 # Version not available
 NOT_AVAILABLE      = 'Not Available'
@@ -120,6 +121,7 @@ class process:
         filename = re.sub(VERSION, '*', filename)
         filename = re.sub(MAJOR_VERSION, '*', filename)
         filename = re.sub(MAJORMINOR_VERSION, '*', filename)
+        filename = re.sub(MAJORMINORSUB_VERSION, '*', filename)
         filename = re.sub(DOTLESS_VERSION, '*', filename)
         filename = re.sub(DASHTODOT_VERSION, '*', filename)
         filename = self.curl_instance.get_cached_name(filename)
@@ -223,6 +225,8 @@ class process:
         except IndexError: major_version = version
         try: majorminor_version = re.findall('^([0-9]+[._-][0-9]+).*', version)[0]
         except IndexError: majorminor_version = version
+        try: majorminorsub_version = re.findall('^([0-9]+[._-][0-9]+[._-][0-9]+).*', version)[0]
+        except IndexError: majorminorsub_version = version
         dotless_version = re.sub(DELIMITERS, '', version)
         dashtodot_version = re.sub('-', '.', version)
         dottounderscore_version = re.sub('\.', '_', version)
@@ -231,6 +235,7 @@ class process:
         string = re.sub(VERSION, version, string)
         string = re.sub(MAJOR_VERSION, major_version, string)
         string = re.sub(MAJORMINOR_VERSION, majorminor_version, string)
+        string = re.sub(MAJORMINORSUB_VERSION, majorminorsub_version, string)
         string = re.sub(DOTLESS_VERSION, dotless_version, string)
         string = re.sub(DASHTODOT_VERSION, dashtodot_version, string)
         string = re.sub(DOTTOUNDERSCORE_VERSION, dottounderscore_version, string)

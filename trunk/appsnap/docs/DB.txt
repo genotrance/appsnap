@@ -67,6 +67,9 @@ the database. The following are a list of supported text replacements.
    #MAJORMINOR_VERSION#
    The first two chunks of the version. E.g. 3-1-1 becomes 3-1
 
+   #MAJORMINORSUB_VERSION#
+   The first three chunks of the version. E.g. 3.1.0-1 becomes 3.1.0
+
    #DOTLESS_VERSION#
    The version information stripped of any delimiters. E.g. 4.2.2 becomes 422
 
