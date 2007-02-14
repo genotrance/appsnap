@@ -13,6 +13,7 @@ class ApplicationPanel(wx.Panel):
         self.gui = gui
         self.app_name = label
         self.selected = False
+        self.process = False
         
         # Widgets
         self.label = wx.StaticText(self, -1, label, pos=(40, 10))
@@ -106,9 +107,9 @@ class ApplicationPanel(wx.Panel):
         self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])
         
         # Get the latest version
-        if not self.event.process.has_key(self.app_name):
-            self.event.process[self.app_name] = process.process(self.event.configuration, self.event.curl_instance, self.app_name, items)
-        latest_version = self.event.process[self.app_name].get_latest_version()
+        if not self.process:
+            self.process = process.process(self.event.configuration, self.event.curl_instance, self.app_name, items)
+        latest_version = self.process.get_latest_version()
         if latest_version == None:
             latest_version = 'failed to connect'
         self.set_version('Latest Version : ' + latest_version)
@@ -130,7 +131,7 @@ class ApplicationPanel(wx.Panel):
         self.show_info()
         
         installed_version = self.event.configuration.get_installed_version(self.app_name)
-        latest_version = self.event.process[self.app_name].get_latest_version()
+        latest_version = self.process.get_latest_version()
         if installed_version == latest_version:
             self.select(False)
             sizeritem.Show(False)
