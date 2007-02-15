@@ -24,9 +24,14 @@ Bug Fixes
 - Installer filenames which do not contain any version information are now 
   redownloaded (if more than a day since the last download) since we have no way
   to know if the file has changed.
-- Fixed Adobe Reader scraping and download link.
-- Fixed Firefox, Thunderbird and WinSCP download links.
 - Obsolete sections in installed.ini are now filtered out.
+
+Scrape Fixes
+- Fixed Adobe Reader scraping and download link.
+- Fixed Firefox and Thunderbird download links, ftp was not working.
+- WinSCP version scraping now done on Sourceforge.
+- Dia's version search now includes pre-releases - e.g. 0.96-pre4
+- uTorrent now has sub-version numbering - e.g. 1.6.1
 
 Version 1.2.1
 -------------
