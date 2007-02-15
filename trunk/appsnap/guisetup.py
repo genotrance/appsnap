@@ -520,6 +520,9 @@ class Events:
 
     # Refresh the section list
     def refresh_section_list(self):
+        # Acquire lock
+        self.lock.acquire()
+        
         schema = """
             methods:
             - name : bsizer
@@ -540,6 +543,9 @@ class Events:
         """
         self.resources['gui'].parse_and_run(schema)
 
+        # Release lock
+        self.lock.release()
+        
     # Update the section list when category is changed
     def category_chosen(self, event):
         # Get the category selected
