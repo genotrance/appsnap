@@ -646,7 +646,7 @@ class Events:
         self.disable_gui()
         
         # Update status bar
-        self.update_status_bar(action[0].capitalize() + action[1:], '')
+        self.update_status_bar('Performing ' + action[0].capitalize() + action[1:], '')
 
         # Do action for each section
         children = []
@@ -701,7 +701,7 @@ class Events:
     # Update database
     def do_db_update(self):
         # Action name
-        action = 'Update DB'
+        action = 'Performing Update DB'
         
         # Disable GUI
         self.disable_gui()

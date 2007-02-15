@@ -6,12 +6,13 @@ New Applications
 - Utilities : ImageMagick, Launchy, Synergy
 - Productivity : DVD-Flick, ImgBurn
 - Libraries : K-Lite Mega Codec Pack
-- Development : wxPython Documentation
+- Development : Py2Exe, wxPython Documentation
 
 GUI Enhancements
 - Brand new look and feel sporting a vertical layout and colors.
 - Added the Upgradeable category that lists all installed applications with
   available upgrades.
+- AppSnap now displays download progress information.
 
 Internal Improvements
 - Support for parallel downloading in order to make best use of the available

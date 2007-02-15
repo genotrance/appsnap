@@ -121,7 +121,7 @@ class curl:
         self.web_data[i] += buf
 
     # Download data from the web
-    def download_web_data(self, url, filename, referer):
+    def download_web_data(self, url, filename, referer, progress_callback=None):
         # Get lock
         i = self.get_lock()
         
@@ -132,6 +132,11 @@ class curl:
         # Open download filename
         cached_filename = self.get_cached_name(filename)
         self.download_data[i] = open(cached_filename, 'wb')
+
+        # Set progress callback if specified
+        if progress_callback != None:
+            self.curl[i].setopt(pycurl.NOPROGRESS, 0)
+            self.curl[i].setopt(pycurl.PROGRESSFUNCTION, progress_callback)
 
         # Download data
         self.curl[i].setopt(pycurl.REFERER, referer)

@@ -1,5 +1,6 @@
 import process
 import threading
+import time
 import wx
 import wx.lib.hyperlink
 
@@ -225,8 +226,8 @@ class ApplicationPanel(wx.Panel):
         
         if action == 'download' or action == 'install' or action == 'upgrade':
             # Download latest version
-            self.set_status_text('Downloading ...')
-            if self.process.download_latest_version() == False:
+            self.set_status_text('Waiting ...')
+            if self.process.download_latest_version(self.update_download_status) == False:
                 return self.error_out('Download')
 
         if action == 'uninstall' or (action == 'upgrade' and self.process.app_config['upgrades'] == 'true'):
@@ -241,8 +242,28 @@ class ApplicationPanel(wx.Panel):
             if self.process.install_latest_version() == False:
                 return self.error_out('Install')
 
+        # Done
+        self.set_status_text('Done')
+        time.sleep(3)
+
         # Succeeded so unselect
         self.select(False)
+        
+    # Callback function for PyCurl
+    def update_download_status(self, dl_total, dl_current, ul_total, ul_current):
+        # Create current string
+        if dl_current < 1024 * 1024:
+            dl_current_string = round((dl_current / 1024), 2).__str__() + ' KB'
+        else:
+            dl_current_string = round((dl_current / 1024 / 1024), 2).__str__() + ' MB'
+
+        # Create total string
+        if dl_total < 1024 * 1024:
+            dl_total_string = round((dl_total / 1024), 2).__str__() + ' KB'
+        else:
+            dl_total_string = round((dl_total / 1024 / 1024), 2).__str__() + ' MB'
+            
+        self.set_status_text('Downloading ' + dl_current_string + ' / ' + dl_total_string)
 
     # Error out if any action fails
     def error_out(self, action):
