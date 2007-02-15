@@ -1,9 +1,10 @@
 # Import required libraries
-import process
 import config
-import sys
 import curl
 import getopt
+import process
+import sys
+import threading
 import version
 
 header = version.APPNAME + ' ' + version.APPVERSION + '\n'
@@ -25,6 +26,61 @@ Application specific functions
    -x          Uninstall current version
 """
 
+def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall):
+    items = configuration.get_section_items(name)
+    if items != None:
+        p = process.process(configuration, curl_instance, name, items)
+        
+        if getversion == True:
+            output = '\n'
+            output += 'Application       : ' + name + '\n'
+            output += 'Description       : ' + items['describe'] + '\n'
+            output += 'Website           : ' + items['website'] + '\n'
+            output += 'Latest Version    : ' + p.get_latest_version() + '\n'
+            installed = configuration.get_installed_version(name)
+            if installed != '':
+                output += 'Installed Version : ' + installed + '\n'
+            print output
+        if download == True:
+            print '-> Downloading ' + name
+            if p.download_latest_version() == False:
+                print "-> Download failed for " + name
+                return
+            else:
+                print "-> Download succeeded for " + name
+        if install == True:
+            print '-> Installing ' + name
+            lock.acquire()
+            if p.install_latest_version() == False: 
+                print "-> Install failed for " + name
+                lock.release()
+                return
+            else:
+                print "-> Install succeeded for " + name
+            lock.release()
+        if upgrade == True:
+            print '-> Upgrading ' + name
+            lock.acquire()
+            if p.upgrade_version() == False: 
+                print "-> Upgrade failed for " + name
+                lock.release()
+                return
+            else:
+                print "-> Upgrade succeeded for " + name
+            lock.release()
+        if uninstall == True:
+            print '-> Uninstalling ' + name
+            lock.acquire()
+            if p.uninstall_version() == False: 
+                print "-> Uninstall failed for " + name
+                lock.release()
+                return
+            else:
+                print "-> Uninstall succeeded for " + name
+            lock.release()
+    else:
+        print 'No such application: ' + name
+        
 if __name__ == '__main__':
     # Parse command line arguments
     try:
@@ -101,31 +157,17 @@ if __name__ == '__main__':
         sys.exit()
 
     # Perform actions for each application specified
+    children = []
+    lock = threading.Lock()
     for name in names:
-        items = configuration.get_section_items(name)
-        if items != None:
-            p = process.process(configuration, curl_instance, name, items)
-
-            if getversion == True:
-                print 'Application       : ' + name
-                print 'Description       : ' + items['describe']
-                print 'Website           : ' + items['website']
-                print 'Latest Version    : ' + p.get_latest_version()
-                installed = configuration.get_installed_version(name)
-                if installed != '':
-                    print 'Installed Version : ' + installed
-                print ''
-            if download == True:
-                print 'Downloading...'
-                if p.download_latest_version() == False: print "  Download failed"
-            if install == True:
-                print 'Installing...'
-                if p.install_latest_version() == False: print "  Install failed"
-            if upgrade == True:
-                print 'Upgrading...'
-                if p.upgrade_version() == False: print "  Upgrade failed"
-            if uninstall == True:
-                print 'Uninstalling...'
-                if p.uninstall_version() == False: print "  Uninstall failed"
-        else:
-            print 'No such application: ' + name
+        child = threading.Thread(target=do_action, args=[configuration, 
+                                                         curl_instance, 
+                                                         lock, 
+                                                         name, 
+                                                         getversion, 
+                                                         download, 
+                                                         install, 
+                                                         upgrade, 
+                                                         uninstall])
+        children.append(child)
+        child.start()
