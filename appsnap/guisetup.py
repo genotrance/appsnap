@@ -725,17 +725,21 @@ class Events:
         if local != remote:
             # Update the DB file
             self.update_status_bar(action, 'Updating Local DB ...')
-            db = open(config.DB, 'wb')
-            db.write(remote)
-            db.close()
-            time.sleep(0.5)
+            try:
+                db = open(config.DB, 'wb')
+                db.write(remote)
+                db.close()
+                time.sleep(0.5)
 
-            # Reload settings
-            self.update_status_bar(action, 'Reloading DB ...')
-            self.setup()
-            time.sleep(0.5)
-            self.update_status_bar(action, 'Done')
-            time.sleep(3)
+                # Reload settings
+                self.update_status_bar(action, 'Reloading DB ...')
+                self.setup()
+                time.sleep(0.5)
+                self.update_status_bar(action, 'Done')
+                time.sleep(3)
+            except IOError:
+                self.update_status_bar(action, 'Unable to write to db.ini')
+                time.sleep(3)
         else:
             # No change found
             self.update_status_bar(action, 'No Changes Found')

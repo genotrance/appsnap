@@ -89,10 +89,13 @@ if __name__ == '__main__':
         local = open(config.DB, 'rb').read()
         if local != remote:
             # Update the DB file
-            print 'Updated!'
-            db = open(config.DB, 'wb')
-            db.write(remote)
-            db.close()
+            try:
+                db = open(config.DB, 'wb')
+                db.write(remote)
+                db.close()
+                print 'Updated!'
+            except IOError:
+                print 'Update Failed. Unable to write to db.ini'
         else:
             print 'No changes.'
         sys.exit()
