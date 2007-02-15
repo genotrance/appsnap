@@ -604,6 +604,9 @@ class Events:
               
             - name : dropdown
               method : Disable
+
+            - name : statusbar
+              method : Refresh
         """
         self.resources['gui'].parse_and_run(schema)
 
