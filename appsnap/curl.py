@@ -106,6 +106,7 @@ class curl:
             else: print '\nError ' + response.__str__() + ' for URL ' + url
 
             # Failure occurred so return false
+            self.free_lock(i)
             return None
 
         # Free lock
@@ -151,10 +152,14 @@ class curl:
             else: print '\nError ' + response.__str__() + ' while downloading ' + url + filename
 
             # Failure occurred so return false
+            self.free_lock(i)
             return False
 
         # Close download file
         self.download_data[i].close()
+
+        # Free lock
+        self.free_lock(i)
 
         # Success
         return True

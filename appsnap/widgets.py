@@ -138,6 +138,9 @@ class ApplicationPanel(wx.Panel):
 
     # Update the layout of this panel
     def update_layout(self):
+        # Get event lock
+        self.event.lock.acquire()
+        
         height = 50
         if self.version.GetLabel() != '': height += 15
         if self.installed_version.GetLabel() != '': height += 15
@@ -147,7 +150,10 @@ class ApplicationPanel(wx.Panel):
         self.SetMaxSize((self.GetMinWidth(), height))
         self.gui.objects['scrollwindow'].Refresh()
         self.gui.objects['bsizer'].Layout()
-        self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])        
+        self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])
+        
+        # Release lock
+        self.event.lock.release()
 
     # Select if upgradeable
     def display_if_upgradeable(self, sizeritem):
@@ -231,15 +237,21 @@ class ApplicationPanel(wx.Panel):
                 return self.error_out('Download')
 
         if action == 'uninstall' or (action == 'upgrade' and self.process.app_config['upgrades'] == 'true'):
-            # Perform the uninstall
+            # Perform the uninstall, use lock to ensure only one install/uninstall at a time
             self.set_status_text('Uninstalling ...')
-            if self.process.uninstall_version() == False:
+            self.event.lock.acquire()
+            uninstall_successful = self.process.uninstall_version()
+            self.event.lock.release()
+            if uninstall_successful == False:
                 return self.error_out('Uninstall')
 
         if action == 'install' or action == 'upgrade':
-            # Perform the install
+            # Perform the install, use lock to ensure only one install/uninstall at a time
             self.set_status_text('Installing ...')
-            if self.process.install_latest_version() == False:
+            self.event.lock.acquire()
+            install_successful = self.process.install_latest_version()
+            self.event.lock.release()
+            if install_successful == False:
                 return self.error_out('Install')
 
         # Done
@@ -263,7 +275,13 @@ class ApplicationPanel(wx.Panel):
         else:
             dl_total_string = round((dl_total / 1024 / 1024), 2).__str__() + ' MB'
             
-        self.set_status_text('Downloading ' + dl_current_string + ' / ' + dl_total_string)
+        # Percentage string
+        if dl_total != 0:
+            percentage_string = ' [' + int(dl_current / dl_total * 100).__str__() + '%]'
+        else:
+            percentage_string = ''
+
+        self.set_status_text('Downloaded ' + dl_current_string + ' of ' + dl_total_string + percentage_string)
 
     # Error out if any action fails
     def error_out(self, action):
