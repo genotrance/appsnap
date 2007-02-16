@@ -4,7 +4,7 @@
 set VERSION=1.3
 
 ::Set personal Path to the Apps:
-set PythonEXE=D:\Mess\Python24\python.exe
+set PythonEXE=D:\Mess\Python25\python.exe
 set SevenZipEXE=D:\Mess\Progra~1\SevenZip\7z.exe
 set UpxEXE=D:\Windows\upx.exe
 set NSIS=D:\Mess\Progra~1\NSIS\makensis.exe
