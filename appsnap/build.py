@@ -1,6 +1,8 @@
 import distutils.core
+import glob
 import os.path
 import py2exe
+import re
 import sys
 import types
 import version
@@ -10,45 +12,67 @@ import _winreg
 class build:
     # Constructor
     def __init__(self):
+        self.setup()
         self.get_dependencies()
-        self.setup_py2exe()
         self.build_executable()
-        self.rezip_zipfile()
+        self.rezip_shared_library()
+        self.upx_compress()
+        self.delete_older_packages()
+        self.build_nsis_package()
+        self.build_zip_package()
         
-    # Get build dependencies
-    def get_dependencies(self):
-        self.sevenzip = self.get_registry_key(_winreg.HKEY_LOCAL_MACHINE,
-                                              'SOFTWARE\\7-Zip',
-                                              'Path'
-                                              ) + os.path.sep + '7z.exe'
-        if self.sevenzip == os.path.sep + '7z.exe' or not os.path.exists(self.sevenzip):
-            self.error_out('7-Zip not available.')
-            
-        self.upx = os.path.expandvars('${systemroot}\\upx.exe')
-        if not os.path.exists(self.upx):
-            self.error_out('UPX not available.')
-            
-        self.nsis = self.get_registry_key(_winreg.HKEY_LOCAL_MACHINE,
-                                          'SOFTWARE\\NSIS',
-                                          '') + os.path.sep + 'makensis.exe'
-        if self.nsis == os.path.sep + 'makensis.exe' or not os.path.exists(self.nsis):
-            self.error_out('NSIS not available')
-            
-    # Initialize the Py2Exe variables
-    def setup_py2exe(self):
+    # Setup the build
+    def setup(self):
         # Initialize
         self.py2exe = {}
         
+        # Files to add in zip package
+        self.zip_package_files = ['*.py',
+                                  'db.ini',
+                                  'config.ini',
+                                  'appsnap.ico',
+                                  'appsnapsetup.nsi',
+                                  'docs' + os.path.sep + '*.txt'
+                                  ]
+        
+        # Create manifest
+        manifest = """
+            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+            <assembly xmlns="urn:schemas-microsoft-com:asm.v1"
+            manifestVersion="1.0">
+            <assemblyIdentity
+                version="0.64.1.0"
+                processorArchitecture="x86"
+                name="Controls"
+                type="win32"
+            />
+            <description>myProgram</description>
+            <dependency>
+                <dependentAssembly>
+                    <assemblyIdentity
+                        type="win32"
+                        name="Microsoft.Windows.Common-Controls"
+                        version="6.0.0.0"
+                        processorArchitecture="X86"
+                        publicKeyToken="6595b64144ccf1df"
+                        language="*"
+                    />
+                </dependentAssembly>
+            </dependency>
+            </assembly>
+        """
+        
         # Console executable
         self.py2exe['console'] = [{
-                         "script"         : "appsnap.py",
-                         "icon_resources" : [(1, "appsnap.ico")]
+                         "script"          : "appsnap.py",
+                         "icon_resources"  : [(1, "appsnap.ico")]
                }]
         
         # GUI executable
         self.py2exe['windows'] = [{
-                         "script"         : "appsnapgui.py",
-                         "icon_resources" : [(1, "appsnap.ico")]
+                         "script"          : "appsnapgui.py",
+                         "icon_resources"  : [(1, "appsnap.ico")],
+                         "other_resources" : [(24, 1, manifest)]
                          }]
         
         # Py2Exe options
@@ -72,9 +96,27 @@ class build:
         # Specify py2exe as a command line option
         sys.argv.append('py2exe')
             
+    # Get build dependencies
+    def get_dependencies(self):
+        self.sevenzip = self.get_registry_key(_winreg.HKEY_LOCAL_MACHINE,
+                                              'SOFTWARE\\7-Zip',
+                                              'Path'
+                                              ) + os.path.sep + '7z.exe'
+        if self.sevenzip == os.path.sep + '7z.exe' or not os.path.exists(self.sevenzip):
+            self.error_out('7-Zip not available.')
+            
+        self.upx = os.path.expandvars('${systemroot}\\upx.exe')
+        if not os.path.exists(self.upx):
+            self.error_out('UPX not available.')
+            
+        self.nsis = self.get_registry_key(_winreg.HKEY_LOCAL_MACHINE,
+                                          'SOFTWARE\\NSIS',
+                                          '') + os.path.sep + 'makensis.exe'
+        if self.nsis == os.path.sep + 'makensis.exe' or not os.path.exists(self.nsis):
+            self.error_out('NSIS not available')
+            
     # Execute Py2Exe to generate executables
     def build_executable(self):
-        print 'Building executable using Py2Exe'
         command = 'distutils.core.setup('
         for key in self.py2exe:
             if type(self.py2exe[key]) is types.StringType:
@@ -83,24 +125,54 @@ class build:
                 command += key + ' = ' + self.py2exe[key].__str__() + ', '
         command = command[:-2] + ')'
         eval(command)
+        os.system('rd build /s /q')
         
     # Rezip shared library
-    def rezip_zipfile(self):
+    def rezip_shared_library(self):
         if self.py2exe.has_key('zipfile'):
-            print 'Rezipping shared library using 7-Zip'
-            os.spawnl(os.P_WAIT, self.sevenzip, '-aoa', 'x', '-y', '"dist' + os.path.sep + self.py2exe['zipfile'] + '"', '-o"dist' + os.path.sep + 'shared"')
-            
+            os.system('""' + self.sevenzip + '" -aoa x -y "dist' + os.path.sep + self.py2exe['zipfile'] + '" -o"dist' + os.path.sep + 'shared""')
             os.chdir('dist' + os.path.sep + 'shared')
-            os.spawnl(os.P_WAIT, self.sevenzip, 'a', '-tzip', '-mx9', '"..' + os.path.sep + self.py2exe['zipfile'] + '"', '-r')
-            
+            os.system('""' + self.sevenzip + '" a -tzip -mx9 -r "..' + os.path.sep + self.py2exe['zipfile'] + '""')
+            os.chdir('..')
+            os.system('rd shared /s /q')
+            os.chdir('..')
+    
+    # Compressing executables with UPX
+    def upx_compress(self):
+        os.system('""' + self.upx + '" --best "dist' + os.path.sep + '*')
+    
+    # Delete older packages
+    def delete_older_packages(self):
+        appname = version.APPNAME.lower()
+        files = glob.glob(appname + 'setup-*.exe')
+        files.extend(glob.glob(appname + '-*.zip'))
+        for file in files:
+            print file
+            os.remove(file)
+    
+    # Package with NSIS
+    def build_nsis_package(self):
+        appname = version.APPNAME.lower()
+        lines = open(appname + 'setup.nsi').read()
+        o = open('temp.nsi', 'w')
+        o.write(re.sub('#VERSION#', version.APPVERSION, lines))
+        o.close()
+        os.system('""' + self.nsis + '" temp.nsi"')
+        os.remove('temp.nsi')
+        
+    # Create ZIP package
+    def build_zip_package(self):
+        appname = version.APPNAME.lower()
+        command = '""' + self.sevenzip + '" a -tzip -mx9 ' + appname + '-' + version.APPVERSION + '.zip '
+        for file in self.zip_package_files:
+            command += file + ' '
+        command += '"'
+        os.system(command)
+    
     # Die on error
     def error_out(self, text):
         print text + ' Build failed.'
         sys.exit(1)
-
-    #####
-    # Helper Functions
-    #####
 
     # Get data from the registry
     def get_registry_key(self, database, key, value):

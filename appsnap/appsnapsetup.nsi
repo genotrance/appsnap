@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME                         "AppSnap"
-!define PRODUCT_VERSION                      "1.3"
+!define PRODUCT_VERSION                      "#VERSION#"
 !define PRODUCT_PUBLISHER                    "Ganesh Viswanathan"
 !define PRODUCT_WEB_SITE                     "http://www.genotrance.com"
 !define PRODUCT_UNINST_KEY                   "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -15,7 +15,7 @@
 !define INSTALL_DIRECTORY                    "$PROGRAMFILES\AppSnap"
 
 ; Location of the installation files
-!define INSTALLATION_FILES_LOCATION          "appsnap_EXE"
+!define INSTALLATION_FILES_LOCATION          "dist"
 
 ; Location of the documentation files
 !define DOCUMENTATION_FILES_LOCATION          "docs"
