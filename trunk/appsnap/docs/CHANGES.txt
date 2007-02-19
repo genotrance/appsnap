@@ -28,6 +28,7 @@ Bug Fixes
   to know if the file has changed.
 - Obsolete sections in installed.ini are now filtered out.
 - Added some more error checking to update DB.
+- AppSnap no longer displays a console window during installs/uninstalls.
 
 Scrape Fixes
 - Fixed Adobe Reader scraping and download link.

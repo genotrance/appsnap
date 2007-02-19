@@ -104,6 +104,22 @@ packages will need to be installed prior to running AppSnap:
 Just download the source ZIP file, extract to a directory of your choice and run
 appsnap.py for the command line or appsnapgui.py for the GUI.
 
+Building AppSnap
+----------------
+
+The AppSnap executable and installer can be built from the source package using
+build.py. The build script requires the following applications and Python modules
+installed prior to execution:
+
+- Python
+  - wxPython
+  - PyCurl
+  - PyYAML
+  - Py2Exe
+- 7-Zip
+- NSIS
+- UPX (upx.exe present in the Windows directory)
+
 License
 -------
 
@@ -147,3 +163,9 @@ http://www.py2exe.org
 
 NSIS
 http://nsis.sf.net
+
+7-Zip
+http://www.7-zip.org/
+
+UPX
+http://upx.sourceforge.net/

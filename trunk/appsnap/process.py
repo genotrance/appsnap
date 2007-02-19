@@ -158,8 +158,8 @@ class process:
             command += ' ' + self.replace_install_dir(self.app_config['chinstdir'])
 
         # Run the installer, check return value
-        retval = os.system('"' + command + '"')
-        if  retval != 0:
+        retval = os.popen('"' + command + '"').close()
+        if  retval != None:
             # MSI returns non-zero as success too
             if cached_filename[-3:] == 'msi' and (retval == 1641 or retval == 3010): pass
             else: return False
@@ -187,8 +187,8 @@ class process:
 
             # Run uninstaller, check return value
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('.exe', '.exe"', uninstall_string)
-            retval = os.system('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"')
-            if  retval != 0:
+            retval = os.popen('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"').close()
+            if  retval != None:
                 # MSI returns non-zero as success too
                 if (retval == 1641 or retval == 3010): pass
                 else: return False
