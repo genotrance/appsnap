@@ -18,7 +18,10 @@ Internal Improvements
 - Support for parallel downloading in order to make best use of the available
   net speed.
 - Added MAJORMINORSUB_VERSION in order to support ImageMagick uninstallation.
-- Intelligent Python based build system to simply packaging AppSnap.
+- Intelligent Python based build system to simplify packaging AppSnap.
+- Installer now deletes only installed files thus preserving installed.ini
+  and userdb.ini.
+- AppSnap source is now distributed in a ZIP archive by the installer.
 
 Bug Fixes
 - Fixed bug in "Update DB" where a failed DB download was wiping out the current

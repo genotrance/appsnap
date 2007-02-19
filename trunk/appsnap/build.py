@@ -1,4 +1,5 @@
 import distutils.core
+import getopt
 import glob
 import os.path
 import py2exe
@@ -14,12 +15,14 @@ class build:
     def __init__(self):
         self.setup()
         self.get_dependencies()
-        self.build_executable()
-        self.rezip_shared_library()
-        self.upx_compress()
-        self.delete_older_packages()
-        self.build_nsis_package()
-        self.build_zip_package()
+        [p, r, u, z, n] = self.parse_arguments()
+        
+        if p: self.build_executable()
+        if r: self.rezip_shared_library()
+        if u: self.upx_compress()
+        if z and n: self.delete_older_packages()
+        if z: self.build_zip_package()
+        if n: self.build_nsis_package()
         
     # Setup the build
     def setup(self):
@@ -95,6 +98,40 @@ class build:
         
         # Specify py2exe as a command line option
         sys.argv.append('py2exe')
+        
+    # Parse arguments
+    def parse_arguments(self):
+        help = """
+Usage:
+  build.py [OPTIONS]
+  -p    Build executable using Py2Exe
+  -r    Rezip shared library using 7-Zip
+  -u    Compress executables using UPX
+  -z    Create ZIP package
+  -n    Create NSIS package"""
+    
+        # Set defaults
+        if len(sys.argv) == 2:
+            p = r = u = z = n = True
+        else:
+            p = r = u = z = n = False
+            try:
+                opts, args = getopt.getopt(sys.argv[1:], 'pruznh')
+            except getopt.GetoptError:
+                print help
+                sys.exit(1)
+    
+            for o, a in opts:
+                if o == '-p': p = True
+                if o == '-r': r = True
+                if o == '-u': u = True
+                if o == '-z': z = True
+                if o == '-n': n = True
+                if o == '-h':
+                    print help
+                    sys.exit(1)
+            
+        return [p, r, u, z, n]
             
     # Get build dependencies
     def get_dependencies(self):
@@ -150,6 +187,15 @@ class build:
             print file
             os.remove(file)
     
+    # Create ZIP package
+    def build_zip_package(self):
+        appname = version.APPNAME.lower()
+        command = '""' + self.sevenzip + '" a -tzip -mx9 ' + appname + '-' + version.APPVERSION + '.zip '
+        for file in self.zip_package_files:
+            command += file + ' '
+        command += '"'
+        os.system(command)
+    
     # Package with NSIS
     def build_nsis_package(self):
         appname = version.APPNAME.lower()
@@ -160,15 +206,6 @@ class build:
         os.system('""' + self.nsis + '" temp.nsi"')
         os.remove('temp.nsi')
         
-    # Create ZIP package
-    def build_zip_package(self):
-        appname = version.APPNAME.lower()
-        command = '""' + self.sevenzip + '" a -tzip -mx9 ' + appname + '-' + version.APPVERSION + '.zip '
-        for file in self.zip_package_files:
-            command += file + ' '
-        command += '"'
-        os.system(command)
-    
     # Die on error
     def error_out(self, text):
         print text + ' Build failed.'

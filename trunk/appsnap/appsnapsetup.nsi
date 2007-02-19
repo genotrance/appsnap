@@ -59,14 +59,11 @@ Section "Installer" SEC01
   ; Copy install files
   SetOutPath "$INSTDIR"
   File "${INSTALLATION_FILES_LOCATION}\*.*"
+  File "appsnap-${PRODUCT_VERSION}.zip"
 
   ; Copy documentation
   SetOutPath "$INSTDIR\docs"
   File "${DOCUMENTATION_FILES_LOCATION}\*.txt"
-
-  ; Copy source
-  SetOutPath "$INSTDIR\source"
-  File "*.py"
 SectionEnd
 
 Section -Post
@@ -100,8 +97,19 @@ Section Uninstall
   ; Delete shortcut
   Delete "$SMPROGRAMS\AppSnapGui.lnk"
 
-  ; Delete all files and directories
-  RMDir /r "$INSTDIR"
+  ; Delete all installed files and directories
+  RMDir /r "$INSTDIR\docs"
+  RMDir /r "$INSTDIR\cache"
+  Delete "$INSTDIR\*.pyd"
+  Delete "$INSTDIR\*.exe"
+  Delete "$INSTDIR\*.ico"
+  Delete "$INSTDIR\*.dll"
+  Delete "$INSTDIR\*.log"
+  Delete "$INSTDIR\*.lib"
+  Delete "$INSTDIR\*.zip"
+  Delete "$INSTDIR\db.ini"
+  Delete "$INSTDIR\config.ini"
+  RMDir "$INSTDIR"
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   SetAutoClose true
