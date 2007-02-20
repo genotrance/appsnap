@@ -15,6 +15,7 @@ Global functions
 -c             List all application categories
 -l             List supported applications
    -f <cat>    Filter list by category
+   -s <string> Filter list by string
 -U             Update database
 
 Application specific functions
@@ -84,14 +85,15 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
 if __name__ == '__main__':
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:uUx')
+        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:uUx')
     except getopt.GetoptError:
         print help
         sys.exit(2)
 
     # Set defaults
     names = None
-    filter = ''
+    categoryfilter = ''
+    stringfilter = ''
     categories = False
     download = False
     getversion = True
@@ -104,7 +106,7 @@ if __name__ == '__main__':
     for o, a in opts:
         if o == '-c': categories = True
         if o == '-d': download = True
-        if o == '-f': filter = a
+        if o == '-f': categoryfilter = a
         if o == '-g': getversion = True
         if o == '-h':
             print help
@@ -112,6 +114,7 @@ if __name__ == '__main__':
         if o == '-i': install = True
         if o == '-l': list = True
         if o == '-n': names = a.split(',')
+        if o == '-s': stringfilter = a
         if o == '-u': upgrade = True
         if o == '-U': updatedb = True
         if o == '-x': uninstall = True
@@ -135,7 +138,7 @@ if __name__ == '__main__':
         configuration.display_categories()
         sys.exit()
     elif list == True:
-        configuration.display_available_sections(filter)
+        configuration.display_available_sections(categoryfilter, stringfilter)
         sys.exit()
 
     # Update database if requested

@@ -13,6 +13,7 @@ GUI Enhancements
 - Added the Upgradeable category that lists all installed applications with
   available upgrades.
 - AppSnap now displays download progress information.
+- Applications can now be filtered by name based on a user specified string.
 
 Internal Improvements
 - Support for parallel downloading in order to make best use of the available
