@@ -37,7 +37,10 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
             output += 'Application       : ' + name + '\n'
             output += 'Description       : ' + items['describe'] + '\n'
             output += 'Website           : ' + items['website'] + '\n'
-            output += 'Latest Version    : ' + p.get_latest_version() + '\n'
+            latest_version = p.get_latest_version()
+            if latest_version == None:
+                latest_version = 'failed to connect'
+            output += 'Latest Version    : ' + latest_version + '\n'
             installed = configuration.get_installed_version(name)
             if installed != '':
                 output += 'Installed Version : ' + installed + '\n'
