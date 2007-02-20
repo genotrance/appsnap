@@ -58,6 +58,13 @@ schema = """
       style : wx.FONTSTYLE_NORMAL
       weight : wx.FONTWEIGHT_NORMAL
 
+    - name : filterfont
+      type : wx.Font
+      pointSize : 9
+      family : wx.FONTFAMILY_SWISS
+      style : wx.FONTSTYLE_NORMAL
+      weight : wx.FONTWEIGHT_NORMAL
+
     - name : urlfont
       type : wx.Font
       pointSize : 6
@@ -85,14 +92,35 @@ schema = """
       type : wx.Choice
       parent : panel
       size : (120, -1)
-      pos : (200, -1)
+      pos : (0, -1)
       methods:
       - method : SetFont
         font : ~dropdownfont
       events:
       - type : wx.EVT_CHOICE
         method : category_chosen
-        
+    
+    - name : filtertext
+      type : wx.StaticText
+      parent : panel
+      pos : (165, 5)
+      label : 'Filter :'
+      methods:
+      - method : SetFont
+        font : ~filterfont
+    
+    - name : filterbox
+      type : wx.TextCtrl
+      parent : panel
+      size : (120, 19)
+      pos : (200, 3)
+      methods:
+      - method : SetFont
+        font : ~filterfont
+      events:
+      - type : wx.EVT_TEXT
+        method : filter_section_list
+    
     - name : bsizer
       type : wx.BoxSizer
       orient : wx.VERTICAL
@@ -472,10 +500,14 @@ class Events:
         # Disable GUI
         self.disable_gui()
 
+        # Get filter string if any
+        filter = self.resources['gui'].objects['filterbox'].GetValue().lower()
+
         # Construct section list
         section_objs = []
         for section in sections:
-            section_objs.append(self.resources['gui'].objects[self.get_section_title(section)])
+            if (len(filter) == 0) or (len(filter) and section.lower().find(filter) != -1):
+                section_objs.append(self.resources['gui'].objects[self.get_section_title(section)])
 
         # Show scrollwindow
         schema = """
@@ -517,6 +549,15 @@ class Events:
         
         # Enable GUI
         self.enable_gui()
+        
+    # Filter the section list by string
+    def filter_section_list(self, event):
+        # Get current selected category
+        category = self.resources['gui'].objects['dropdown'].GetStringSelection()
+
+        child = threading.Thread(target=self.update_section_list, args=[category])
+        child.setDaemon(True)
+        child.start()
 
     # Refresh the section list
     def refresh_section_list(self):

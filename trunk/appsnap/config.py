@@ -97,7 +97,7 @@ class config:
             print '  ' + category
 
     # Display available sections
-    def display_available_sections(self, category=''):
+    def display_available_sections(self, category='', string=''):
         # Get the sections
         if category == 'Installed':
             sections = self.installed.sections()
@@ -107,14 +107,18 @@ class config:
             sections = self.get_sections()
             print 'Supported Applications\n'
 
-        if category != '': print '  Category    : ' + category + '\n'
+        if category != '': print '  Category    : ' + category
+        if string != '': print '  Filter      : ' + string + '\n'
+        else:
+            print
         for section in sections:
-            items = self.get_section_items(section)
-            if category == '' or (category == items['category']):
-                print '  Application : ' + section
-                print '  Description : ' + items['describe']
-                print '  Website     : ' + items['website']
-                print ''
+            if string == '' or (string != '' and section.lower().find(string) != -1):
+                items = self.get_section_items(section)
+                if category == '' or (category == items['category']):
+                    print '  Application : ' + section
+                    print '  Description : ' + items['describe']
+                    print '  Website     : ' + items['website']
+                    print ''
 
     #####
     # Version
