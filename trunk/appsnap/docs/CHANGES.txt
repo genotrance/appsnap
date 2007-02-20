@@ -1,12 +1,13 @@
 Version 1.3
 -----------
 New Applications
-- Internet : Google Talk, Maxthon, Opera, Skype
+- Internet : Google Talk, Maxthon, Opera, Skype, X-Chat, Yahoo Messenger
 - Fun and Games : Battle for Wesnoth, Tremulous
-- Utilities : ImageMagick, Launchy, Synergy
+- Utilities : ImageMagick, Launchy, RocketDock, Synergy
 - Productivity : DVD-Flick, ImgBurn
-- Libraries : K-Lite Mega Codec Pack
+- Libraries : K-Lite Mega Codec Pack, OpenSSL
 - Development : Py2Exe, wxPython Documentation
+- Entertainment : Jajuk
 
 GUI Enhancements
 - Brand new look and feel sporting a vertical layout and colors.
@@ -33,6 +34,7 @@ Bug Fixes
 - Obsolete sections in installed.ini are now filtered out.
 - Added some more error checking to update DB.
 - AppSnap no longer displays a console window during installs/uninstalls.
+- Fixed bug in CLI that was causing crash if latest version detection failed.
 
 Scrape Fixes
 - Fixed Adobe Reader scraping and download link.

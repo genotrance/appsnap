@@ -554,7 +554,7 @@ class Events:
     def filter_section_list(self, event):
         # Get current selected category
         category = self.resources['gui'].objects['dropdown'].GetStringSelection()
-
+        time.sleep(0.1)
         child = threading.Thread(target=self.update_section_list, args=[category])
         child.setDaemon(True)
         child.start()
