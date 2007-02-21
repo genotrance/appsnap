@@ -186,7 +186,7 @@ class process:
             _winreg.CloseKey(key)
 
             # Run uninstaller, check return value
-            if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('.exe', '.exe"', uninstall_string)
+            if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('.exe', '.exe"', uninstall_string.lower())
             retval = os.popen('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"').close()
             if  retval != None:
                 # MSI returns non-zero as success too
