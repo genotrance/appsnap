@@ -1,6 +1,7 @@
 # Import required libraries
 import sys
 import ConfigParser
+import version
 
 # Configuration file
 DB        = 'db.ini'
@@ -38,6 +39,10 @@ class config:
         for section in self.installed.sections():
             if not self.db.has_section(section):
                 self.installed.remove_section(section)
+                
+        # Add AppSnap to installed applications list
+        self.installed.add_section(version.APPNAME)
+        self.installed.set(version.APPNAME, 'version', version.APPVERSION)
 
     #####
     # Get

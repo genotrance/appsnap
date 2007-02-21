@@ -56,6 +56,15 @@ ShowInstDetails nevershow
 ShowUnInstDetails nevershow
 
 Section "Installer" SEC01
+  ; Close and uninstall older version of AppSnap
+  ReadRegStr $R0 ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString"
+  StrCmp $R0 "" uninstalldone
+  fct::fct /WC 'wxWindowClassNR' /WTP '${PRODUCT_NAME}' /TIMEOUT 2000 /QUESTION '${PRODUCT_NAME} is not responding. Terminate?'
+  StrCpy $R1 $R0 -10
+  ExecWait '$R0 /S _?=$R1'
+  Delete $R0
+  uninstalldone:
+
   ; Copy install files
   SetOutPath "$INSTDIR"
   File "${INSTALLATION_FILES_LOCATION}\*.*"
@@ -79,27 +88,29 @@ Section -Post
   SetOutPath "$INSTDIR"
   CreateShortCut "$SMPROGRAMS\AppSnapGui.lnk" "$INSTDIR\appsnapgui.exe"
 
-  ; Display README
-  ExecShell "open" "$INSTDIR\docs\README.txt"
+  ; Start AppSnap
+  ExecShell "open" "$INSTDIR\appsnapgui.exe"
 SectionEnd
 
 Function un.onUninstSuccess
   HideWindow
-  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer."
+  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer." /SD IDOK
 FunctionEnd
 
 Function un.onInit
-  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES +2
+  MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" /SD IDYES IDYES +2
   Abort
 FunctionEnd
 
 Section Uninstall
+  ; Close any running instances of AppSnapGui
+  fct::fct /WC 'wxWindowClassNR' /WTP '${PRODUCT_NAME}' /TIMEOUT 2000 /QUESTION '${PRODUCT_NAME} is not responding. Terminate?'
+  
   ; Delete shortcut
   Delete "$SMPROGRAMS\AppSnapGui.lnk"
 
   ; Delete all installed files and directories
   RMDir /r "$INSTDIR\docs"
-  RMDir /r "$INSTDIR\cache"
   Delete "$INSTDIR\*.pyd"
   Delete "$INSTDIR\*.exe"
   Delete "$INSTDIR\*.ico"
