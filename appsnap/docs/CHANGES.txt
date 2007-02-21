@@ -35,6 +35,8 @@ Bug Fixes
 - Added some more error checking to update DB.
 - AppSnap no longer displays a console window during installs/uninstalls.
 - Fixed bug in CLI that was causing crash if latest version detection failed.
+- Fixed bug in uninstallation where quotes were being lost when uninstaller had
+  upper case characters.
 
 Scrape Fixes
 - Fixed Adobe Reader scraping and download link.
