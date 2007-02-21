@@ -4,6 +4,7 @@ import process
 import re
 import threading
 import time
+import webbrowser
 import wx
 
 WIDTH = 400
@@ -237,6 +238,21 @@ schema = """
       - method : CopyFromIcon
         icon : ~reloadicon
 
+    - name : reportbugicon
+      type : wx.Icon
+      ^name : '%%systemroot%%\system32\shell32.dll;13'
+      ^type : wx.BITMAP_TYPE_ICO
+      desiredWidth: 16
+      desiredHeight: 16
+
+    - name : reportbugbmp
+      type : wx.EmptyBitmap
+      width : 16
+      height : 16
+      methods:
+      - method : CopyFromIcon
+        icon : ~reportbugicon
+
     - name : toolbar
       type : wx.ToolBar
       parent : tbpanel
@@ -402,6 +418,22 @@ class Events:
               shortHelp : Reload configuration
 
             - name : toolbar
+              method : AddSeparator
+
+            - name : toolbar
+              method : AddSeparator
+
+            - name : toolbar
+              method : AddSeparator
+
+            - name : toolbar
+              method : AddLabelTool
+              id : -1
+              bitmap : ~reportbugbmp
+              label : Report Bug
+              shortHelp : Report a bug 
+
+            - name : toolbar
               method : Realize
         """
         (objects, methods, events) = self.resources['gui'].parse(schema)
@@ -412,6 +444,7 @@ class Events:
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[9].GetId(), self.do_uninstall)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[13].GetId(), self.do_threaded_db_update)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[15].GetId(), self.do_reload)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[19].GetId(), self.do_report)
 
         # Create toolbar only once
         self.toolbar = True
@@ -808,3 +841,7 @@ class Events:
         # Reset the GUI
         self.update_status_bar('', '')
         self.enable_gui()
+        
+    # Report a bug
+    def do_report(self, event):
+        webbrowser.open('http://code.google.com/p/appsnap/issues/entry', 2)
