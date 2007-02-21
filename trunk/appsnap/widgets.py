@@ -148,6 +148,7 @@ class ApplicationPanel(wx.Panel):
         
         self.SetMinSize((self.GetMinWidth(), height))
         self.SetMaxSize((self.GetMinWidth(), height))
+        self.Refresh()
         self.gui.objects['scrollwindow'].Refresh()
         self.gui.objects['bsizer'].Layout()
         self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])
