@@ -1,6 +1,8 @@
 # Import required libraries
-import sys
 import ConfigParser
+import os.path
+import sys
+import time
 import version
 
 # Configuration file
@@ -8,6 +10,7 @@ DB        = 'db.ini'
 USERDB    = 'userdb.ini'
 CONFIG    = 'config.ini'
 INSTALLED = 'installed.ini'
+LATEST    = 'latest.ini'
 
 # Configuration loading class
 class config:
@@ -43,6 +46,11 @@ class config:
         # Add AppSnap to installed applications list
         self.installed.add_section(version.APPNAME)
         self.installed.set(version.APPNAME, 'version', version.APPVERSION)
+        
+        # Load the version cache
+        self.latest_ini = os.path.join(self.cache['cache_location'], LATEST)
+        self.latest = ConfigParser.SafeConfigParser()
+        self.latest.read(self.latest_ini)
 
     #####
     # Get
@@ -88,6 +96,15 @@ class config:
 
         return cat_sections
 
+    # Get sections by string
+    def filter_sections_by_string(self, sections, string):
+        string_sections = []
+        for section in sections:
+            if section.lower().find(string.lower()) != -1:
+                string_sections.append(section)
+
+        return string_sections
+
     #####
     # Display
     #####
@@ -112,21 +129,21 @@ class config:
             sections = self.get_sections()
             print 'Supported Applications\n'
 
-        if category != '': print '  Category    : ' + category
-        if string != '': print '  Filter      : ' + string + '\n'
+        if category != '': print 'Category    : ' + category
+        if string != '': print 'Filter      : ' + string + '\n'
         else:
             print
         for section in sections:
-            if string == '' or (string != '' and section.lower().find(string) != -1):
+            if string == '' or (string != '' and section.lower().find(string.lower()) != -1):
                 items = self.get_section_items(section)
                 if category == '' or (category == items['category']):
-                    print '  Application : ' + section
-                    print '  Description : ' + items['describe']
-                    print '  Website     : ' + items['website']
-                    print ''
+                    print 'Application : ' + section
+                    print 'Description : ' + items['describe']
+                    print 'Website     : ' + items['website']
+                    print
 
     #####
-    # Version
+    # Installed Version
     #####
 
     # Get installed version
@@ -147,6 +164,25 @@ class config:
         if self.installed.has_section(section) == True:
             self.installed.remove_section(section)
             self.installed.write(open(INSTALLED, 'w'))
+
+    #####
+    # Cached Latest Version
+    #####
+
+    # Get cached latest version
+    def get_cached_latest_version(self, section):
+        if self.latest.has_section(section) == True:
+            if time.time() - float(self.latest.get(section, 'timestamp')) < int(self.cache['cache_timeout']) * 24 * 60 * 60:
+                return self.latest.get(section, 'version')
+        return None
+
+    # Save cached latest version to file
+    def save_cached_latest_version(self, section, version):
+        if self.latest.has_section(section) == False:
+            self.latest.add_section(section)
+        self.latest.set(section, 'version', version)
+        self.latest.set(section, 'timestamp', time.time().__str__())
+        self.latest.write(open(self.latest_ini, 'w'))
 
     #####
     # Helper functions
