@@ -40,24 +40,25 @@ class process:
         self.app_config = app_config
 
         # Get version only if scrape specified
+        self.versions = None
+        self.splitversions = None
+        self.width = 0
         if 'scrape' in self.app_config and 'version' in self.app_config:
-            self.latestversion = None
-            self.versions = self.get_versions()
-            self.splitversions = self.get_split_versions()
-            self.width = self.get_width()
+            self.latestversion = self.global_config.get_cached_latest_version(self.app)
+            if self.latestversion == None:
+                self.versions = self.get_versions()
+                self.splitversions = self.get_split_versions()
+                self.width = self.get_width()
         else:
             self.latestversion = NOT_AVAILABLE
-            self.versions = None
-            self.splitversions = None
-            self.width = 0
 
     # ***
     # External functions
 
     # Get the latest version
     def get_latest_version(self):
-        # No versioning available
-        if self.latestversion == NOT_AVAILABLE: return self.latestversion
+        # No versioning or cached version available
+        if self.latestversion != None: return self.latestversion
 
         # Filter latest
         if self.filter_latest_version() == False: return None
@@ -70,6 +71,7 @@ class process:
         for i in range(len(self.versions)):
             if re.match(version, self.versions[i]):
                 self.latestversion = self.versions[i]
+                self.global_config.save_cached_latest_version(self.app, self.latestversion)
                 return self.versions[i]
 
         return None
@@ -101,10 +103,11 @@ class process:
         # Download if new version not already downloaded or if filename does not
         # contain version information and more than a day old (we have no way to
         # know if the file has changed)
+        cache_timeout = int(self.global_config.cache['cache_timeout']) * 24 * 60 * 60
         if not os.path.exists(cached_filename) or (
                                                    filename == self.app_config['filename'] and
                                                    os.path.exists(cached_filename) and
-                                                   (time.time() - os.stat(cached_filename).st_ctime > 86400)
+                                                   (time.time() - os.stat(cached_filename).st_ctime > cache_timeout)
                                                    ):
             # Delete any older cached versions
             self.delete_older_versions()

@@ -19,7 +19,10 @@ Global functions
 -U             Update database
 
 Application specific functions
--n <name>      One or more application names, comma separated
+-n <name>      One or more application names, comma separated or * to specify filter
+   -f <cat>    Filter applications by category
+   -s <string> Filter applications by string
+
    -d          Download application
    -g          Get latest version       (DEFAULT)
    -i          Install latest version   (implies -d)
@@ -162,6 +165,20 @@ if __name__ == '__main__':
             print 'No changes.'
         sys.exit()
 
+    # Figure out applications selected
+    if len(names) == 1 and names[0] == '*':
+        if categoryfilter == '':
+            names = configuration.get_sections()
+        else:
+            print 'Category          : ' + categoryfilter
+            names = configuration.get_sections_by_category(categoryfilter)
+
+        if stringfilter != '':
+            print 'Filter            : ' + stringfilter + '\n'
+            names = configuration.filter_sections_by_string(names, stringfilter)
+        else:
+            print
+            
     # Perform actions for each application specified
     children = []
     lock = threading.Lock()

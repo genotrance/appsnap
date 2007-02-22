@@ -14,11 +14,16 @@ GUI Enhancements
   available upgrades.
 - AppSnap now displays download progress information.
 - Applications can now be filtered by name based on a user specified string.
+- The CLI can now filter applications by category as well as user specified
+  strings, both for listing as well as to perform application specific actions.
 - Added a bug report button to simplify reporting problems.
 
 Internal Improvements
 - Support for parallel downloading in order to make best use of the available
   connection.
+- AppSnap now caches the version information obtained by scraping for a user
+  configurable time limit (default 2 days) after which the information needs
+  to be downloaded again.
 - Intelligent Python based build system to simplify packaging AppSnap.
 - Installer is now capable of detecting and uninstalling older versions. AppSnap
   can now be added to its own database.
@@ -32,8 +37,8 @@ Bug Fixes
 - Fixed bug in "Update DB" where a failed DB download was wiping out the current
   DB and killing AppSnap.
 - Installer filenames which do not contain any version information are now 
-  redownloaded (if more than a day since the last download) since we have no way
-  to know if the file has changed.
+  redownloaded if cache timeout has expired (configured in config.ini) since we 
+  have no way to know if the file has changed.
 - Obsolete sections in installed.ini are now filtered out.
 - Added some more error checking to update DB.
 - AppSnap no longer displays a console window during installs/uninstalls.
