@@ -684,6 +684,9 @@ class Events:
               
             - name : dropdown
               method : Disable
+              
+            - name : filterbox
+              method : Disable
 
             - name : statusbar
               method : Refresh
@@ -701,6 +704,9 @@ class Events:
               method : Refresh
               
             - name : dropdown
+              method : Enable
+
+            - name : filterbox
               method : Enable
 
             - name : statusbar

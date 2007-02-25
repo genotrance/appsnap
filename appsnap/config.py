@@ -44,7 +44,8 @@ class config:
                 self.installed.remove_section(section)
                 
         # Add AppSnap to installed applications list
-        self.installed.add_section(version.APPNAME)
+        if not self.installed.has_section(version.APPNAME):
+            self.installed.add_section(version.APPNAME)
         self.installed.set(version.APPNAME, 'version', version.APPVERSION)
         
         # Load the version cache
