@@ -24,13 +24,14 @@ Application specific functions
    -s <string> Filter applications by string
 
    -d          Download application
+      -t       Test download only
    -g          Get latest version       (DEFAULT)
    -i          Install latest version   (implies -d)
    -u          Upgrade current version  (implies -i, -x if not upgradeable)
    -x          Uninstall current version
 """
 
-def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall):
+def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall, test):
     items = configuration.get_section_items(name)
     if items != None:
         p = process.process(configuration, curl_instance, name, items)
@@ -49,8 +50,10 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
                 output += 'Installed Version : ' + installed + '\n'
             print output
         if download == True:
-            print '-> Downloading ' + name
-            if p.download_latest_version() == False:
+            print '-> Downloading ' + name,
+            if test: print ' (Testing)'
+            else: print
+            if p.download_latest_version(None, test) == False:
                 print "-> Download failed for " + name
                 return
             else:
@@ -91,7 +94,7 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
 if __name__ == '__main__':
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:uUx')
+        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:tuUx')
     except getopt.GetoptError:
         print help
         sys.exit(2)
@@ -108,6 +111,7 @@ if __name__ == '__main__':
     upgrade = False
     uninstall = False
     updatedb = False
+    test = False
 
     for o, a in opts:
         if o == '-c': categories = True
@@ -121,6 +125,7 @@ if __name__ == '__main__':
         if o == '-l': list = True
         if o == '-n': names = a.split(',')
         if o == '-s': stringfilter = a
+        if o == '-t': test = True
         if o == '-u': upgrade = True
         if o == '-U': updatedb = True
         if o == '-x': uninstall = True
@@ -191,6 +196,7 @@ if __name__ == '__main__':
                                                          download, 
                                                          install, 
                                                          upgrade, 
-                                                         uninstall])
+                                                         uninstall,
+                                                         test])
         children.append(child)
         child.start()
