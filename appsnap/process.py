@@ -77,7 +77,7 @@ class process:
         return None
 
     # Download the latest version of the application's installer
-    def download_latest_version(self, progress_callback=None):
+    def download_latest_version(self, progress_callback=None, test=False):
         # Get latest version if not already done
         if self.latestversion == None: self.get_latest_version()
 
@@ -113,7 +113,7 @@ class process:
             self.delete_older_versions()
 
             # Return false if download fails
-            if self.curl_instance.download_web_data(download, filename, referer, progress_callback) != True: return False
+            if self.curl_instance.download_web_data(download, filename, referer, progress_callback, test) != True: return False
 
         return cached_filename
 

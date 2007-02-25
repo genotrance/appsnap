@@ -32,6 +32,8 @@ Internal Improvements
 - Installer now supports silent uninstallation.
 - AppSnap source is now distributed in a ZIP archive by the installer.
 - Added MAJORMINORSUB_VERSION in order to support ImageMagick uninstallation.
+- Added a test flag to the CLI to verify that an application is downloadable
+  without having to download the entire installer.
 
 Bug Fixes
 - Fixed bug in "Update DB" where a failed DB download was wiping out the current
@@ -52,6 +54,7 @@ Scrape Fixes
 - WinSCP version scraping now done on Sourceforge.
 - Dia's version search now includes pre-releases - e.g. 0.96-pre4
 - uTorrent now has sub-version numbering - e.g. 1.6.1
+- Fixed InnoSetup version regex.
 
 Version 1.2.1
 -------------

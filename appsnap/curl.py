@@ -72,7 +72,7 @@ class curl:
         self.lock[i].release()
 
     # Get the specified URL
-    def get_url(self, url, i, callback):
+    def get_url(self, url, i, callback, test=False):
         # Save thread name
         self.acquired[threading.currentThread().getName()] = i
 
@@ -85,7 +85,11 @@ class curl:
 
         # Perform the get
         try: self.curl[i].perform()
-        except pycurl.error:
+        except pycurl.error, message:
+            errno, text = message
+            # Timeout test then succeeded
+            if  errno == 28 and test == True:
+                return 200
             return 404
 
         # Return the response code
@@ -122,7 +126,7 @@ class curl:
         self.web_data[i] += buf
 
     # Download data from the web
-    def download_web_data(self, url, filename, referer, progress_callback=None):
+    def download_web_data(self, url, filename, referer, progress_callback=None, test=False):
         # Get lock
         i = self.get_lock()
         
@@ -130,18 +134,23 @@ class curl:
         if not os.path.exists(self.global_config.cache['cache_location']):
             os.mkdir(self.global_config.cache['cache_location'])
 
-        # Open download filename
+        # If test mode, download to different file and set timeout
         cached_filename = self.get_cached_name(filename)
+        if test == True:
+            self.curl[i].setopt(pycurl.TIMEOUT, 1)
+            cached_filename += '.tmp'
+
+        # Open download filename
         self.download_data[i] = open(cached_filename, 'wb')
 
         # Set progress callback if specified
         if progress_callback != None:
             self.curl[i].setopt(pycurl.NOPROGRESS, 0)
             self.curl[i].setopt(pycurl.PROGRESSFUNCTION, progress_callback)
-
+            
         # Download data
         self.curl[i].setopt(pycurl.REFERER, referer)
-        response = self.get_url(url + filename, i, self.call_back_download)
+        response = self.get_url(url + filename, i, self.call_back_download, True)
         if response >= 300:
             # Close and delete download file
             self.download_data[i].close()
@@ -157,9 +166,12 @@ class curl:
 
         # Close download file
         self.download_data[i].close()
-
+        
         # Free lock
         self.free_lock(i)
+        
+        # Delete file if test mode
+        if test == True: os.remove(cached_filename)
 
         # Success
         return True
