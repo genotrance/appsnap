@@ -5,7 +5,7 @@ New Applications
 - Fun and Games : Battle for Wesnoth, Tremulous
 - Internet : Google Talk, Maxthon, Opera, Skype, X-Chat, Yahoo Messenger
 - Libraries : K-Lite Mega Codec Pack, OpenSSL
-- Productivity : DVD-Flick, ImgBurn
+- Productivity : DVD-Flick, ImgBurn, Inkscape
 - Utilities : ImageMagick, Launchy, RocketDock, Synergy
 
 GUI Enhancements
@@ -54,7 +54,7 @@ Scrape Fixes
 - WinSCP version scraping now done on Sourceforge.
 - Dia's version search now includes pre-releases - e.g. 0.96-pre4
 - uTorrent now has sub-version numbering - e.g. 1.6.1
-- Fixed InnoSetup version regex.
+- Fixed InnoSetup and Azureus version regex.
 
 Version 1.2.1
 -------------
