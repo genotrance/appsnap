@@ -8,8 +8,23 @@ then installs the software in one seamless step.
 AppSnap is primarily designed for Windows which does not have any decent
 package manager such as APT and RPM as in the Linux world.
 
-AppSnap is written in Python and uses wxPython, PyCurl and PyYAML. It is
-packaged using Py2Exe and installed using NSIS.
+AppSnap is written in Python and uses wxPython, PyCurl and PyYAML. It is 
+packaged using Py2Exe, compressed with UPX and installed using NSIS.
+
+Features
+--------
+
+- Detect latest version of supported applications
+- Download, install, upgrade and uninstall
+- Fully functional GUI and CLI
+- Manage installed and upgradeable applications
+- Manage AppSnap updates from within itself
+- Update growing application database from central repository
+- Create single application repository to be used by AppSnap on an intranet
+- Support proxy configurations
+- Parallel downloads with progress information
+- Filter applications by category and keywords
+- Free and Open Source
 
 Installation
 ------------

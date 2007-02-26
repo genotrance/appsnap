@@ -442,7 +442,7 @@ class Events:
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[5].GetId(), self.do_install)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[7].GetId(), self.do_upgrade)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[9].GetId(), self.do_uninstall)
-        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[13].GetId(), self.do_threaded_db_update)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[13].GetId(), self.do_db_update)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[15].GetId(), self.do_reload)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[19].GetId(), self.do_report)
 
@@ -690,6 +690,9 @@ class Events:
 
             - name : statusbar
               method : Refresh
+              
+            - name : application
+              method : Yield
         """
         self.resources['gui'].parse_and_run(schema)
 
@@ -711,6 +714,9 @@ class Events:
 
             - name : statusbar
               method : Refresh
+
+            - name : application
+              method : Yield
         """
         self.resources['gui'].parse_and_run(schema)
         
@@ -779,13 +785,7 @@ class Events:
         self.do_threaded_action('upgrade')
 
     # Update database
-    def do_threaded_db_update(self, event):
-        child = threading.Thread(target=self.do_db_update)
-        child.setDaemon(True)
-        child.start()
-        
-    # Update database
-    def do_db_update(self):
+    def do_db_update(self, event):
         # Action name
         action = 'Performing Update DB'
         
@@ -822,6 +822,7 @@ class Events:
                 self.setup()
                 time.sleep(0.5)
                 self.update_status_bar(action, 'Done')
+                self.configuration.copy_database_to_cache(True)
                 time.sleep(3)
             except IOError:
                 self.update_status_bar(action, 'Unable to write to db.ini')

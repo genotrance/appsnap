@@ -1,6 +1,7 @@
 # Import required libraries
 import ConfigParser
 import os.path
+import shutil
 import sys
 import time
 import version
@@ -33,6 +34,13 @@ class config:
         self.cache = self.convert_to_hash(self.config.items('cache'))
         self.database = self.convert_to_hash(self.config.items('database'))
         self.network = self.convert_to_hash(self.config.items('network'))
+        
+        # Remove file: from cache location if specified
+        if self.cache['cache_location'][:5].lower() == 'file:':
+            self.cache['cache_location'] = self.cache['cache_location'][5:]
+            
+        # Copy database to cache location if not already done
+        self.copy_database_to_cache()
 
         # Load the installed applications
         self.installed = ConfigParser.SafeConfigParser()
@@ -210,6 +218,13 @@ class config:
                 os.mkdir(self.cache['cache_location'])
             except IOError:
                 print 'Failed to create cache location'
+                
+    # Copy database to cache directory
+    def copy_database_to_cache(self, overwrite=False):
+        cached_db = os.path.join(self.cache['cache_location'], DB)
+        self.create_cache_directory()
+        if not os.path.exists(cached_db) or overwrite == True:
+            shutil.copy(DB, cached_db)
 
     # Check if a section has all the expected fields
     def check_section_items(self, section, items):
