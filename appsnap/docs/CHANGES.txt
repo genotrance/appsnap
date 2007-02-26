@@ -1,5 +1,5 @@
-Version 1.3
------------
+Version 1.3.0-pre1
+------------------
 New Applications
 - Development : Py2Exe, wxPython Documentation
 - Fun and Games : Battle for Wesnoth, Tremulous
