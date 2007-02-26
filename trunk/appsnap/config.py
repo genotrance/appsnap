@@ -158,13 +158,19 @@ class config:
         if self.installed.has_section(section) == False:
             self.installed.add_section(section)
         self.installed.set(section, 'version', version)
-        self.installed.write(open(INSTALLED, 'w'))
+        try:
+            self.installed.write(open(INSTALLED, 'w'))
+        except IOError:
+            print 'Failed to update installed.ini. Is it writable?'
 
     # Delete installed version from file
     def delete_installed_version(self, section):
         if self.installed.has_section(section) == True:
             self.installed.remove_section(section)
-            self.installed.write(open(INSTALLED, 'w'))
+            try:
+                self.installed.write(open(INSTALLED, 'w'))
+            except:
+                print 'Failed to update installed.ini. Is it writable?'
 
     #####
     # Cached Latest Version
@@ -183,11 +189,27 @@ class config:
             self.latest.add_section(section)
         self.latest.set(section, 'version', version)
         self.latest.set(section, 'timestamp', time.time().__str__())
-        self.latest.write(open(self.latest_ini, 'w'))
+
+        # Create cache directory
+        self.create_cache_directory()
+    
+        # Save version
+        try:
+            self.latest.write(open(self.latest_ini, 'w'))
+        except IOError:
+            print 'Failed to update latest.ini. Is it writable?'
 
     #####
     # Helper functions
     #####
+    
+    # Create cache directory
+    def create_cache_directory(self):
+        if not os.path.exists(self.cache['cache_location']):
+            try:
+                os.mkdir(self.cache['cache_location'])
+            except IOError:
+                print 'Failed to create cache location'
 
     # Check if a section has all the expected fields
     def check_section_items(self, section, items):
