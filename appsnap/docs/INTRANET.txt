@@ -1,0 +1,54 @@
+AppSnap Intranet Setup
+----------------------
+
+AppSnap can prove useful in deploying applications across multiple machines 
+in an intranet. In such a configuration, a central server with AppSnap 
+installed will download all the required version information and installers 
+to the AppSnap cache folder. This cache folder can then be shared across the 
+network for remote instances of AppSnap to connect to and download from.
+
+AppSnap Repository
+------------------
+
+AppSnap should be installed on a primary server with access to the internet 
+as well as the intranet. An application repository can be created on the 
+command line as follows:-
+
+  appsnap -n * -d
+
+This will query and cache the latest version and installer of every application 
+supported by AppSnap. If every single application does not need to be cached 
+then the list of applications can be specified comma separated instead of *.
+For example:-
+
+  appsnap -n AppSnap,FileZilla,Firefox,Thunderbird -d
+
+The above actions can also be performed on the GUI by selecting every application 
+of interest and clicking on download. Once the repository has been created, the 
+AppSnap cache folder should be setup as a Windows shared folder that every intranet 
+client can access.
+
+AppSnap Clients
+---------------
+
+In order for the AppSnap clients to access this application repository, the 
+following needs to be changed in the config.ini file for each client under the 
+[cache] section:-
+
+  cache_location = file:\\primary_server\appsnap_shared_cache_folder
+  cache_timeout = 1000
+
+What this does is instructs AppSnap on the client machines to use the remote 
+cache folder as their own cache folder. This way, each client has access to the 
+latest version information and installers as maintained by the primary server. 
+The cache timeout essentially tells the client to respect the cached information 
+for a long time (1000 days).
+
+We also need to ensure that the AppSnap clients can keep their application databases 
+up to date without access to the internet. This can be achieved by the following 
+change to config.ini under the [database] section:
+
+  location = file:\\primary_server\appsnap_shared_cache_folder\db.ini
+
+As the primary server updates its own database, the clients will also be able to 
+keep up with the changes. 
