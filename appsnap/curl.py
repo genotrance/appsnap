@@ -131,8 +131,7 @@ class curl:
         i = self.get_lock()
         
         # Create cache directory
-        if not os.path.exists(self.global_config.cache['cache_location']):
-            os.mkdir(self.global_config.cache['cache_location'])
+        self.global_config.create_cache_directory()
 
         # If test mode, download to different file and set timeout
         cached_filename = self.get_cached_name(filename)
