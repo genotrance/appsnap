@@ -1,9 +1,14 @@
 Version 1.3.0-pre2
 ------------------
+Internal Improvements
+- AppSnap maintains a copy of the database in the cache directory since it is
+  an essential part of the application repository.
+
 Bug Fixes
 - Fixed a bug where latest.ini creation was failing on a fresh install since
   the cache directory did not exist. (Reported by gabmatrix). Also added error 
   checking for all file writes.
+- Fixed a bug where update DB on the GUI was not reloading correctly.
 
 Version 1.3.0-pre1
 ------------------

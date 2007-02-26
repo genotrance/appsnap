@@ -163,6 +163,7 @@ if __name__ == '__main__':
                 db = open(config.DB, 'wb')
                 db.write(remote)
                 db.close()
+                configuration.copy_database_to_cache(True)
                 print 'Updated!'
             except IOError:
                 print 'Update Failed. Unable to write to db.ini'
