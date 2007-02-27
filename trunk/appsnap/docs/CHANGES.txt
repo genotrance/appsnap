@@ -10,6 +10,9 @@ Bug Fixes
   checking for all file writes.
 - Fixed a bug where update DB on the GUI was not reloading correctly.
 
+Scrape Fixes
+- Fixed DVD-Flick to install to defined directory.
+
 Version 1.3.0-pre1
 ------------------
 New Applications
