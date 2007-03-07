@@ -45,6 +45,12 @@ schema = """
       green : 200
       blue : 255
       
+    - name : bluecolour
+      type : wx.Colour
+      red : 0
+      green : 0
+      blue : 255
+      
     - name : sectionfont
       type : wx.Font
       pointSize : 10
