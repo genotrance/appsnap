@@ -9,9 +9,12 @@ Bug Fixes
   the cache directory did not exist. (Reported by gabmatrix). Also added error 
   checking for all file writes.
 - Fixed a bug where update DB on the GUI was not reloading correctly.
+- Fixed font bug reported by gabmatrix (issue 25) where AppSnap was loading the
+  wrong font for the application name if Office 2007 was installed.
 
 Scrape Fixes
 - Fixed DVD-Flick to install to defined directory.
+- Fixed Songbird scrape and filename.
 
 Version 1.3.0-pre1
 ------------------

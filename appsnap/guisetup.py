@@ -51,6 +51,7 @@ schema = """
       family : wx.FONTFAMILY_DECORATIVE
       style : wx.FONTSTYLE_NORMAL
       weight : wx.FONTWEIGHT_BOLD
+      face : Comic Sans MS
 
     - name : dropdownfont
       type : wx.Font
@@ -58,6 +59,7 @@ schema = """
       family : wx.FONTFAMILY_SWISS
       style : wx.FONTSTYLE_NORMAL
       weight : wx.FONTWEIGHT_NORMAL
+      face : Arial
 
     - name : filterfont
       type : wx.Font
@@ -65,13 +67,15 @@ schema = """
       family : wx.FONTFAMILY_SWISS
       style : wx.FONTSTYLE_NORMAL
       weight : wx.FONTWEIGHT_NORMAL
-
+      face : Arial
+      
     - name : urlfont
       type : wx.Font
       pointSize : 6
       family : wx.FONTFAMILY_TELETYPE
       style : wx.FONTSTYLE_NORMAL
       weight : wx.FONTWEIGHT_BOLD
+      face : Courier New
 
     - name : tbpanel
       type : wx.Panel
