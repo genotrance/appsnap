@@ -31,6 +31,8 @@ class ApplicationPanel(wx.Panel):
         self.url.SetLabel(">>")
         self.url.SetURL(url)
         self.url.SetToolTipString(url)
+        self.url.SetUnderlines(False, False, False)
+        self.url.SetColours(self.gui.objects['bluecolour'], self.gui.objects['bluecolour'])
         
         self.status = wx.StaticText(self, -1, '')
         
