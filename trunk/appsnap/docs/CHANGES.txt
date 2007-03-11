@@ -11,6 +11,8 @@ Bug Fixes
 - Fixed a bug where update DB on the GUI was not reloading correctly.
 - Fixed font bug reported by gabmatrix (issue 25) where AppSnap was loading the
   wrong font for the application name if Office 2007 was installed.
+- Fixed a drawing bug reported by gabmatrix (issue 22) where application details
+  were disappearing on choosing a different category.
 
 Scrape Fixes
 - Fixed DVD-Flick to install to defined directory.

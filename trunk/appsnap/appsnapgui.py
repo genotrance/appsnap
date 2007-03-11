@@ -1,8 +1,10 @@
 import guisetup
 import makegui
+import pycurl
 import sys
 import time
 import version
+import wx
 
 OLD_STDOUT = None
 
@@ -26,6 +28,12 @@ if __name__ == '__main__':
     # Start debug if requested
     start_debug()
     
+    # Print version information
+    print 'AppSnap = ' + version.APPVERSION
+    print 'wxPython = ' + wx.VERSION_STRING
+    print 'PyCurl = ' + pycurl.version
+    print
+
     # Create a gui object
     gui = makegui.MakeGui(version.APPNAME + ' ' + version.APPVERSION, None, (guisetup.WIDTH, guisetup.HEIGHT))
 

@@ -627,6 +627,11 @@ class Events:
         """
         self.resources['gui'].parse_and_run(schema)
 
+        # Fix for disappearing section information
+        for item in self.resources['gui'].objects['bsizer'].GetChildren():
+            if item.IsShown():
+                item.GetWindow().set_position()
+
         # Release lock
         self.lock.release()
         

@@ -17,16 +17,16 @@ class ApplicationPanel(wx.Panel):
         self.process = False
         
         # Widgets
-        self.label = wx.StaticText(self, -1, label, pos=(40, 10))
+        self.label = wx.StaticText(self, -1, label)
         self.label.SetFont(self.gui.objects['sectionfont'])
 
-        self.checkbox = wx.CheckBox(self, -1, pos=(10, 20))
-        self.description = wx.StaticText(self, -1, description, pos=(40, 30))
+        self.checkbox = wx.CheckBox(self, -1)
+        self.description = wx.StaticText(self, -1, description)
 
         self.version = wx.StaticText(self, -1, '')
         self.installed_version = wx.StaticText(self, -1, '')
         
-        self.url = wx.lib.hyperlink.HyperLinkCtrl(self, pos=(45 + self.label.GetSize().GetWidth(), 10))
+        self.url = wx.lib.hyperlink.HyperLinkCtrl(self)
         self.url.SetFont(self.gui.objects['urlfont'])
         self.url.SetLabel(">>")
         self.url.SetURL(url)
@@ -46,6 +46,17 @@ class ApplicationPanel(wx.Panel):
     
     #####
     # Setup helpers
+    
+    # Set the position of all elements
+    def set_position(self):
+        self.label.SetPosition((40, 10))
+        self.checkbox.SetPosition((10, 20))
+        self.description.SetPosition((40, 30))
+        self.url.SetPosition((45 + self.label.GetSize().GetWidth(), 10))
+        if self.version.GetLabel() != '':
+            self.version.SetPosition((40, 45))
+        if self.installed_version.GetLabel() != '':
+            self.installed_version.SetPosition((40, 60))
 
     # Set event object
     def set_event(self, event):
