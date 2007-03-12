@@ -1,5 +1,8 @@
 Version 1.3.0-pre2
 ------------------
+New Applications
+- Utilities : TaskSwitchXP
+
 Internal Improvements
 - AppSnap maintains a copy of the database in the cache directory since it is
   an essential part of the application repository.
