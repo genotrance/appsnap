@@ -6,6 +6,8 @@ New Applications
 Internal Improvements
 - AppSnap maintains a copy of the database in the cache directory since it is
   an essential part of the application repository.
+- Added preinstall, postinstall, preuninstall and postuninstall directives to
+  allow executing custom commands to assist the install/uninstall process.
 
 Bug Fixes
 - Fixed a bug where latest.ini creation was failing on a fresh install since

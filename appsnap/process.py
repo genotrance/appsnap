@@ -141,6 +141,10 @@ class process:
         # Download the latest version if required
         cached_filename = self.download_latest_version()
         if cached_filename == False: return False
+        
+        # Execute pre-install command if any
+        if self.execute_script('preinstall') != True:
+            return False
 
         # Create the command to execute
         if cached_filename[-3:] == 'msi':
@@ -170,6 +174,10 @@ class process:
         # Save installed version
         self.global_config.save_installed_version(self.app, self.latestversion)
 
+        # Execute post-install command if any
+        if self.execute_script('postinstall') != True:
+            return False
+
         # Return
         return True
 
@@ -188,6 +196,10 @@ class process:
             uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
             _winreg.CloseKey(key)
 
+            # Execute pre-uninstall command if any
+            if self.execute_script('preuninstall') != True:
+                return False
+    
             # Run uninstaller, check return value
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('.exe', '.exe"', uninstall_string.lower())
             retval = os.popen('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"').close()
@@ -196,6 +208,10 @@ class process:
                 if (retval == 1641 or retval == 3010): pass
                 else: return False
 
+            # Execute post-uninstall command if any
+            if self.execute_script('postuninstall') != True:
+                return False
+    
             # Delete installed version
             self.global_config.delete_installed_version(self.app)
         except WindowsError:
@@ -212,6 +228,32 @@ class process:
             cont = self.install_latest_version()
 
         return cont
+    
+    # Execute commands for pre/post install/uninstall
+    def execute_script(self, type):
+        try: commands = self.app_config[type].split(',')
+        except KeyError:
+            return True
+        
+        # Latest version for installation
+        if type == 'preinstall' or type == 'postinstall':
+            version = None
+        # Installed version for uninstallation
+        elif type == 'preuninstall' or type == 'postuninstall':
+            version = self.global_config.get_installed_version(self.app)
+            if version == '':
+                version = None
+        
+        # Execute the commands
+        for command in commands:
+            command = self.replace_version(command, version)
+            command = self.replace_install_dir(command)
+            
+            retval = os.popen('"' + command + '"').close()
+            if retval != None:
+                return False
+            
+        return True
 
     # ***
     # Internal functions for versioning
