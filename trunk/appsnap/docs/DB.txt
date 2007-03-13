@@ -303,6 +303,54 @@ All the options required in order to configure an application are as below:
     E.g.
 
     uninstparam = -ms
+    
+16. Pre-Install commands
+
+    This comma separated list of commands is executed by AppSnap prior to
+    launching the application installer.
+    
+    This option allows the usage of versioning text replacements as well as
+    the #INSTALL_DIR# text replacement.
+    
+    E.g.
+    
+    preinstall = command1,command2
+
+17. Post-Install commands
+
+    This comma separated list of commands is executed by AppSnap just after
+    the application installer returns successfully.
+    
+    This option allows the usage of versioning text replacements as well as
+    the #INSTALL_DIR# text replacement.
+    
+    E.g.
+    
+    postinstall = command1,command2
+
+18. Pre-Uninstall commands
+
+    This comma separated list of commands is executed by AppSnap prior to
+    launching the application uninstaller.
+    
+    This option allows the usage of versioning text replacements as well as
+    the #INSTALL_DIR# text replacement.
+    
+    E.g.
+    
+    preuninstall = command1,command2
+
+19. Post-Uninstall commands
+
+    This comma separated list of commands is executed by AppSnap just after
+    the application uninstaller returns successfully.
+    
+    This option allows the usage of versioning text replacements as well as
+    the #INSTALL_DIR# text replacement.
+    
+    E.g.
+    
+    postuninstall = command1,command2
 
 Testing
 -------
