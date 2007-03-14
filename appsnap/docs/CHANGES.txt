@@ -1,6 +1,7 @@
 Version 1.3.0-pre2
 ------------------
 New Applications
+- Development : Tortoise CVS, Tortoise SVN
 - Utilities : TaskSwitchXP
 
 Internal Improvements
@@ -18,6 +19,7 @@ Bug Fixes
   wrong font for the application name if Office 2007 was installed.
 - Fixed a drawing bug reported by gabmatrix (issue 22) where application details
   were disappearing on choosing a different category.
+- Fixed a regex bug in uninstall where msiexec calls were getting garbled.
 
 Scrape Fixes
 - Fixed DVD-Flick to install to defined directory.
