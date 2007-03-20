@@ -2,13 +2,18 @@ Version 1.3.0-pre2
 ------------------
 New Applications
 - Development : Tortoise CVS, Tortoise SVN
+- Productivity : VirtualDub
 - Utilities : TaskSwitchXP
 
 Internal Improvements
+- AppSnap is now localizable. Translations need to be added.
+- Zipped applications with no installer can now be deployed.
 - AppSnap maintains a copy of the database in the cache directory since it is
   an essential part of the application repository.
 - Added preinstall, postinstall, preuninstall and postuninstall directives to
   allow executing custom commands to assist the install/uninstall process.
+- In db.ini, the following are now optional: instparam, chinstdir, uninstall
+  and uninstparam.
 
 Bug Fixes
 - Fixed a bug where latest.ini creation was failing on a fresh install since
@@ -20,10 +25,13 @@ Bug Fixes
 - Fixed a drawing bug reported by gabmatrix (issue 22) where application details
   were disappearing on choosing a different category.
 - Fixed a regex bug in uninstall where msiexec calls were getting garbled.
+- Fixed a bug where writes to latest.ini were not being serialized.
 
 Scrape Fixes
 - Fixed DVD-Flick to install to defined directory.
 - Fixed Songbird scrape and filename.
+- Fixed K-Lite scrape.
+- Fixed Blender3D version search to exclude release candidates.
 
 Version 1.3.0-pre1
 ------------------

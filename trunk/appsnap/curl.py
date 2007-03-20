@@ -1,23 +1,30 @@
 # Import required libraries
-import pycurl
-import urllib
-import _winreg
-import string
-import socket
+import config
 import os
+import pycurl
+import socket
+import string
+import strings
 import sys
 import threading
 import time
+import urllib
+import _winreg
 
 # Don't quote these characters
 QUOTE = ':./?=&'
+
+# Proxy strings
+INTERNET_SETTINGS_KEY = 'Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings'
+PROXY_ENABLE = 'ProxyEnable'
+PROXY_SERVER = 'ProxyServer'
 
 class curl:
     # Constructor
     def __init__(self, global_config):
         # Set up pycurl
         self.global_config = global_config
-        self.download = int(self.global_config.network['download'])
+        self.download = int(self.global_config.network[config.DOWNLOAD])
         
         # Curl object lists
         self.lock = []
@@ -35,9 +42,9 @@ class curl:
     
             # Get proxy settings from IE if possible
             try:
-                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings')
-                proxy_enabled, temp = _winreg.QueryValueEx(key, 'ProxyEnable')
-                proxy_info, temp = _winreg.QueryValueEx(key, 'ProxyServer')
+                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, INTERNET_SETTINGS_KEY)
+                proxy_enabled, temp = _winreg.QueryValueEx(key, PROXY_ENABLE)
+                proxy_info, temp = _winreg.QueryValueEx(key, PROXY_SERVER)
                 _winreg.CloseKey(key)
     
                 if proxy_enabled == 1:
@@ -48,8 +55,8 @@ class curl:
                     self.curl[i].setopt(pycurl.PROXY, socket.getfqdn(proxy_server.__str__()))
                     self.curl[i].setopt(pycurl.PROXYPORT, string.atoi(proxy_port))
     
-                    self.curl[i].setopt(pycurl.PROXYUSERPWD, self.global_config.user['proxy_user'] +
-                        ':' + self.global_config.user['proxy_password'])
+                    self.curl[i].setopt(pycurl.PROXYUSERPWD, self.global_config.user[config.PROXY_USER] +
+                        ':' + self.global_config.user[config.PROXY_PASSWORD])
                     self.curl[i].setopt(pycurl.PROXYAUTH, 8)
             except WindowsError: pass
     
@@ -106,8 +113,8 @@ class curl:
         # Download the page
         response = self.get_url(url, i, self.call_back_buffer)
         if response >= 300:
-            if response == 407: print '\nProxy authentication failed. Check config.ini'
-            else: print '\nError ' + response.__str__() + ' for URL ' + url
+            if response == 407: print '\n' + strings.PROXY_AUTHENTICATION_FAILED
+            else: print '\n' + strings.ERROR + ' '  + response.__str__() + '. URL = ' + url
 
             # Failure occurred so return false
             self.free_lock(i)
@@ -156,8 +163,8 @@ class curl:
             os.remove(cached_filename)
 
             # Print the message
-            if response == 407: print '\nProxy authentication failed. Check config.ini'
-            else: print '\nError ' + response.__str__() + ' while downloading ' + url + filename
+            if response == 407: print '\n' + strings.PROXY_AUTHENTICATION_FAILED
+            else: print '\n' + strings.ERROR + ' ' + response.__str__() + '. URL = ' + url + filename
 
             # Failure occurred so return false
             self.free_lock(i)
@@ -182,7 +189,7 @@ class curl:
 
     # Return the filename with the cache dir prepended
     def get_cached_name(self, filename):
-        return self.global_config.cache['cache_location'] + '\\' + filename
+        return os.path.join(self.global_config.cache[config.CACHE_LOCATION], filename)
 
     def __del__(self):
         for i in range(self.download):

@@ -3,33 +3,14 @@ import config
 import curl
 import getopt
 import process
+import strings
 import sys
 import threading
 import version
 
 header = version.APPNAME + ' ' + version.APPVERSION + '\n'
 
-help = header + """
-Global functions
--h             This help screen
--c             List all application categories
--l             List supported applications
-   -f <cat>    Filter list by category
-   -s <string> Filter list by string
--U             Update database
-
-Application specific functions
--n <name>      One or more application names, comma separated or * to specify filter
-   -f <cat>    Filter applications by category
-   -s <string> Filter applications by string
-
-   -d          Download application
-      -t       Test download only
-   -g          Get latest version       (DEFAULT)
-   -i          Install latest version   (implies -d)
-   -u          Upgrade current version  (implies -i, -x if not upgradeable)
-   -x          Uninstall current version
-"""
+help = header + strings.COMMANDLINE_HELP
 
 def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall, test):
     items = configuration.get_section_items(name)
@@ -38,58 +19,58 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
         
         if getversion == True:
             output = '\n'
-            output += 'Application       : ' + name + '\n'
-            output += 'Description       : ' + items['describe'] + '\n'
-            output += 'Website           : ' + items['website'] + '\n'
+            output += strings.APPLICATION + ' : ' + name + '\n'
+            output += strings.DESCRIPTION + ' : ' + items[process.APP_DESCRIBE] + '\n'
+            output += strings.WEBSITE + ' : ' + items[process.APP_WEBSITE] + '\n'
             latest_version = p.get_latest_version()
             if latest_version == None:
-                latest_version = 'failed to connect'
-            output += 'Latest Version    : ' + latest_version + '\n'
+                latest_version = strings.FAILED_TO_CONNECT
+            output += strings.LATEST_VERSION + ' : ' + latest_version + '\n'
             installed = configuration.get_installed_version(name)
             if installed != '':
-                output += 'Installed Version : ' + installed + '\n'
+                output += strings.INSTALLED_VERSION + ' : ' + installed + '\n'
             print output
         if download == True:
-            print '-> Downloading ' + name,
-            if test: print ' (Testing)'
+            print '-> ' + strings.DOWNLOADING + ' ' + name,
+            if test: print ' (' + strings.TESTING + ')'
             else: print
             if p.download_latest_version(None, test) == False:
-                print "-> Download failed for " + name
+                print '-> ' + strings.DOWNLOAD_FAILED + ' : ' + name
                 return
             else:
-                print "-> Download succeeded for " + name
+                print '-> ' + strings.DOWNLOAD_SUCCEEDED + ' : ' + name
         if install == True:
-            print '-> Installing ' + name
+            print '-> ' + strings.INSTALLING + ' ' + name
             lock.acquire()
             if p.install_latest_version() == False: 
-                print "-> Install failed for " + name
+                print '-> ' + strings.INSTALL_FAILED + ' : ' + name
                 lock.release()
                 return
             else:
-                print "-> Install succeeded for " + name
+                print '-> ' + strings.INSTALL_SUCCEEDED + ' : ' + name
             lock.release()
         if upgrade == True:
-            print '-> Upgrading ' + name
+            print '-> ' + strings.UPGRADING + ' : ' + name
             lock.acquire()
             if p.upgrade_version() == False: 
-                print "-> Upgrade failed for " + name
+                print '-> ' + strings.UPGRADE_FAILED + ' : ' + name
                 lock.release()
                 return
             else:
-                print "-> Upgrade succeeded for " + name
+                print '-> ' + strings.UPGRADE_SUCCEEDED + ' : ' + name
             lock.release()
         if uninstall == True:
-            print '-> Uninstalling ' + name
+            print '-> ' + strings.UNINSTALLING + ' : ' + name
             lock.acquire()
             if p.uninstall_version() == False: 
-                print "-> Uninstall failed for " + name
+                print '-> ' + strings.UNINSTALL_FAILED + ' : ' + name
                 lock.release()
                 return
             else:
-                print "-> Uninstall succeeded for " + name
+                print '-> ' + strings.UNINSTALL_SUCCEEDED + ' : ' + name
             lock.release()
     else:
-        print 'No such application: ' + name
+        print strings.NO_SUCH_APPLICATION + ' : ' + name
         
 if __name__ == '__main__':
     # Parse command line arguments
@@ -154,8 +135,8 @@ if __name__ == '__main__':
 
     # Update database if requested
     if updatedb == True:
-        print 'Updating database...'
-        remote = curl_instance.get_web_data(configuration.database['location'])
+        print '-> ' + strings.UPDATING_DATABASE
+        remote = curl_instance.get_web_data(configuration.database[config.LOCATION])
         local = open(config.DB, 'rb').read()
         if local != remote:
             # Update the DB file
@@ -164,11 +145,11 @@ if __name__ == '__main__':
                 db.write(remote)
                 db.close()
                 configuration.copy_database_to_cache(True)
-                print 'Updated!'
+                print '-> ' + strings.UPDATE_DATABASE_SUCCEEDED
             except IOError:
-                print 'Update Failed. Unable to write to db.ini'
+                print '-> ' + strings.UPDATE_DATABASE_FAILED + '. ' + strings.UNABLE_TO_WRITE_DB_INI
         else:
-            print 'No changes.'
+            print '-> ' + strings.NO_CHANGES_FOUND
         sys.exit()
 
     # Figure out applications selected
@@ -176,11 +157,11 @@ if __name__ == '__main__':
         if categoryfilter == '':
             names = configuration.get_sections()
         else:
-            print 'Category          : ' + categoryfilter
+            print strings.CATEGORY + ' : ' + categoryfilter
             names = configuration.get_sections_by_category(categoryfilter)
 
         if stringfilter != '':
-            print 'Filter            : ' + stringfilter + '\n'
+            print strings.FILTER + ' : ' + stringfilter + '\n'
             names = configuration.filter_sections_by_string(names, stringfilter)
         else:
             print
