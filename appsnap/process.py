@@ -26,6 +26,32 @@ INSTALL_DIR                = '#INSTALL_DIR#'
 # Version not available
 NOT_AVAILABLE      = 'Not Available'
 
+# DB.ini entries
+APP_CATEGORY      = 'category'
+APP_DESCRIBE      = 'describe'
+APP_WEBSITE       = 'website'
+APP_SCRAPE        = 'scrape'
+APP_VERSION       = 'version'
+APP_DOWNLOAD      = 'download'
+APP_FILENAME      = 'filename'
+APP_REFERER       = 'referer'
+APP_INSTALLER     = 'installer'
+APP_INSTPARAM     = 'instparam'
+APP_UPGRADES      = 'upgrades'
+APP_CHINSTDIR     = 'chinstdir'
+APP_UNINSTALL     = 'uninstall'
+APP_UNINSTPARAM   = 'uninstparam'
+APP_PREINSTALL    = 'preinstall'
+APP_POSTINSTALL   = 'postinstall'
+APP_PREUNINSTALL  = 'preuninstall'
+APP_POSTUNINSTALL = 'postuninstall'
+
+# Actions
+ACT_DOWNLOAD      = 'download'
+ACT_INSTALL       = 'install'
+ACT_UNINSTALL     = 'uninstall'
+ACT_UPGRADE       = 'upgrade'
+
 # Version cache
 cached_versions = {}
 
@@ -43,7 +69,7 @@ class process:
         self.versions = None
         self.splitversions = None
         self.width = 0
-        if 'scrape' in self.app_config and 'version' in self.app_config:
+        if APP_SCRAPE in self.app_config and APP_VERSION in self.app_config:
             self.latestversion = self.global_config.get_cached_latest_version(self.app)
             if self.latestversion == None:
                 self.versions = self.get_versions()
@@ -85,17 +111,17 @@ class process:
         if self.latestversion == None: return False
 
         # Get download URL, default to scrape
-        try: download = self.replace_version(self.app_config['download'])
-        except KeyError: download = self.app_config['scrape']
+        try: download = self.replace_version(self.app_config[APP_DOWNLOAD])
+        except KeyError: download = self.app_config[APP_SCRAPE]
 
         # Get filename
-        filename = self.replace_version(self.app_config['filename'])
+        filename = self.replace_version(self.app_config[APP_FILENAME])
 
         # Get referer
-        try: referer = self.replace_version(self.app_config['referer'])
+        try: referer = self.replace_version(self.app_config[APP_REFERER])
         except KeyError:
-            try: referer = self.app_config['scrape']
-            except KeyError: referer = self.app_config['download']
+            try: referer = self.app_config[APP_SCRAPE]
+            except KeyError: referer = self.app_config[APP_DOWNLOAD]
 
         # Get cached location to save file to
         cached_filename = self.curl_instance.get_cached_name(filename)
@@ -105,7 +131,7 @@ class process:
         # know if the file has changed)
         cache_timeout = int(self.global_config.cache['cache_timeout']) * 24 * 60 * 60
         if not os.path.exists(cached_filename) or (
-                                                   filename == self.app_config['filename'] and
+                                                   filename == self.app_config[APP_FILENAME] and
                                                    os.path.exists(cached_filename) and
                                                    (time.time() - os.stat(cached_filename).st_ctime > cache_timeout)
                                                    ):
@@ -120,7 +146,7 @@ class process:
     # Delete older application installers
     def delete_older_versions(self):
         # Create pattern for filename
-        filename = self.app_config['filename']
+        filename = self.app_config[APP_FILENAME]
         filename = re.sub(VERSION, '*', filename)
         filename = re.sub(MAJOR_VERSION, '*', filename)
         filename = re.sub(MAJORMINOR_VERSION, '*', filename)
@@ -143,39 +169,54 @@ class process:
         if cached_filename == False: return False
         
         # Execute pre-install command if any
-        if self.execute_script('preinstall') != True:
+        if self.execute_script(APP_PREINSTALL) != True:
             return False
 
         # Create the command to execute
+        installer = True
         if cached_filename[-3:] == 'msi':
             command = 'msiexec /i "' + cached_filename + '"'
         elif cached_filename[-3:] == 'zip':
             self.unzip_file(cached_filename)
-            try: command = '"' + os.path.join(cached_filename[:-4], self.replace_version(self.app_config['installer'])) + '"'
-            except KeyError: return False
+            try: command = '"' + os.path.join(cached_filename[:-4], self.replace_version(self.app_config[APP_INSTALLER])) + '"'
+            except KeyError:
+                # ZIP file with no embedded installer
+                installer = False
         else:
             command = '"' + cached_filename + '"'
 
-        # Add instparam flags if available
-        if self.app_config['instparam'] != '':
-            command += ' ' + self.replace_install_dir(self.app_config['instparam'])
-
-        # Add the install directory if available
-        if self.app_config['chinstdir'] != '':
-            command += ' ' + self.replace_install_dir(self.app_config['chinstdir'])
-
-        # Run the installer, check return value
-        retval = os.popen('"' + command + '"').close()
-        if  retval != None:
-            # MSI returns non-zero as success too
-            if cached_filename[-3:] == 'msi' and (retval == 1641 or retval == 3010): pass
-            else: return False
-
+        # If installer command to be executed
+        if installer == True:
+            # Add instparam flags if available
+            try:
+                if self.app_config[APP_INSTPARAM] != '':
+                    command += ' ' + self.replace_install_dir(self.app_config[APP_INSTPARAM])
+            except KeyError:
+                pass
+    
+            # Add the install directory if available
+            try:
+                if self.app_config[APP_CHINSTDIR] != '':
+                    command += ' ' + self.replace_install_dir(self.app_config[APP_CHINSTDIR])
+            except KeyError:
+                pass
+    
+            # Run the installer, check return value
+            retval = os.popen('"' + command + '"').close()
+            if  retval != None:
+                # MSI returns non-zero as success too
+                if cached_filename[-3:] == 'msi' and (retval == 1641 or retval == 3010): pass
+                else: return False
+        else:
+            directory = self.expand_env(self.replace_install_dir(INSTALL_DIR))
+            command = 'explorer "' + directory + '"'
+            os.popen('"' + command + '"').close()
+    
         # Save installed version
         self.global_config.save_installed_version(self.app, self.latestversion)
 
         # Execute post-install command if any
-        if self.execute_script('postinstall') != True:
+        if self.execute_script(APP_POSTINSTALL) != True:
             return False
 
         # Return
@@ -191,38 +232,52 @@ class process:
 
         try:
             # Get uninstall string from registry
-            uninstall = self.replace_version(self.app_config['uninstall'], installed_version)
+            uninstall = self.replace_version(self.app_config[APP_UNINSTALL], installed_version)
             key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
             uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
             _winreg.CloseKey(key)
 
             # Execute pre-uninstall command if any
-            if self.execute_script('preuninstall') != True:
+            if self.execute_script(APP_PREUNINSTALL) != True:
                 return False
     
             # Run uninstaller, check return value
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('\.exe', '.exe"', uninstall_string.lower())
-            retval = os.popen('"' + uninstall_string + ' ' + self.replace_install_dir(self.app_config['uninstparam']) + '"').close()
+            try: uninstparam = ' ' + self.replace_install_dir(self.app_config[APP_UNINSTPARAM])
+            except KeyError: uninstparam = ''
+            retval = os.popen('"' + uninstall_string + uninstparam + '"').close()
             if  retval != None:
                 # MSI returns non-zero as success too
                 if (retval == 1641 or retval == 3010): pass
                 else: return False
 
             # Execute post-uninstall command if any
-            if self.execute_script('postuninstall') != True:
+            if self.execute_script(APP_POSTUNINSTALL) != True:
                 return False
     
             # Delete installed version
             self.global_config.delete_installed_version(self.app)
-        except WindowsError:
-            return False
+        except (WindowsError, KeyError):
+            filename = self.app_config[APP_FILENAME]
+            if filename[-3:] == 'zip':
+                try:
+                    # Installer didn't provide uninstall method
+                    test = self.app_config[APP_INSTALLER]
+                    return False
+                except KeyError:
+                    # ZIP file with no embedded installer
+                    directory = self.expand_env(self.replace_install_dir(INSTALL_DIR))
+                    self.delete_tree(directory)
+            else:
+                # No uninstall method available
+                return False
 
         return True
 
     # Upgrade to latest version
     def upgrade_version(self):
         cont = True
-        if self.app_config['upgrades'] == 'false':
+        if self.app_config[APP_UPGRADES] == 'false':
             cont = self.uninstall_version()
         if cont == True:
             cont = self.install_latest_version()
@@ -236,10 +291,10 @@ class process:
             return True
         
         # Latest version for installation
-        if type == 'preinstall' or type == 'postinstall':
+        if type == APP_PREINSTALL or type == APP_POSTINSTALL:
             version = None
         # Installed version for uninstallation
-        elif type == 'preuninstall' or type == 'postuninstall':
+        elif type == APP_PREUNINSTALL or type == APP_POSTUNINSTALL:
             version = self.global_config.get_installed_version(self.app)
             if version == '':
                 version = None
@@ -290,7 +345,7 @@ class process:
     # Replace install dir string with appropriate value
     def replace_install_dir(self, string):
         # Create install directory string
-        install_dir = self.global_config.user['install_dir'] + '\\' + self.app
+        install_dir = os.path.join(self.global_config.user['install_dir'], self.app)
 
         # Replace install directory
         string = re.sub(INSTALL_DIR, install_dir, string)
@@ -300,11 +355,11 @@ class process:
     # Get all the versions from the scrape page
     def get_versions(self):
         # Call pyurl to get the scrape page
-        web_data = self.curl_instance.get_web_data(self.app_config['scrape'])
+        web_data = self.curl_instance.get_web_data(self.app_config[APP_SCRAPE])
         if web_data == None: return None
 
         # Return a list of potential versions
-        return re.findall(self.app_config['version'], web_data)
+        return re.findall(self.app_config[APP_VERSION], web_data)
 
     # Split the versions into separate columns
     def get_split_versions(self):
@@ -389,8 +444,14 @@ class process:
         if not zipfile.is_zipfile(file):
             return False
         
+        # Check if ZIP file with extract only
+        try:
+            test = self.app_config[APP_INSTALLER]
+            directory = file[:-4]
+        except KeyError:
+            directory = self.expand_env(self.replace_install_dir(INSTALL_DIR))
+        
         # Create directory to extract to
-        directory = file[:-4]
         if os.path.isdir(directory):
             self.delete_tree(directory)
         os.mkdir(directory)
@@ -400,7 +461,10 @@ class process:
             if cfile[-1] == '/':
                 os.mkdir(os.path.join(directory, cfile[:-1]))
             else:
-                ufile = open(os.path.join(directory, cfile), 'wb')
+                target = os.path.join(directory, cfile)
+                if not os.path.exists(os.path.dirname(target)):
+                    os.mkdir(os.path.dirname(target))
+                ufile = open(target, 'wb')
                 buffer = StringIO.StringIO(zip.read(cfile))
                 buflen = 2 ** 20
                 data = buffer.read(buflen)
@@ -419,4 +483,14 @@ class process:
                 self.delete_tree(file)
             else:
                 os.remove(file)
-        os.rmdir(directory)
+        try: os.rmdir(directory)
+        except WindowsError:
+            pass
+        
+    # Expand string containing environment variable
+    def expand_env(self, string):
+        pipe = os.popen("cmd /c echo " + string)
+        exp_string = pipe.read()
+        pipe.close()
+
+        return exp_string[:-1]

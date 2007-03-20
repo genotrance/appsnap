@@ -12,6 +12,11 @@ class MakeGui:
         # Create an application object
         self.objects['application'] = wx.App(False)
 
+        # Setup internationalization
+        self.objects['locale'] = wx.Locale(wx.LANGUAGE_DEFAULT)
+        self.objects['locale'].AddCatalogLookupPathPrefix("locale")
+        self.objects['locale'].AddCatalog("appsnap")
+    
         # Create a frame object
         self.objects['frame'] = wx.Frame(None, -1, title, pos, size, style)
         self.objects['application'].SetTopWindow(self.objects['frame'])

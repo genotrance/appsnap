@@ -1,4 +1,5 @@
 import process
+import strings
 import threading
 import time
 import wx
@@ -100,7 +101,7 @@ class ApplicationPanel(wx.Panel):
         
     # Set status text
     def set_status_text(self, text):
-        self.status.SetLabel('Status : ' + text)
+        self.status.SetLabel(strings.STATUS + ' : ' + text)
 
     # Display status information
     def display_status(self):
@@ -109,7 +110,7 @@ class ApplicationPanel(wx.Panel):
                 self.status.SetPosition((40, 75))
             else:
                 self.status.SetPosition((40, 60))
-            self.set_status_text('Starting ...')
+            self.set_status_text(strings.STARTING + ' ...')
             self.update_layout()
             
     # Hide status information
@@ -125,11 +126,11 @@ class ApplicationPanel(wx.Panel):
         # Get installed version
         installed_version = self.event.configuration.get_installed_version(self.app_name)
         if installed_version != '':
-            installed_version = 'Installed Version : ' + installed_version
+            installed_version = strings.INSTALLED_VERSION + ' : ' + installed_version
             self.set_installed_version(installed_version)
 
         # Display latest version text
-        self.set_version('Latest Version : loading...')
+        self.set_version(strings.LATEST_VERSION + ' : ' + strings.LOADING + ' ...')
         
         # Update layout
         self.update_layout()
@@ -139,8 +140,8 @@ class ApplicationPanel(wx.Panel):
             self.process = process.process(self.event.configuration, self.event.curl_instance, self.app_name, items)
         latest_version = self.process.get_latest_version()
         if latest_version == None:
-            latest_version = 'failed to connect'
-        self.set_version('Latest Version : ' + latest_version)
+            latest_version = strings.FAILED_TO_CONNECT
+        self.set_version(strings.LATEST_VERSION + ' : ' + latest_version)
 
     # Hide information
     def hide_info(self):
@@ -244,32 +245,32 @@ class ApplicationPanel(wx.Panel):
         # Display status field
         self.display_status()
         
-        if action == 'download' or action == 'install' or action == 'upgrade':
+        if action == process.ACT_DOWNLOAD or action == process.ACT_INSTALL or action == process.ACT_UPGRADE:
             # Download latest version
-            self.set_status_text('Waiting ...')
+            self.set_status_text(strings.WAITING + ' ...')
             if self.process.download_latest_version(self.update_download_status) == False:
-                return self.error_out('Download')
+                return self.error_out(strings.DOWNLOAD_FAILED)
 
-        if action == 'uninstall' or (action == 'upgrade' and self.process.app_config['upgrades'] == 'true'):
+        if action == process.ACT_UNINSTALL or (action == process.ACT_UPGRADE and self.process.app_config[process.APP_UPGRADES] == 'true'):
             # Perform the uninstall, use lock to ensure only one install/uninstall at a time
-            self.set_status_text('Uninstalling ...')
+            self.set_status_text(strings.UNINSTALLING + ' ...')
             self.event.lock.acquire()
             uninstall_successful = self.process.uninstall_version()
             self.event.lock.release()
             if uninstall_successful == False:
-                return self.error_out('Uninstall')
+                return self.error_out(strings.UNINSTALL_FAILED)
 
-        if action == 'install' or action == 'upgrade':
+        if action == process.ACT_INSTALL or action == process.ACT_UPGRADE:
             # Perform the install, use lock to ensure only one install/uninstall at a time
-            self.set_status_text('Installing ...')
+            self.set_status_text(strings.INSTALLING + ' ...')
             self.event.lock.acquire()
             install_successful = self.process.install_latest_version()
             self.event.lock.release()
             if install_successful == False:
-                return self.error_out('Install')
+                return self.error_out(strings.INSTALL_FAILED)
 
         # Done
-        self.set_status_text('Done')
+        self.set_status_text(strings.DONE)
         time.sleep(3)
 
         # Succeeded so unselect
@@ -295,12 +296,12 @@ class ApplicationPanel(wx.Panel):
         else:
             percentage_string = ''
 
-        self.set_status_text('Downloaded ' + dl_current_string + ' of ' + dl_total_string + percentage_string)
+        self.set_status_text(strings.DOWNLOADED + ' ' + dl_current_string + ' / ' + dl_total_string + percentage_string)
 
     # Error out if any action fails
     def error_out(self, action):
         # Mark as failed
-        self.set_status_text('Failed ' + action)
+        self.set_status_text(action)
         
         # Return
         return False

@@ -16,7 +16,7 @@ Features
 
 - Detect latest version of supported applications
 - Download, install, upgrade and uninstall
-- Fully functional GUI and CLI
+- Fully functional GUI and CLI supporting localization
 - Manage installed and upgradeable applications
 - Manage AppSnap updates from within itself
 - Update growing application database from central repository
@@ -118,6 +118,25 @@ packages will need to be installed prior to running AppSnap:
 
 Just download the source ZIP file, extract to a directory of your choice and run
 appsnap.py for the command line or appsnapgui.py for the GUI.
+
+Source from SVN
+---------------
+
+The AppSnap source can be downloaded directly from SVN using an SVN client. The
+latest code can be obtained from the following URL:-
+
+  http://appsnap.googlecode.com/svn/trunk/appsnap
+
+Source of previously released versions of AppSnap are also tagged and can be
+downloaded from the following URL:-
+
+  http://appsnap.googlecode.com/svn/tags/
+  
+For example, version 1.2.1 can be downloaded from:-
+
+  http://appsnap.googlecode.com/svn/tags/appsnap-1.2.1/
+
+For more information, refer to http://code.google.com/p/appsnap/source.
 
 Building AppSnap
 ----------------

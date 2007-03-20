@@ -4,6 +4,7 @@ import glob
 import os.path
 import py2exe
 import re
+import strings
 import sys
 import types
 import version
@@ -101,14 +102,7 @@ class build:
         
     # Parse arguments
     def parse_arguments(self):
-        help = """
-Usage:
-  build.py [OPTIONS]
-  -p    Build executable using Py2Exe
-  -r    Rezip shared library using 7-Zip
-  -u    Compress executables using UPX
-  -z    Create ZIP package
-  -n    Create NSIS package"""
+        help = strings.BUILD_COMMANDLINE_HELP
     
         # Set defaults
         if len(sys.argv) == 2:
@@ -140,17 +134,17 @@ Usage:
                                               'Path'
                                               ) + os.path.sep + '7z.exe'
         if self.sevenzip == os.path.sep + '7z.exe' or not os.path.exists(self.sevenzip):
-            self.error_out('7-Zip not available.')
+            self.error_out(strings.SEVENZIP_NOT_AVAILABLE)
             
         self.upx = os.path.expandvars('${systemroot}\\upx.exe')
         if not os.path.exists(self.upx):
-            self.error_out('UPX not available.')
+            self.error_out(strings.UPX_NOT_AVAILABLE)
             
         self.nsis = self.get_registry_key(_winreg.HKEY_LOCAL_MACHINE,
                                           'SOFTWARE\\NSIS',
                                           '') + os.path.sep + 'makensis.exe'
         if self.nsis == os.path.sep + 'makensis.exe' or not os.path.exists(self.nsis):
-            self.error_out('NSIS not available')
+            self.error_out(strings.NSIS_NOT_AVAILABLE)
             
     # Execute Py2Exe to generate executables
     def build_executable(self):
@@ -208,7 +202,7 @@ Usage:
         
     # Die on error
     def error_out(self, text):
-        print text + ' Build failed.'
+        print text + '. ' + strings.BUILD_FAILED
         sys.exit(1)
 
     # Get data from the registry

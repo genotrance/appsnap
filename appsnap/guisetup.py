@@ -2,6 +2,7 @@ import config
 import curl
 import process
 import re
+import strings
 import threading
 import time
 import webbrowser
@@ -11,6 +12,9 @@ WIDTH = 400
 HEIGHT = 590
 
 TBWIDTH = 60
+
+# Setup localization
+_ = wx.GetTranslation
 
 # GUI schema in YAML format
 schema = """
@@ -115,7 +119,7 @@ schema = """
       type : wx.StaticText
       parent : panel
       pos : (165, 5)
-      label : 'Filter :'
+      label : '%s :'
       methods:
       - method : SetFont
         font : ~filterfont
@@ -301,7 +305,7 @@ schema = """
     - name : frame
       type : wx.EVT_SIZE
       method : resize_all
-""" % (TBWIDTH, 'appsnap.ico', WIDTH, HEIGHT, WIDTH)
+""" % (TBWIDTH, strings.FILTER, 'appsnap.ico', WIDTH, HEIGHT, WIDTH)
 
 # Event processing methods
 class Events:
@@ -326,9 +330,9 @@ class Events:
 
         # Get all categories
         categories = self.configuration.get_categories()
-        categories.insert(0, 'All')
-        categories.insert(1, 'Installed')
-        categories.insert(2, 'Upgradeable')
+        categories.insert(0, config.ALL.encode('UTF-8'))
+        categories.insert(1, config.INSTALLED.encode('UTF-8'))
+        categories.insert(2, config.UPGRADEABLE.encode('UTF-8'))
         categories.insert(3, '--')
 
         # Add categories to dropdown and sections to sectionlist
@@ -346,7 +350,7 @@ class Events:
 
         # Get all sections
         self.initialize_section_list()
-        self.update_section_list('All')
+        self.update_section_list(config.ALL)
         
         if self.toolbar == False:
             self.create_toolbar()
@@ -368,8 +372,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~downloadbmp
-              label : Download
-              shortHelp : Download selected applications
+              label : '%s'
+              shortHelp : '%s'
 
             - name : toolbar
               method : AddSeparator
@@ -378,8 +382,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~installbmp
-              label : Install
-              shortHelp : Download and install selected applications
+              label : '%s'
+              shortHelp : '%s'
 
             - name : toolbar
               method : AddSeparator
@@ -388,8 +392,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~upgradebmp
-              label : Upgrade
-              shortHelp : Upgrade selected applications
+              label : '%s'
+              shortHelp : '%s'
 
             - name : toolbar
               method : AddSeparator
@@ -398,8 +402,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~uninstallbmp
-              label : Uninstall
-              shortHelp : Uninstall selected applications
+              label : '%s'
+              shortHelp : '%s'
 
             - name : toolbar
               method : AddSeparator
@@ -414,8 +418,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~dbupdatebmp
-              label : Update DB
-              shortHelp : Update application database
+              label : '%s'
+              shortHelp : '%s'
 
             - name : toolbar
               method : AddSeparator
@@ -424,8 +428,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~reloadbmp
-              label : Reload
-              shortHelp : Reload configuration
+              label : '%s'
+              shortHelp : '%s'
 
             - name : toolbar
               method : AddSeparator
@@ -440,12 +444,19 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~reportbugbmp
-              label : Report Bug
-              shortHelp : Report a bug 
+              label : '%s'
+              shortHelp : '%s'
 
             - name : toolbar
               method : Realize
-        """
+        """ % (strings.DOWNLOAD, strings.DOWNLOAD_DESCRIPTION,
+               strings.INSTALL, strings.INSTALL_DESCRIPTION,
+               strings.UPGRADE, strings.UPGRADE_DESCRIPTION,
+               strings.UNINSTALL, strings.UNINSTALL_DESCRIPTION,
+               strings.UPDATE_DB, strings.UPDATE_DB_DESCRIPTION,
+               strings.RELOAD, strings.RELOAD_DESCRIPTION,
+               strings.REPORT_BUG, strings.REPORT_BUG_DESCRIPTION
+               )
         (objects, methods, events) = self.resources['gui'].parse(schema)
         retval = self.resources['gui'].execute(methods)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[3].GetId(), self.do_download)
@@ -524,16 +535,16 @@ class Events:
                   method : Add
                   item : ~%s
                   flag : wx.GROW
-            """ % (section_title, section, items['describe'], items['website'], (WIDTH-TBWIDTH-100, 50), section_title)
+            """ % (section_title, section, items[process.APP_DESCRIBE], items[process.APP_WEBSITE], (WIDTH-TBWIDTH-100, 50), section_title)
             self.resources['gui'].parse_and_run(schema)
             self.resources['gui'].objects[section_title].set_event(self)
 
     # Update the section list
     def update_section_list(self, category):
         # Get sections by category
-        if category == 'All':
+        if category == config.ALL:
             sections = self.configuration.get_sections()
-        elif category == 'Installed' or category == 'Upgradeable':
+        elif category == config.INSTALLED or category == config.UPGRADEABLE:
             sections = self.configuration.installed.sections()
         elif category == '--':
             return
@@ -566,7 +577,7 @@ class Events:
             item.GetWindow().reset()
             if item.GetWindow() in section_objs:
                 item.Show(True)
-                if category == 'Upgradeable':
+                if category == config.UPGRADEABLE:
                     self.refresh_section_list()
                     children.append(threading.Thread(target=item.GetWindow().display_if_upgradeable, args=[item]))
                     children[row].start()
@@ -577,7 +588,7 @@ class Events:
                 item.Show(False)
 
         # Wait for children to be done
-        if category == 'Upgradeable':
+        if category == config.UPGRADEABLE:
             for child in children:
                 child.join()
                 self.refresh_section_list()
@@ -670,7 +681,7 @@ class Events:
               
             - name : statusbar
               method : Refresh
-        """ % ([first, second])
+        """ % ([_(first).encode('UTF-8'), _(second).encode('UTF-8')])
         self.resources['gui'].parse_and_run(schema)
 
     # Update status bar sub-status text
@@ -679,12 +690,12 @@ class Events:
             methods:
             - name : statusbar
               method : SetStatusText
-              text : "%s"
+              text : '%s'
               number : 1
               
             - name : statusbar
               method : Refresh
-        """ % (second)
+        """ % (_(second).encode('UTF-8'))
         self.resources['gui'].parse_and_run(schema)
 
     # Disable GUI elements
@@ -753,7 +764,7 @@ class Events:
         self.disable_gui()
         
         # Update status bar
-        self.update_status_bar('Performing ' + action[0].capitalize() + action[1:], '')
+        self.update_status_bar(action[0].capitalize() + action[1:], '')
 
         # Do action for each section
         children = []
@@ -785,47 +796,47 @@ class Events:
     
     # Download checked applications
     def do_download(self, event):
-        self.do_threaded_action('download')
+        self.do_threaded_action(process.ACT_DOWNLOAD)
 
     # Download and install checked applications
     def do_install(self, event):
-        self.do_threaded_action('install')
+        self.do_threaded_action(process.ACT_INSTALL)
 
     # Uninstall checked applications
     def do_uninstall(self, event):
-        self.do_threaded_action('uninstall')
+        self.do_threaded_action(process.ACT_UNINSTALL)
 
     # Upgrade checked applications
     def do_upgrade(self, event):
-        self.do_threaded_action('upgrade')
+        self.do_threaded_action(process.ACT_UPGRADE)
 
     # Update database
     def do_db_update(self, event):
         # Action name
-        action = 'Performing Update DB'
+        action = strings.UPDATING_DATABASE
         
         # Disable GUI
         self.disable_gui()
         
         # Update statusbar
-        self.update_status_bar(action, 'Downloading ...')
+        self.update_status_bar(action, strings.DOWNLOADING + ' ...')
 
         # Download latest DB.ini
-        remote = self.curl_instance.get_web_data(self.configuration.database['location'])
+        remote = self.curl_instance.get_web_data(self.configuration.database[config.LOCATION])
         time.sleep(0.5)
         
         # If download failed
         if remote == None:
-            return self.error_out(action, 'Download Failed')
+            return self.error_out(action, strings.DOWNLOAD_FAILED)
 
         # Compare with existing DB
-        self.update_status_bar(action, 'Comparing ...')
+        self.update_status_bar(action, strings.COMPARING + ' ...')
         local = open(config.DB, 'rb').read()
         time.sleep(0.5)
 
         if local != remote:
             # Update the DB file
-            self.update_status_bar(action, 'Updating Local DB ...')
+            self.update_status_bar(action, strings.UPDATING_LOCAL_DATABASE + ' ...')
             try:
                 db = open(config.DB, 'wb')
                 db.write(remote)
@@ -833,18 +844,18 @@ class Events:
                 time.sleep(0.5)
 
                 # Reload settings
-                self.update_status_bar(action, 'Reloading DB ...')
+                self.update_status_bar(action, strings.RELOADING_DATABASE + ' ...')
                 self.setup()
                 time.sleep(0.5)
-                self.update_status_bar(action, 'Done')
+                self.update_status_bar(action, strings.DONE)
                 self.configuration.copy_database_to_cache(True)
                 time.sleep(3)
             except IOError:
-                self.update_status_bar(action, 'Unable to write to db.ini')
+                self.update_status_bar(action, strings.UNABLE_TO_WRITE_DB_INI)
                 time.sleep(3)
         else:
             # No change found
-            self.update_status_bar(action, 'No Changes Found')
+            self.update_status_bar(action, strings.NO_CHANGES_FOUND)
             time.sleep(3)
 
         # Reset the GUI
@@ -855,7 +866,7 @@ class Events:
     def do_reload(self, event):
         # Disable the GUI
         self.disable_gui()
-        self.update_status_bar('Reloading', '')
+        self.update_status_bar(strings.RELOADING_DATABASE, '')
         
         # Reload all ini files
         self.setup()
