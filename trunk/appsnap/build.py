@@ -36,7 +36,8 @@ class build:
                                   'config.ini',
                                   'appsnap.ico',
                                   'appsnapsetup.nsi',
-                                  'docs' + os.path.sep + '*.txt'
+                                  'docs' + os.path.sep + '*.txt',
+                                  'locale' + os.path.sep + '*' + os.path.sep + 'LC_MESSAGES' + os.path.sep + 'appsnap.*'
                                   ]
         
         # Create manifest
