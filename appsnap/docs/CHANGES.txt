@@ -1,7 +1,7 @@
 Version 1.3.0-pre2
 ------------------
 New Applications
-- Development : Tortoise CVS, Tortoise SVN
+- Development : poEdit, Tortoise CVS, Tortoise SVN
 - Productivity : VirtualDub
 - Utilities : TaskSwitchXP
 

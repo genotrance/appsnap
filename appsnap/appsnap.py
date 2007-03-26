@@ -10,7 +10,53 @@ import version
 
 header = version.APPNAME + ' ' + version.APPVERSION + '\n'
 
-help = header + strings.COMMANDLINE_HELP
+help = header + """
+%s
+-h\t\t\t%s
+-c\t\t\t%s
+-l\t\t\t%s
+   -f <%s>\t%s
+   -s <%s>\t\t%s
+-U\t\t\t%s
+
+%s
+-n <%s>\t\t%s
+   -f <%s>\t%s
+   -s <%s>\t\t%s
+
+   -d\t\t\t%s
+      -t\t\t%s
+   -g\t\t\t%s (%s)
+   -i\t\t\t%s (%s)
+   -u\t\t\t%s (%s)
+   -x\t\t\t%s
+""" % (
+       strings.GLOBAL_FUNCTIONS,
+       strings.THIS_HELP_SCREEN,
+       strings.LIST_ALL_APPLICATION_CATEGORIES,
+       strings.LIST_SUPPORTED_APPLICATIONS,
+       strings.CATEGORY,
+       strings.FILTER_LIST_BY_CATEGORY,
+       strings.STRING,
+       strings.FILTER_LIST_BY_STRING,
+       strings.UPDATE_DB_DESCRIPTION,
+       strings.APPLICATION_SPECIFIC_FUNCTIONS,
+       strings.NAME,
+       strings.APPLICATION_NAME_DESCRIPTION,
+       strings.CATEGORY,
+       strings.FILTER_APP_BY_CATEGORY,
+       strings.STRING,
+       strings.FILTER_APP_BY_STRING,
+       strings.DOWNLOAD_DESCRIPTION,
+       strings.TEST_DOWNLOAD_ONLY,
+       strings.GET_LATEST_VERSION,
+       strings.DEFAULT,
+       strings.INSTALL_DESCRIPTION,
+       strings.INSTALL_IMPLICATION,
+       strings.UPGRADE_DESCRIPTION,
+       strings.UPDATE_IMPLICATION,
+       strings.UNINSTALL_DESCRIPTION
+       )
 
 def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall, test):
     items = configuration.get_section_items(name)

@@ -11,36 +11,18 @@ _ = wx.GetTranslation
 
 ALL = _('All')
 APPLICATION = _('Application')
+APPLICATION_NAME_DESCRIPTION = _('Application names, comma separated or * to filter')
+APPLICATION_SPECIFIC_FUNCTIONS = _('Application specific functions')
 AVAILABLE_CATEGORIES = _('Available Categories')
 
 ##
 
 CATEGORY = _('Category')
-COMMANDLINE_HELP = _("""
-Global functions
--h             This help screen
--c             List all application categories
--l             List supported applications
-   -f <cat>    Filter list by category
-   -s <string> Filter list by string
--U             Update database
-
-Application specific functions
--n <name>      One or more application names, comma separated or * to specify filter
-   -f <cat>    Filter applications by category
-   -s <string> Filter applications by string
-
-   -d          Download application
-      -t       Test download only
-   -g          Get latest version       (DEFAULT)
-   -i          Install latest version   (implies -d)
-   -u          Upgrade current version  (implies -i, -x if not upgradeable)
-   -x          Uninstall current version
-""")
 COMPARING = _('Comparing')
 
 ##
 
+DEFAULT = _('Default')
 DESCRIPTION = _('Description')
 DONE = _('Done')
 DOWNLOAD = _('Download')
@@ -57,8 +39,17 @@ ERROR = _('Error')
 ##
 
 FAILED_CREATE_CACHE_DIR = _('Failed to create cache location')
-FAILED_TO_CONNECT = _('failed to connect')
+FAILED_TO_CONNECT = _('Failed to connect')
 FILTER = _('Filter')
+FILTER_APP_BY_CATEGORY = _('Filter applications by category')
+FILTER_APP_BY_STRING = _('Filter applications by string')
+FILTER_LIST_BY_CATEGORY = _('Filter list by category')
+FILTER_LIST_BY_STRING = _('Filter list by string')
+
+##
+
+GET_LATEST_VERSION = _('Get latest version')
+GLOBAL_FUNCTIONS = _('Global functions')
 
 ##
 
@@ -70,6 +61,7 @@ INSTALLED_VERSION = _('Installed Version')
 INSTALLING = _('Installing')
 INSTALL_DESCRIPTION = _('Download and install selected applications')
 INSTALL_FAILED = _('Install failed')
+INSTALL_IMPLICATION = _('implies -d')
 INSTALL_SUCCEEDED = _('Install succeeded')
 
 ##
@@ -80,6 +72,8 @@ KEY = _('Key')
 
 LATEST_INI_UPDATE_FAILED = _('Failed to update latest.ini. Is it writable?')
 LATEST_VERSION = _('Latest Version')
+LIST_ALL_APPLICATION_CATEGORIES = _('List all application categories')
+LIST_SUPPORTED_APPLICATIONS = _('List supported applications')
 LOADING = _('Loading')
 
 ##
@@ -90,7 +84,8 @@ MISSING_VERSION_WHEN_SCRAPE = _("Missing key 'version' when 'scrape' specified")
 
 ##
 
-NO_CHANGES_FOUND = _('No changes found.')
+NAME = _('Name')
+NO_CHANGES_FOUND = _('No changes found')
 NO_SUCH_APPLICATION = _('No such application')
 
 ##
@@ -110,11 +105,14 @@ REPORT_BUG_DESCRIPTION = _('Report a bug')
 SECTION = _('Section')
 STARTING = _('Starting')
 STATUS = _('Status')
+STRING = _('String')
 SUPPORTED_APPLICATIONS = _('Supported Applications')
 
 ##
 
+TEST_DOWNLOAD_ONLY = _('Test download only')
 TESTING = _('Testing')
+THIS_HELP_SCREEN = _('This help screen')
 
 ##
 
@@ -128,6 +126,7 @@ UPDATE_DATABASE_FAILED = _('Update database failed')
 UPDATE_DATABASE_SUCCEEDED = _('Update database succeeded')
 UPDATE_DB = _('Update DB')
 UPDATE_DB_DESCRIPTION = _('Update application database')
+UPDATE_IMPLICATION = _('implies -i, -x if not upgradeable')
 UPDATING_DATABASE = _('Updating database')
 UPDATING_LOCAL_DATABASE = _('Updating local database')
 UPGRADE = _('Upgrade')
@@ -146,19 +145,26 @@ WEBSITE = _('Website')
 # Build strings
 ###
 
-BUILD_COMMANDLINE_HELP = _("""
-Usage:
-  build.py [OPTIONS]
-  -p    Build executable using Py2Exe
-  -r    Rezip shared library using 7-Zip
-  -u    Compress executables using UPX
-  -z    Create ZIP package
-  -n    Create NSIS package""")
+BUILD_EXECUTABLE_USING_PY2EXE = _('Build executable using Py2Exe')
 BUILD_FAILED = _('Build failed.')
 
 ##
 
+COMPRESS_USING_UPX = _('Compress executables using UPX')
+CREATE_NSIS_PACKAGE = _('Create NSIS package')
+CREATE_ZIP_PACKAGE = _('Create ZIP package')
+
+##
+
 NSIS_NOT_AVAILABLE = _('NSIS not available')
+
+##
+
+OPTIONS = _('OPTIONS')
+
+##
+
+REZIP_USING_SEVENZIP = _('Rezip shared library using 7-Zip')
 
 ##
 
@@ -167,3 +173,4 @@ SEVENZIP_NOT_AVAILABLE = _('7-Zip not available')
 ##
 
 UPX_NOT_AVAILABLE = _('UPX not available')
+USAGE = _('Usage')
