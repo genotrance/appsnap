@@ -20,6 +20,9 @@
 ; Location of the documentation files
 !define DOCUMENTATION_FILES_LOCATION          "docs"
 
+; Location of the locale files
+!define LOCALE_FILES_LOCATION                 "locale"
+
 ; Messages
 !define ABORT_INSTALL_MESSAGE                 "${PRODUCT_NAME} ${PRODUCT_VERSION} install failed! Aborting installation."
 !define ABORT_UNINSTALL_MESSAGE               "${PRODUCT_NAME} ${PRODUCT_VERSION} uninstall failed! Aborting uninstallation."
@@ -73,6 +76,10 @@ Section "Installer" SEC01
   ; Copy documentation
   SetOutPath "$INSTDIR\docs"
   File "${DOCUMENTATION_FILES_LOCATION}\*.txt"
+
+  ; Copy locale
+  SetOutPath "$INSTDIR\locale"
+  File /r /x .svn "${LOCALE_FILES_LOCATION}\*.*"
 SectionEnd
 
 Section -Post
@@ -111,6 +118,7 @@ Section Uninstall
 
   ; Delete all installed files and directories
   RMDir /r "$INSTDIR\docs"
+  RMDir /r "$INSTDIR\locale"
   Delete "$INSTDIR\*.pyd"
   Delete "$INSTDIR\*.exe"
   Delete "$INSTDIR\*.ico"
