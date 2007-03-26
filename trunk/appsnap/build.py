@@ -102,7 +102,22 @@ class build:
         
     # Parse arguments
     def parse_arguments(self):
-        help = strings.BUILD_COMMANDLINE_HELP
+        help = """
+%s:
+  build.py [%s]
+  -p    %s
+  -r    %s
+  -u    %s
+  -z    %s
+  -n    %s""" % (
+                 strings.USAGE,
+                 strings.OPTIONS,
+                 strings.BUILD_EXECUTABLE_USING_PY2EXE,
+                 strings.REZIP_USING_SEVENZIP,
+                 strings.COMPRESS_USING_UPX,
+                 strings.CREATE_ZIP_PACKAGE,
+                 strings.CREATE_NSIS_PACKAGE
+                 )
     
         # Set defaults
         if len(sys.argv) == 2:
