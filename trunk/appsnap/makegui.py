@@ -16,6 +16,8 @@ class MakeGui:
         self.objects['locale'] = wx.Locale(wx.LANGUAGE_DEFAULT)
         self.objects['locale'].AddCatalogLookupPathPrefix("locale")
         self.objects['locale'].AddCatalog("appsnap")
+        print 'Locale = ' + self.objects['locale'].GetName()
+        print
     
         # Create a frame object
         self.objects['frame'] = wx.Frame(None, -1, title, pos, size, style)
@@ -127,22 +129,28 @@ class MakeGui:
                 # Remove escapers
                 if key[0] == '^': key = key[1:]
 
-                if (key == 'parent'):
-                    code += key + "=self.objects['" + value.__str__() + "'],"
-                elif (value.__str__() != "" and value.__str__()[0] == '~'):
-                    code += key + "=self.objects['" + value.__str__()[1:] + "'],"
-                else:
-                    try:
-                        if (type(eval(value.__str__()))):
-                            code += key + "=" + value.__str__() + ","
-                    except (NameError, SyntaxError):
-                        code += key + "='" + value.__str__() + "',"
+                try:
+                    if (key == 'parent'):
+                        code += key + "=self.objects['" + value.__str__() + "'],"
+                    elif (value.__str__() != "" and value.__str__()[0] == '~'):
+                        code += key + "=self.objects['" + value.__str__()[1:] + "'],"
+                    else:
+                        try:
+                            if (type(eval(value.__str__()))):
+                                code += key + "=" + value.__str__() + ","
+                        except (NameError, SyntaxError):
+                            code += key + "='" + value.__str__() + "',"
+                except UnicodeEncodeError:
+                    code += key + "=u\"" + value + "\","
             code = code[:len(code)-1] + " )"
 
             # Execute and capture return value
             ret = eval(code)
             retval.append(ret)
-            print '>>> ' + code + '\n... ' + ret.__str__()
+            try:
+                print '>>> ' + code + '\n... ' + ret.__str__()
+            except UnicodeEncodeError:
+                print '>>> ' + code.encode("utf-8") + '\n... ' + ret.__str__()
 
         # Return captured returned values
         return retval

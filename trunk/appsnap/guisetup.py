@@ -340,11 +340,13 @@ class Events:
             methods:
             - name : dropdown
               method : Clear
-
+        """
+        for category in categories:
+            schema += """
             - name : dropdown
-              method : AppendItems
-              strings : %s
-        """ % (categories)
+              method : Append
+              item : "%s"
+            """ % (category)
         self.resources['gui'].parse_and_run(schema)
         self.resources['gui'].execute([{'name' : 'dropdown', 'method' : 'Select', 'n' : 0}])
 
@@ -372,8 +374,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~downloadbmp
-              label : '%s'
-              shortHelp : '%s'
+              label : "%s"
+              shortHelp : "%s"
 
             - name : toolbar
               method : AddSeparator
@@ -382,8 +384,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~installbmp
-              label : '%s'
-              shortHelp : '%s'
+              label : "%s"
+              shortHelp : "%s"
 
             - name : toolbar
               method : AddSeparator
@@ -392,8 +394,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~upgradebmp
-              label : '%s'
-              shortHelp : '%s'
+              label : "%s"
+              shortHelp : "%s"
 
             - name : toolbar
               method : AddSeparator
@@ -402,8 +404,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~uninstallbmp
-              label : '%s'
-              shortHelp : '%s'
+              label : "%s"
+              shortHelp : "%s"
 
             - name : toolbar
               method : AddSeparator
@@ -418,8 +420,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~dbupdatebmp
-              label : '%s'
-              shortHelp : '%s'
+              label : "%s"
+              shortHelp : "%s"
 
             - name : toolbar
               method : AddSeparator
@@ -428,8 +430,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~reloadbmp
-              label : '%s'
-              shortHelp : '%s'
+              label : "%s"
+              shortHelp : "%s"
 
             - name : toolbar
               method : AddSeparator
@@ -444,8 +446,8 @@ class Events:
               method : AddLabelTool
               id : -1
               bitmap : ~reportbugbmp
-              label : '%s'
-              shortHelp : '%s'
+              label : "%s"
+              shortHelp : "%s"
 
             - name : toolbar
               method : Realize
@@ -690,7 +692,7 @@ class Events:
             methods:
             - name : statusbar
               method : SetStatusText
-              text : '%s'
+              text : "%s"
               number : 1
               
             - name : statusbar

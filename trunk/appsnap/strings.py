@@ -3,6 +3,10 @@
 ###
 
 import wx
+app = wx.App(False)
+locale = wx.Locale(wx.LANGUAGE_DEFAULT)
+locale.AddCatalogLookupPathPrefix("locale")
+locale.AddCatalog("appsnap")
 _ = wx.GetTranslation
 
 ###
@@ -87,6 +91,7 @@ MISSING_VERSION_WHEN_SCRAPE = _("Missing key 'version' when 'scrape' specified")
 NAME = _('Name')
 NO_CHANGES_FOUND = _('No changes found')
 NO_SUCH_APPLICATION = _('No such application')
+NOT_AVAILABLE = _('Not available')
 
 ##
 

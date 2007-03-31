@@ -183,11 +183,11 @@ if __name__ == '__main__':
     if updatedb == True:
         print '-> ' + strings.UPDATING_DATABASE
         remote = curl_instance.get_web_data(configuration.database[config.LOCATION])
-        local = open(config.DB, 'rb').read()
+        local = open(config.DB_INI, 'rb').read()
         if local != remote:
             # Update the DB file
             try:
-                db = open(config.DB, 'wb')
+                db = open(config.DB_INI, 'wb')
                 db.write(remote)
                 db.close()
                 configuration.copy_database_to_cache(True)

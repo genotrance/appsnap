@@ -4,6 +4,7 @@ import os
 import os.path
 import re
 import string
+import strings
 import StringIO
 import time
 import _winreg
@@ -22,9 +23,6 @@ DOTLESS_VERSION            = '#DOTLESS_VERSION#'
 DASHTODOT_VERSION          = '#DASHTODOT_VERSION#'
 DOTTOUNDERSCORE_VERSION    = '#DOTTOUNDERSCORE_VERSION#'
 INSTALL_DIR                = '#INSTALL_DIR#'
-
-# Version not available
-NOT_AVAILABLE      = 'Not Available'
 
 # DB.ini entries
 APP_CATEGORY      = 'category'
@@ -76,7 +74,7 @@ class process:
                 self.splitversions = self.get_split_versions()
                 self.width = self.get_width()
         else:
-            self.latestversion = NOT_AVAILABLE
+            self.latestversion = strings.NOT_AVAILABLE
 
     # ***
     # External functions
@@ -316,7 +314,7 @@ class process:
     # Replace version strings with version value specified or latest version
     def replace_version(self, string, version=None):
         if version == None:
-            if self.latestversion == None or self.latestversion == NOT_AVAILABLE: return string
+            if self.latestversion == None or self.latestversion == strings.NOT_AVAILABLE: return string
             version = self.latestversion
         elif version == '': return string
 
