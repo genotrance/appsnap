@@ -32,7 +32,6 @@ if __name__ == '__main__':
     print 'AppSnap = ' + version.APPVERSION
     print 'wxPython = ' + wx.VERSION_STRING
     print 'PyCurl = ' + pycurl.version
-    print
 
     # Create a gui object
     gui = makegui.MakeGui(version.APPNAME + ' ' + version.APPVERSION, None, (guisetup.WIDTH, guisetup.HEIGHT))

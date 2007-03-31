@@ -6,7 +6,8 @@ New Applications
 - Utilities : TaskSwitchXP
 
 Internal Improvements
-- AppSnap is now localizable. Translations need to be added.
+- AppSnap is now localizable. A French translation has been added courtesy
+  Gonzague Dambricourt.
 - Zipped applications with no installer can now be deployed.
 - AppSnap maintains a copy of the database in the cache directory since it is
   an essential part of the application repository.
