@@ -6,11 +6,11 @@ New Applications
 - Utilities : TaskSwitchXP
 
 GUI Enhancements
+- AppSnap is now localizable. A French translation has been added courtesy
+  Gonzague Dambricourt.
 - Moved text "Filter" into the filter box to save space on the GUI.
 
 Internal Improvements
-- AppSnap is now localizable. A French translation has been added courtesy
-  Gonzague Dambricourt.
 - Zipped applications with no installer can now be deployed.
 - AppSnap maintains a copy of the database in the cache directory since it is
   an essential part of the application repository.
@@ -18,7 +18,7 @@ Internal Improvements
   allow executing custom commands to assist the install/uninstall process.
 - In db.ini, the following are now optional: instparam, chinstdir, uninstall
   and uninstparam.
-- AppSnap CLI now limits the number of threads spawned at a time depending upon
+- AppSnap now limits the number of threads spawned in parallel depending upon
   the number of network connections configured in config.ini.
 - Internal code cleanup : move numeric limits to defines.py, return unique 
   return values depending on error

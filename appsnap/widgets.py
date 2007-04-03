@@ -180,7 +180,7 @@ class ApplicationPanel(wx.Panel):
         
         installed_version = self.event.configuration.get_installed_version(self.app_name)
         latest_version = self.process.get_latest_version()
-        if installed_version == latest_version:
+        if installed_version >= latest_version:
             self.select(False)
             sizeritem.Show(False)
 
