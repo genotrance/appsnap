@@ -1,3 +1,4 @@
+import defines
 import guisetup
 import makegui
 import pycurl
@@ -34,7 +35,7 @@ if __name__ == '__main__':
     print 'PyCurl = ' + pycurl.version
 
     # Create a gui object
-    gui = makegui.MakeGui(version.APPNAME + ' ' + version.APPVERSION, None, (guisetup.WIDTH, guisetup.HEIGHT))
+    gui = makegui.MakeGui(version.APPNAME + ' ' + version.APPVERSION, None, (defines.GUI_WIDTH, defines.GUI_HEIGHT))
 
     # Parse and run the GUI schema
     gui.parse_and_run(guisetup.schema, guisetup.Events({'gui' : gui}))

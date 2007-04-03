@@ -163,7 +163,7 @@ class MakeGui:
             # Create the code to execute
             code = e['type'] + "("
 
-            if (e['type'] in ['wx.EVT_SIZE', 'wx.EVT_MOVE', 'wx.EVT_LEFT_DOWN', 'wx.EVT_LEFT_UP', 'wx.EVT_LEFT_DCLICK']):
+            if (e['type'] in ['wx.EVT_SIZE', 'wx.EVT_MOVE', 'wx.EVT_LEFT_DOWN', 'wx.EVT_LEFT_UP', 'wx.EVT_LEFT_DCLICK', 'wx.EVT_SET_FOCUS', 'wx.EVT_KILL_FOCUS']):
                 code += "self.objects['" + e['name'] + "'],"
             else:
                 code += "self.objects['frame']," + "self.objects['" + e['name'] + "'].GetId(),"

@@ -1,4 +1,5 @@
 # Import required libraries
+import defines
 import glob
 import os
 import os.path
@@ -127,7 +128,7 @@ class process:
         # Download if new version not already downloaded or if filename does not
         # contain version information and more than a day old (we have no way to
         # know if the file has changed)
-        cache_timeout = int(self.global_config.cache['cache_timeout']) * 24 * 60 * 60
+        cache_timeout = int(self.global_config.cache['cache_timeout']) * defines.NUM_SECONDS_IN_DAY
         if not os.path.exists(cached_filename) or (
                                                    filename == self.app_config[APP_FILENAME] and
                                                    os.path.exists(cached_filename) and

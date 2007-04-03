@@ -1,6 +1,7 @@
 # Import required libraries
 import config
 import curl
+import defines
 import getopt
 import process
 import strings
@@ -58,6 +59,7 @@ help = header + """
        strings.UNINSTALL_DESCRIPTION
        )
 
+# Perform an action on the specified application
 def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall, test):
     items = configuration.get_section_items(name)
     if items != None:
@@ -117,14 +119,14 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
             lock.release()
     else:
         print strings.NO_SUCH_APPLICATION + ' : ' + name
-        
+
 if __name__ == '__main__':
     # Parse command line arguments
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:tuUx')
     except getopt.GetoptError:
         print help
-        sys.exit(2)
+        sys.exit(defines.ERROR_GETOPT)
 
     # Set defaults
     names = None
@@ -147,7 +149,7 @@ if __name__ == '__main__':
         if o == '-g': getversion = True
         if o == '-h':
             print help
-            sys.exit()
+            sys.exit(defines.ERROR_HELP)
         if o == '-i': install = True
         if o == '-l': list = True
         if o == '-n': names = a.split(',')
@@ -160,7 +162,7 @@ if __name__ == '__main__':
     # If no application specified, exit
     if names == None and list == False and categories == False and updatedb == False:
         print help
-        sys.exit()
+        sys.exit(defines.ERROR_NO_OPTIONS_SPECIFIED)
 
     # Print application header
     print header
@@ -174,10 +176,10 @@ if __name__ == '__main__':
     # List applications if requested
     if categories == True:
         configuration.display_categories()
-        sys.exit()
+        sys.exit(defines.ERROR_SUCCESS)
     elif list == True:
         configuration.display_available_sections(categoryfilter, stringfilter)
-        sys.exit()
+        sys.exit(defines.ERROR_SUCCESS)
 
     # Update database if requested
     if updatedb == True:
@@ -196,7 +198,7 @@ if __name__ == '__main__':
                 print '-> ' + strings.UPDATE_DATABASE_FAILED + '. ' + strings.UNABLE_TO_WRITE_DB_INI
         else:
             print '-> ' + strings.NO_CHANGES_FOUND
-        sys.exit()
+        sys.exit(defines.ERROR_SUCCESS)
 
     # Figure out applications selected
     if len(names) == 1 and names[0] == '*':
@@ -216,6 +218,8 @@ if __name__ == '__main__':
     children = []
     lock = threading.Lock()
     for name in names:
+        curl_instance.limit_threads(children)
+        
         child = threading.Thread(target=do_action, args=[configuration, 
                                                          curl_instance, 
                                                          lock, 

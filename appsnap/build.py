@@ -1,3 +1,4 @@
+import defines
 import distutils.core
 import getopt
 import glob
@@ -129,7 +130,7 @@ class build:
                 opts, args = getopt.getopt(sys.argv[1:], 'pruznh')
             except getopt.GetoptError:
                 print help
-                sys.exit(1)
+                sys.exit(defines.ERROR_GETOPT)
     
             for o, a in opts:
                 if o == '-p': p = True
@@ -139,7 +140,7 @@ class build:
                 if o == '-n': n = True
                 if o == '-h':
                     print help
-                    sys.exit(1)
+                    sys.exit(defines.ERROR_HELP)
             
         return [p, r, u, z, n]
             
@@ -219,7 +220,7 @@ class build:
     # Die on error
     def error_out(self, text):
         print text + '. ' + strings.BUILD_FAILED
-        sys.exit(1)
+        sys.exit(defines.ERROR_BUILD_FAILED)
 
     # Get data from the registry
     def get_registry_key(self, database, key, value):
