@@ -1,5 +1,6 @@
 # Import required libraries
 import config
+import defines
 import os
 import pycurl
 import socket
@@ -57,11 +58,11 @@ class curl:
     
                     self.curl[i].setopt(pycurl.PROXYUSERPWD, self.global_config.user[config.PROXY_USER] +
                         ':' + self.global_config.user[config.PROXY_PASSWORD])
-                    self.curl[i].setopt(pycurl.PROXYAUTH, 8)
+                    self.curl[i].setopt(pycurl.PROXYAUTH, pycurl.CURLAUTH_ANY)
             except WindowsError: pass
     
             self.curl[i].setopt(pycurl.FOLLOWLOCATION, True)
-            self.curl[i].setopt(pycurl.MAXREDIRS, 5)
+            self.curl[i].setopt(pycurl.MAXREDIRS, defines.NUM_MAX_REDIRECTIONS)
 
     # Acquire a lock
     def get_lock(self):
@@ -95,7 +96,7 @@ class curl:
         except pycurl.error, message:
             errno, text = message
             # Timeout test then succeeded
-            if  errno == 28 and test == True:
+            if  errno == defines.ERROR_CURL_OPERATION_TIMEOUT and test == True:
                 return 200
             return 404
 
@@ -143,7 +144,7 @@ class curl:
         # If test mode, download to different file and set timeout
         cached_filename = self.get_cached_name(filename)
         if test == True:
-            self.curl[i].setopt(pycurl.TIMEOUT, 1)
+            self.curl[i].setopt(pycurl.TIMEOUT, defines.NUM_SECONDS_TO_TEST_DOWNLOAD)
             cached_filename += '.tmp'
 
         # Open download filename
@@ -191,6 +192,15 @@ class curl:
     def get_cached_name(self, filename):
         return os.path.join(self.global_config.cache[config.CACHE_LOCATION], filename)
 
+    # Ensure # of threads per curl object is limited
+    def limit_threads(self, threads):
+        while len(threads) > defines.NUM_THREADS_PER_CURL_OBJECT * self.download:
+            for i in range(len(threads)):
+                threads[i].join(defines.NUM_SECONDS_PER_THREAD_JOIN)
+                if not threads[i].isAlive():
+                    threads.pop(i)
+                    break
+    # Destructor
     def __del__(self):
         for i in range(self.download):
             self.curl[i].close()

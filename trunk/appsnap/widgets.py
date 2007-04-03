@@ -1,3 +1,4 @@
+import defines
 import process
 import strings
 import threading
@@ -155,10 +156,10 @@ class ApplicationPanel(wx.Panel):
         # Get event lock
         self.event.lock.acquire()
         
-        height = 50
-        if self.version.GetLabel() != '': height += 15
-        if self.installed_version.GetLabel() != '': height += 15
-        if self.status.GetLabel() != '': height += 15
+        height = defines.SECTION_HEIGHT
+        if self.version.GetLabel() != '': height += defines.SECTION_HEIGHT_INCREMENT
+        if self.installed_version.GetLabel() != '': height += defines.SECTION_HEIGHT_INCREMENT
+        if self.status.GetLabel() != '': height += defines.SECTION_HEIGHT_INCREMENT
         
         self.SetMinSize((self.GetMinWidth(), height))
         self.SetMaxSize((self.GetMinWidth(), height))
@@ -207,7 +208,7 @@ class ApplicationPanel(wx.Panel):
         self.unset_version()
         self.unset_installed_version()
         self.hide_status()
-        self.SetMinSize((self.GetMinWidth(), 50))
+        self.SetMinSize((self.GetMinWidth(), defines.SECTION_HEIGHT))
         
     # Save row colour
     def save_colour_by_row(self, row):
@@ -224,6 +225,7 @@ class ApplicationPanel(wx.Panel):
     
     # When panel or text is clicked
     def on_click(self, event):
+        self.SetFocus()
         if self.selected == True and self.checkbox.IsChecked() == False:
             self.select(False)
         elif self.selected == False and self.checkbox.IsChecked() == False:
@@ -235,6 +237,7 @@ class ApplicationPanel(wx.Panel):
         
     # When checkbox is clicked
     def on_checkbox_click(self, event):
+        self.SetFocus()
         if event.IsChecked() == True:
             self.select(True)
         else:
@@ -271,7 +274,7 @@ class ApplicationPanel(wx.Panel):
 
         # Done
         self.set_status_text(strings.DONE)
-        time.sleep(3)
+        time.sleep(defines.SLEEP_GUI_SECTION_ACTION_DONE)
 
         # Succeeded so unselect
         self.select(False)

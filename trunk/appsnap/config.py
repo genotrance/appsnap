@@ -1,5 +1,6 @@
 # Import required libraries
 import ConfigParser
+import defines
 import os.path
 import process
 import shutil
@@ -222,7 +223,7 @@ class config:
     # Get cached latest version
     def get_cached_latest_version(self, section):
         if self.latest.has_section(section) == True:
-            if time.time() - float(self.latest.get(section, TIMESTAMP)) < int(self.cache[CACHE_TIMEOUT]) * 24 * 60 * 60:
+            if time.time() - float(self.latest.get(section, TIMESTAMP)) < int(self.cache[CACHE_TIMEOUT]) * defines.NUM_SECONDS_IN_DAY:
                 return self.latest.get(section, process.APP_VERSION)
         return None
 
@@ -275,13 +276,13 @@ class config:
         for key in keys:
             if not key in items:
                 print strings.MISSING_SECTION_KEY + '. ' + strings.SECTION + ' = ' + section + ', ' + strings.KEY + ' = ' + key
-                sys.exit()
+                sys.exit(defines.ERROR_MISSING_SECTION_KEY)
         if process.APP_SCRAPE in items and not process.APP_VERSION in items:
             print strings.MISSING_VERSION_WHEN_SCRAPE + '. ' + strings.SECTION + ' = ' + section
-            sys.exit()
+            sys.exit(defines.ERROR_MISSING_VERSION_WHEN_SCRAPE)
         if not process.APP_SCRAPE in items and not process.APP_DOWNLOAD in items:
             print strings.MISSING_SCRAPE_AND_DOWNLOAD + '. ' + strings.SECTION + ' = ' + section
-            sys.exit()
+            sys.exit(defines.MISSING_SCRAPE_AND_DOWNLOAD)
 
     # Convert a config list into a hash
     def convert_to_hash(self, list):

@@ -1,4 +1,5 @@
 import config
+import defines
 import curl
 import process
 import re
@@ -7,11 +8,6 @@ import threading
 import time
 import webbrowser
 import wx
-
-WIDTH = 400
-HEIGHT = 590
-
-TBWIDTH = 60
 
 # Setup localization
 _ = wx.GetTranslation
@@ -106,7 +102,7 @@ schema = """
     - name : dropdown
       type : wx.Choice
       parent : panel
-      size : (120, -1)
+      size : (%s, -1)
       pos : (0, -1)
       methods:
       - method : SetFont
@@ -115,26 +111,25 @@ schema = """
       - type : wx.EVT_CHOICE
         method : category_chosen
     
-    - name : filtertext
-      type : wx.StaticText
-      parent : panel
-      pos : (165, 5)
-      label : '%s :'
-      methods:
-      - method : SetFont
-        font : ~filterfont
-    
     - name : filterbox
       type : wx.TextCtrl
       parent : panel
-      size : (120, 19)
+      size : (%s, %s)
       pos : (200, 3)
       methods:
       - method : SetFont
         font : ~filterfont
+      - method : SetValue
+        value : "%s"
+      - method : SetForegroundColour
+        colour : ~darkgreycolour
       events:
       - type : wx.EVT_TEXT
         method : filter_section_list
+      - type : wx.EVT_SET_FOCUS 
+        method : adjust_filter_box_text
+      - type : wx.EVT_KILL_FOCUS
+        method : adjust_filter_box_text
     
     - name : bsizer
       type : wx.BoxSizer
@@ -305,7 +300,13 @@ schema = """
     - name : frame
       type : wx.EVT_SIZE
       method : resize_all
-""" % (TBWIDTH, strings.FILTER, 'appsnap.ico', WIDTH, HEIGHT, WIDTH)
+""" % (defines.TOOLBAR_WIDTH,
+       defines.CATEGORY_DROPDOWN_WIDTH, 
+       defines.FILTER_BOX_WIDTH, defines.FILTER_BOX_HEIGHT,
+       strings.FILTER,
+       'appsnap.ico', 
+       defines.GUI_WIDTH, defines.GUI_HEIGHT, defines.GUI_WIDTH
+       )
 
 # Event processing methods
 class Events:
@@ -476,13 +477,13 @@ class Events:
     def resize_all(self, event):
         # Get the frame size
         frame = event.GetSize()
-
+        
         schema = """
             methods:
             - name : tbpanel
               method : SetSize
               size : (%s, %s)
-              
+            
             - name : panel
               method : SetSize
               size : (%s, %s)
@@ -494,7 +495,11 @@ class Events:
             - name : bsizer
               method : SetMinSize
               size : (%s, %s)
-        """ % (TBWIDTH, frame.y, frame.x - TBWIDTH + 1, frame.y, WIDTH - 80, frame.y - 90, WIDTH - TBWIDTH, frame.y - 90)
+        """ % (defines.TOOLBAR_WIDTH, frame.y,
+               defines.GUI_WIDTH - defines.TOOLBAR_WIDTH, frame.y, 
+               defines.GUI_WIDTH - defines.TOOLBAR_WIDTH - 15, frame.y - defines.TOP_MARGIN, 
+               defines.GUI_WIDTH - defines.TOOLBAR_WIDTH - 15, frame.y - defines.TOP_MARGIN
+               )
         self.resources['gui'].parse_and_run(schema)
     
     # Get the title of a section
@@ -537,7 +542,13 @@ class Events:
                   method : Add
                   item : ~%s
                   flag : wx.GROW
-            """ % (section_title, section, items[process.APP_DESCRIBE], items[process.APP_WEBSITE], (WIDTH-TBWIDTH-100, 50), section_title)
+            """ % (section_title, 
+                   section, 
+                   items[process.APP_DESCRIBE], 
+                   items[process.APP_WEBSITE], 
+                   (defines.GUI_WIDTH-defines.TOOLBAR_WIDTH-100, defines.SECTION_HEIGHT), 
+                   section_title
+                   )
             self.resources['gui'].parse_and_run(schema)
             self.resources['gui'].objects[section_title].set_event(self)
 
@@ -558,6 +569,8 @@ class Events:
 
         # Get filter string if any
         filter = self.resources['gui'].objects['filterbox'].GetValue().lower()
+        if filter == strings.FILTER.lower():
+            filter = ''
 
         # Construct section list
         section_objs = []
@@ -610,10 +623,19 @@ class Events:
     def filter_section_list(self, event):
         # Get current selected category
         category = self.resources['gui'].objects['dropdown'].GetStringSelection()
-        time.sleep(0.1)
+        time.sleep(defines.SLEEP_GUI_FILTER_SECTION_LIST)
         child = threading.Thread(target=self.update_section_list, args=[category])
         child.setDaemon(True)
         child.start()
+        
+    # Display or hide the word "Filter :" in the filterbox
+    def adjust_filter_box_text(self, event):
+        # Get filter string if any
+        filter = self.resources['gui'].objects['filterbox'].GetValue()
+        if filter == strings.FILTER:
+            self.resources['gui'].objects['filterbox'].ChangeValue('')
+        elif filter == '':
+            self.resources['gui'].objects['filterbox'].ChangeValue(strings.FILTER)
 
     # Refresh the section list
     def refresh_section_list(self):
@@ -771,13 +793,12 @@ class Events:
         # Do action for each section
         children = []
         for section in checked:
+            # Limit number of parallel threads
+            self.curl_instance.limit_threads(children)
+            
             child = threading.Thread(target=section.do_action, args=[action])
             children.append(child)
             child.start()
-            
-        # Wait for children to be done
-        for child in children:
-            child.join()
 
         # Reset the GUI
         self.update_status_bar('', '')
@@ -787,7 +808,7 @@ class Events:
     def error_out(self, action, message):
         # Mark as failed
         self.update_status_bar(action, message)
-        time.sleep(3)
+        time.sleep(defines.SLEEP_GUI_ERROR_OUT)
         self.update_status_bar('', '')
 
         # Reset the GUI
@@ -825,7 +846,7 @@ class Events:
 
         # Download latest DB.ini
         remote = self.curl_instance.get_web_data(self.configuration.database[config.LOCATION])
-        time.sleep(0.5)
+        time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
         
         # If download failed
         if remote == None:
@@ -833,32 +854,32 @@ class Events:
 
         # Compare with existing DB
         self.update_status_bar(action, strings.COMPARING + ' ...')
-        local = open(config.DB, 'rb').read()
-        time.sleep(0.5)
+        local = open(config.DB_INI, 'rb').read()
+        time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
 
         if local != remote:
             # Update the DB file
             self.update_status_bar(action, strings.UPDATING_LOCAL_DATABASE + ' ...')
             try:
-                db = open(config.DB, 'wb')
+                db = open(config.DB_INI, 'wb')
                 db.write(remote)
                 db.close()
-                time.sleep(0.5)
+                time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
 
                 # Reload settings
                 self.update_status_bar(action, strings.RELOADING_DATABASE + ' ...')
                 self.setup()
-                time.sleep(0.5)
+                time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
                 self.update_status_bar(action, strings.DONE)
                 self.configuration.copy_database_to_cache(True)
-                time.sleep(3)
+                time.sleep(defines.SLEEP_GUI_DB_UPDATE_DONE)
             except IOError:
                 self.update_status_bar(action, strings.UNABLE_TO_WRITE_DB_INI)
-                time.sleep(3)
+                time.sleep(defines.SLEEP_GUI_DB_UPDATE_DONE)
         else:
             # No change found
             self.update_status_bar(action, strings.NO_CHANGES_FOUND)
-            time.sleep(3)
+            time.sleep(defines.SLEEP_GUI_DB_UPDATE_DONE)
 
         # Reset the GUI
         self.update_status_bar('', '')

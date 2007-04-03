@@ -5,6 +5,9 @@ New Applications
 - Productivity : VirtualDub
 - Utilities : TaskSwitchXP
 
+GUI Enhancements
+- Moved text "Filter" into the filter box to save space on the GUI.
+
 Internal Improvements
 - AppSnap is now localizable. A French translation has been added courtesy
   Gonzague Dambricourt.
@@ -15,6 +18,10 @@ Internal Improvements
   allow executing custom commands to assist the install/uninstall process.
 - In db.ini, the following are now optional: instparam, chinstdir, uninstall
   and uninstparam.
+- AppSnap CLI now limits the number of threads spawned at a time depending upon
+  the number of network connections configured in config.ini.
+- Internal code cleanup : move numeric limits to defines.py, return unique 
+  return values depending on error
 
 Bug Fixes
 - Fixed a bug where latest.ini creation was failing on a fresh install since
@@ -27,6 +34,8 @@ Bug Fixes
   were disappearing on choosing a different category.
 - Fixed a regex bug in uninstall where msiexec calls were getting garbled.
 - Fixed a bug where writes to latest.ini were not being serialized.
+- PyCurl is now instructed to try all proxy authentication schemes instead of
+  NTLM only.
 
 Scrape Fixes
 - Fixed DVD-Flick to install to defined directory.
