@@ -2,8 +2,10 @@ Version 1.3.0-pre2
 ------------------
 New Applications
 - Development : poEdit, Tortoise CVS, Tortoise SVN
-- Productivity : VirtualDub
-- Utilities : TaskSwitchXP
+- Entertainment : Democracy Player
+- Libraries : Ghostscript
+- Productivity : Scribus, Sodipodi, VirtualDub
+- Utilities : Ditto, TaskSwitchXP, Universal Extractor, VirtuaWin
 
 GUI Enhancements
 - AppSnap is now localizable. A French translation has been added courtesy
