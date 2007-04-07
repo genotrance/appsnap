@@ -1,6 +1,7 @@
 import config
 import defines
 import curl
+import os.path
 import process
 import re
 import strings
@@ -262,6 +263,21 @@ schema = """
       - method : CopyFromIcon
         icon : ~reportbugicon
 
+    - name : helpicon
+      type : wx.Icon
+      ^name : '%%systemroot%%\system32\shell32.dll;23'
+      ^type : wx.BITMAP_TYPE_ICO
+      desiredWidth: 16
+      desiredHeight: 16
+
+    - name : helpbmp
+      type : wx.EmptyBitmap
+      width : 16
+      height : 16
+      methods:
+      - method : CopyFromIcon
+        icon : ~helpicon
+
     - name : toolbar
       type : wx.ToolBar
       parent : tbpanel
@@ -451,6 +467,16 @@ class Events:
               shortHelp : "%s"
 
             - name : toolbar
+              method : AddSeparator
+
+            - name : toolbar
+              method : AddLabelTool
+              id : -1
+              bitmap : ~helpbmp
+              label : "%s"
+              shortHelp : "%s"
+
+            - name : toolbar
               method : Realize
         """ % (strings.DOWNLOAD, strings.DOWNLOAD_DESCRIPTION,
                strings.INSTALL, strings.INSTALL_DESCRIPTION,
@@ -458,7 +484,8 @@ class Events:
                strings.UNINSTALL, strings.UNINSTALL_DESCRIPTION,
                strings.UPDATE_DB, strings.UPDATE_DB_DESCRIPTION,
                strings.RELOAD, strings.RELOAD_DESCRIPTION,
-               strings.REPORT_BUG, strings.REPORT_BUG_DESCRIPTION
+               strings.REPORT_BUG, strings.REPORT_BUG_DESCRIPTION,
+               strings.HELP, strings.HELP_DESCRIPTION
                )
         (objects, methods, events) = self.resources['gui'].parse(schema)
         retval = self.resources['gui'].execute(methods)
@@ -469,7 +496,8 @@ class Events:
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[13].GetId(), self.do_db_update)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[15].GetId(), self.do_reload)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[19].GetId(), self.do_report)
-
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[21].GetId(), self.do_help)
+        
         # Create toolbar only once
         self.toolbar = True
 
@@ -901,3 +929,8 @@ class Events:
     # Report a bug
     def do_report(self, event):
         webbrowser.open('http://code.google.com/p/appsnap/issues/entry', 2)
+        
+    # Open help
+    def do_help(self, event):
+        if os.path.exists('appsnap.html'):
+            webbrowser.open('appsnap.html', 2)

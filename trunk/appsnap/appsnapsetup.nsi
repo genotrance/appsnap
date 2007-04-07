@@ -17,9 +17,6 @@
 ; Location of the installation files
 !define INSTALLATION_FILES_LOCATION          "dist"
 
-; Location of the documentation files
-!define DOCUMENTATION_FILES_LOCATION          "docs"
-
 ; Location of the locale files
 !define LOCALE_FILES_LOCATION                 "locale"
 
@@ -73,10 +70,6 @@ Section "Installer" SEC01
   File "${INSTALLATION_FILES_LOCATION}\*.*"
   File "appsnap-${PRODUCT_VERSION}.zip"
 
-  ; Copy documentation
-  SetOutPath "$INSTDIR\docs"
-  File "${DOCUMENTATION_FILES_LOCATION}\*.txt"
-
   ; Copy locale
   SetOutPath "$INSTDIR\locale"
   File /r /x .svn "${LOCALE_FILES_LOCATION}\*.*"
@@ -117,7 +110,6 @@ Section Uninstall
   Delete "$SMPROGRAMS\AppSnapGui.lnk"
 
   ; Delete all installed files and directories
-  RMDir /r "$INSTDIR\docs"
   RMDir /r "$INSTDIR\locale"
   Delete "$INSTDIR\*.pyd"
   Delete "$INSTDIR\*.exe"

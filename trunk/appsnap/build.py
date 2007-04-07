@@ -37,7 +37,7 @@ class build:
                                   'config.ini',
                                   'appsnap.ico',
                                   'appsnapsetup.nsi',
-                                  'docs' + os.path.sep + '*.txt',
+                                  'appsnap.html',
                                   'locale' + os.path.sep + '*' + os.path.sep + 'LC_MESSAGES' + os.path.sep + 'appsnap.*'
                                   ]
         
@@ -93,7 +93,7 @@ class build:
         # Resource files to include
         self.py2exe['data_files'] = [(
                             "" , 
-                            ["appsnap.ico","db.ini","config.ini",]
+                            ["appsnap.ico","db.ini","config.ini","appsnap.html"]
                             )]
         
         # Name of zip file to generate
