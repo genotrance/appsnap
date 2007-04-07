@@ -728,18 +728,10 @@ class Events:
         schema = """
             methods:
             - name : statusbar
-              method : SetFields
-              items : %s
+              method : SetStatusText
+              text : "%s"
+              number : 0
               
-            - name : statusbar
-              method : Refresh
-        """ % ([_(first).encode('UTF-8'), _(second).encode('UTF-8')])
-        self.resources['gui'].parse_and_run(schema)
-
-    # Update status bar sub-status text
-    def update_status_bar_substatus(self, second):
-        schema = """
-            methods:
             - name : statusbar
               method : SetStatusText
               text : "%s"
@@ -747,7 +739,7 @@ class Events:
               
             - name : statusbar
               method : Refresh
-        """ % (_(second).encode('UTF-8'))
+        """ % (_(first).encode('UTF-8'), _(second).encode('UTF-8'))
         self.resources['gui'].parse_and_run(schema)
 
     # Disable GUI elements
