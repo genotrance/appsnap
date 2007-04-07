@@ -49,16 +49,26 @@ class curl:
                 _winreg.CloseKey(key)
     
                 if proxy_enabled == 1:
-                    # Split server and port
-                    proxy_server, proxy_port = proxy_info.split(':')
+                    # Get rid of protocol if specified
+                    if proxy_info[:7] == 'http://': proxy_info = proxy_info[7:]
+                    if proxy_info[:6] == 'ftp://': proxy_info = proxy_info[6:]
+                    
+                    try:
+                        # Split server and port
+                        proxy_server, proxy_port = proxy_info.rsplit(':', 1)
+                    except ValueError:
+                        # Only server available
+                        proxy_server = proxy_info
+                        proxy_port = None
     
                     # Set proxy server and port
                     self.curl[i].setopt(pycurl.PROXY, socket.getfqdn(proxy_server.__str__()))
-                    self.curl[i].setopt(pycurl.PROXYPORT, string.atoi(proxy_port))
+                    if proxy_port != None:
+                        self.curl[i].setopt(pycurl.PROXYPORT, string.atoi(proxy_port))
     
                     self.curl[i].setopt(pycurl.PROXYUSERPWD, self.global_config.user[config.PROXY_USER] +
                         ':' + self.global_config.user[config.PROXY_PASSWORD])
-                    self.curl[i].setopt(pycurl.PROXYAUTH, pycurl.CURLAUTH_ANY)
+                    self.curl[i].setopt(pycurl.PROXYAUTH, defines.CURLOPT_PROXY_ANY)
             except WindowsError: pass
     
             self.curl[i].setopt(pycurl.FOLLOWLOCATION, True)
