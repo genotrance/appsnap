@@ -57,6 +57,11 @@ GLOBAL_FUNCTIONS = _('Global functions')
 
 ##
 
+HELP = _('Help')
+HELP_DESCRIPTION = _('Open documentation')
+
+##
+
 INSTALL = _('Install')
 INSTALLED = _('Installed')
 INSTALLED_APPLICATIONS = _('Installed Applications')
