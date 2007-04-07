@@ -23,6 +23,11 @@ NUM_SECONDS_TO_TEST_DOWNLOAD = 3
 NUM_THREADS_PER_CURL_OBJECT = 2
 
 ###
+# Values
+###
+CURLOPT_PROXY_ANY = 15
+
+###
 # GUI Layout
 ###
 
