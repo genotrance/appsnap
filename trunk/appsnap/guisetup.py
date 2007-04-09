@@ -1,13 +1,13 @@
 import config
 import defines
 import curl
+import os
 import os.path
 import process
 import re
 import strings
 import threading
 import time
-import webbrowser
 import wx
 
 # Setup localization
@@ -920,9 +920,9 @@ class Events:
         
     # Report a bug
     def do_report(self, event):
-        webbrowser.open('http://code.google.com/p/appsnap/issues/entry', 2)
+        os.startfile('http://code.google.com/p/appsnap/issues/entry')
         
     # Open help
     def do_help(self, event):
         if os.path.exists('appsnap.html'):
-            webbrowser.open('appsnap.html', 2)
+            os.startfile('appsnap.html')
