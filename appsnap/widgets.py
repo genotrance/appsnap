@@ -1,10 +1,10 @@
 import defines
+import os
 import process
 import strings
 import threading
 import time
 import wx
-import wx.lib.hyperlink
 
 # Application panel
 class ApplicationPanel(wx.Panel):
@@ -15,6 +15,7 @@ class ApplicationPanel(wx.Panel):
         # State information
         self.gui = gui
         self.app_name = label
+        self.app_url = url
         self.selected = False
         self.process = False
         
@@ -28,13 +29,10 @@ class ApplicationPanel(wx.Panel):
         self.version = wx.StaticText(self, -1, '')
         self.installed_version = wx.StaticText(self, -1, '')
         
-        self.url = wx.lib.hyperlink.HyperLinkCtrl(self)
+        self.url = wx.StaticText(self, -1, '>>')
         self.url.SetFont(self.gui.objects['urlfont'])
-        self.url.SetLabel(">>")
-        self.url.SetURL(url)
         self.url.SetToolTipString(url)
-        self.url.SetUnderlines(False, False, False)
-        self.url.SetColours(self.gui.objects['bluecolour'], self.gui.objects['bluecolour'])
+        self.url.SetForegroundColour(self.gui.objects['bluecolour'])
         
         self.status = wx.StaticText(self, -1, '')
         
@@ -45,6 +43,7 @@ class ApplicationPanel(wx.Panel):
         # Events
         self.setup_click_event([self, self.label, self.description, self.version, self.installed_version])
         wx.EVT_CHECKBOX(self.gui.objects['frame'], self.checkbox.GetId(), self.on_checkbox_click)
+        wx.EVT_LEFT_DOWN(self.url, self.on_url_click)
     
     #####
     # Setup helpers
@@ -242,6 +241,10 @@ class ApplicationPanel(wx.Panel):
             self.select(True)
         else:
             self.select(False)
+            
+    # When url is clicked
+    def on_url_click(self, event):
+        os.startfile(self.app_url)
 
     # Perform specified action
     def do_action(self, action):
