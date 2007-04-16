@@ -453,7 +453,9 @@ class process:
         # Create directory to extract to
         if os.path.isdir(directory):
             self.delete_tree(directory)
-        os.mkdir(directory)
+        try: os.mkdir(directory)
+        except WindowsError:
+            pass
         
         zip = zipfile.ZipFile(file, 'r')
         for cfile in zip.namelist():

@@ -1,4 +1,5 @@
 # Import required libraries
+import codecs
 import config
 import curl
 import defines
@@ -8,6 +9,17 @@ import strings
 import sys
 import threading
 import version
+import wx
+
+# Detect the locale and set the output encoding appropriately
+locale = wx.Locale(wx.LANGUAGE_DEFAULT).GetName()
+if locale[:2] == 'da':
+    encoding = 'cp850'
+else:
+    encoding = ''
+
+if encoding:
+    sys.stdout = codecs.getwriter(encoding)(sys.stdout, 'replace')
 
 header = version.APPNAME + ' ' + version.APPVERSION + '\n'
 
