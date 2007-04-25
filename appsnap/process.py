@@ -460,7 +460,8 @@ class process:
         zip = zipfile.ZipFile(file, 'r')
         for cfile in zip.namelist():
             if cfile[-1] == '/':
-                os.mkdir(os.path.join(directory, cfile[:-1]))
+                if not os.path.exists(os.path.join(directory, cfile[:-1])):
+                    os.mkdir(os.path.join(directory, cfile[:-1]))
             else:
                 target = os.path.join(directory, cfile)
                 if not os.path.exists(os.path.dirname(target)):
