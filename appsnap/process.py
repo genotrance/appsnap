@@ -207,7 +207,7 @@ class process:
                 if cached_filename[-3:] == 'msi' and (retval == 1641 or retval == 3010): pass
                 else: return False
         else:
-            directory = self.expand_env(self.replace_install_dir(INSTALL_DIR))
+            directory = self.replace_install_dir(INSTALL_DIR)
             command = 'explorer "' + directory + '"'
             os.popen('"' + command + '"').close()
     
@@ -229,6 +229,10 @@ class process:
             if self.latestversion == None: self.get_latest_version()
             installed_version = self.latestversion
 
+        # Execute pre-uninstall command if any
+        if self.execute_script(APP_PREUNINSTALL) != True:
+            return False
+
         try:
             # Get uninstall string from registry
             uninstall = self.replace_version(self.app_config[APP_UNINSTALL], installed_version)
@@ -236,10 +240,6 @@ class process:
             uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
             _winreg.CloseKey(key)
 
-            # Execute pre-uninstall command if any
-            if self.execute_script(APP_PREUNINSTALL) != True:
-                return False
-    
             # Run uninstaller, check return value
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('\.exe', '.exe"', uninstall_string.lower())
             try: uninstparam = ' ' + self.replace_install_dir(self.app_config[APP_UNINSTPARAM])
@@ -249,10 +249,6 @@ class process:
                 # MSI returns non-zero as success too
                 if (retval == 1641 or retval == 3010): pass
                 else: return False
-
-            # Execute post-uninstall command if any
-            if self.execute_script(APP_POSTUNINSTALL) != True:
-                return False
     
             # Delete installed version
             self.global_config.delete_installed_version(self.app)
@@ -265,11 +261,15 @@ class process:
                     return False
                 except KeyError:
                     # ZIP file with no embedded installer
-                    directory = self.expand_env(self.replace_install_dir(INSTALL_DIR))
+                    directory = self.replace_install_dir(INSTALL_DIR)
                     self.delete_tree(directory)
             else:
                 # No uninstall method available
                 return False
+
+        # Execute post-uninstall command if any
+        if self.execute_script(APP_POSTUNINSTALL) != True:
+            return False
 
         return True
 
@@ -302,7 +302,6 @@ class process:
         for command in commands:
             command = self.replace_version(command, version)
             command = self.replace_install_dir(command)
-            
             retval = os.popen('"' + command + '"').close()
             if retval != None:
                 return False
@@ -349,7 +348,7 @@ class process:
         # Replace install directory
         string = re.sub(INSTALL_DIR, install_dir, string)
 
-        return string
+        return self.expand_env(string)
 
     # Get all the versions from the scrape page
     def get_versions(self):
@@ -448,7 +447,7 @@ class process:
             test = self.app_config[APP_INSTALLER]
             directory = file[:-4]
         except KeyError:
-            directory = self.expand_env(self.replace_install_dir(INSTALL_DIR))
+            directory = self.replace_install_dir(INSTALL_DIR)
         
         # Create directory to extract to
         if os.path.isdir(directory):
@@ -465,7 +464,7 @@ class process:
             else:
                 target = os.path.join(directory, cfile)
                 if not os.path.exists(os.path.dirname(target)):
-                    os.mkdir(os.path.dirname(target))
+                    os.makedirs(os.path.dirname(target))
                 ufile = open(target, 'wb')
                 buffer = StringIO.StringIO(zip.read(cfile))
                 buflen = 2 ** 20
