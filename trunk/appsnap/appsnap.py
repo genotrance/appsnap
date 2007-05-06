@@ -15,6 +15,8 @@ import wx
 locale = wx.Locale(wx.LANGUAGE_DEFAULT).GetName()
 if locale[:2] == 'da':
     encoding = 'cp850'
+elif locale[:2] == 'bg':
+    encoding = 'cp1251'
 else:
     encoding = ''
 
