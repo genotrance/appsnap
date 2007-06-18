@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-05-06 06:11-0600\n"
+"PO-Revision-Date: 2007-06-06 18:30-0600\n"
 "Last-Translator: \n"
 "Language-Team: Momchil Bojinov\n"
 "MIME-Version: 1.0\n"
@@ -90,7 +90,7 @@ msgstr "Неуспешно свързване"
 
 #: .\/strings.py:47
 msgid "Filter"
-msgstr "Сортирай"
+msgstr "Търсене"
 
 #: .\/strings.py:48
 msgid "Filter applications by category"
@@ -98,15 +98,15 @@ msgstr "Сортирай по категория"
 
 #: .\/strings.py:49
 msgid "Filter applications by string"
-msgstr "Съртирай по дума"
+msgstr "Сортирай по дума"
 
 #: .\/strings.py:50
 msgid "Filter list by category"
-msgstr "Съртирай списъка по категория"
+msgstr "Сортирай списъка по категория"
 
 #: .\/strings.py:51
 msgid "Filter list by string"
-msgstr "Съртирай списъка по дума"
+msgstr "Сортирай списъка по дума"
 
 #: .\/strings.py:55
 msgid "Get latest version"
@@ -130,7 +130,7 @@ msgstr "Инсталирай"
 
 #: .\/strings.py:66
 msgid "Installed"
-msgstr "Инсталирано"
+msgstr "Инсталирани"
 
 #: .\/strings.py:67
 msgid "Installed Applications"
@@ -146,7 +146,7 @@ msgstr "Инсталирана версия"
 
 #: .\/strings.py:70
 msgid "Installing"
-msgstr "Инсталирва се"
+msgstr "Инсталирване"
 
 #: .\/strings.py:71
 msgid "Download and install selected applications"
@@ -222,23 +222,23 @@ msgstr "Прокси аутерификация невалидна. Провер
 
 #: .\/strings.py:107
 msgid "Reload"
-msgstr "Презареди"
+msgstr "Презареждане"
 
 #: .\/strings.py:108
 msgid "Reloading database"
-msgstr "Презарегдане на базата данни"
+msgstr "Презареждане на базата данни"
 
 #: .\/strings.py:109
 msgid "Reload configuration"
-msgstr "Презарегдане на конфигурацията"
+msgstr "Презареждане на конфигурацията"
 
 #: .\/strings.py:110
 msgid "Report Bug"
-msgstr "Докладнай бъг"
+msgstr "Бъг?"
 
 #: .\/strings.py:111
 msgid "Report a bug"
-msgstr "Докладнай бъг"
+msgstr "Бъг?"
 
 #: .\/strings.py:115
 msgid "Section"
@@ -278,7 +278,7 @@ msgstr "Невъзможност за промяна на db.ini"
 
 #: .\/strings.py:130
 msgid "Uninstall"
-msgstr "Премахни"
+msgstr "Премахване"
 
 #: .\/strings.py:131
 msgid "Uninstalling"
@@ -330,7 +330,7 @@ msgstr "Обновление"
 
 #: .\/strings.py:143
 msgid "Upgradeable"
-msgstr "Възможно е обновляване"
+msgstr "За обновление"
 
 #: .\/strings.py:144
 msgid "Upgrade selected applications"
