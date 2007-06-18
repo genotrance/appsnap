@@ -198,7 +198,7 @@ if __name__ == '__main__':
     # Update database if requested
     if updatedb == True:
         print '-> ' + strings.UPDATING_DATABASE
-        remote = curl_instance.get_web_data(configuration.database[config.LOCATION])
+        remote = curl_instance.get_web_data(configuration.database[config.LOCATION] + '/?version=' + version.APPVERSION)
         local = open(config.DB_INI, 'rb').read()
         if local != remote:
             # Update the DB file

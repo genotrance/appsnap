@@ -263,6 +263,9 @@ class process:
                     # ZIP file with no embedded installer
                     directory = self.replace_install_dir(INSTALL_DIR)
                     self.delete_tree(directory)
+                    
+                    # Delete installed version
+                    self.global_config.delete_installed_version(self.app)
             else:
                 # No uninstall method available
                 return False

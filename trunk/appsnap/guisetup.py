@@ -8,6 +8,7 @@ import re
 import strings
 import threading
 import time
+import version
 import wx
 
 # Setup localization
@@ -865,7 +866,7 @@ class Events:
         self.update_status_bar(action, strings.DOWNLOADING + ' ...')
 
         # Download latest DB.ini
-        remote = self.curl_instance.get_web_data(self.configuration.database[config.LOCATION])
+        remote = self.curl_instance.get_web_data(self.configuration.database[config.LOCATION] + '/?version=' + version.APPVERSION)
         time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
         
         # If download failed
