@@ -36,6 +36,8 @@ TIMESTAMP      = 'timestamp'
 # Built-in categories
 ALL            = strings.ALL
 INSTALLED      = strings.INSTALLED
+NOT_INSTALLED  = strings.NOT_INSTALLED
+PROCESSING     = strings.PROCESSING
 UPGRADEABLE    = strings.UPGRADEABLE
 
 # Configuration loading class

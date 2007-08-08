@@ -350,8 +350,10 @@ class Events:
         categories = self.configuration.get_categories()
         categories.insert(0, config.ALL.encode('UTF-8'))
         categories.insert(1, config.INSTALLED.encode('UTF-8'))
-        categories.insert(2, config.UPGRADEABLE.encode('UTF-8'))
-        categories.insert(3, '--')
+        categories.insert(2, config.NOT_INSTALLED.encode('UTF-8'))
+        categories.insert(3, config.UPGRADEABLE.encode('UTF-8'))
+        categories.insert(4, config.PROCESSING.encode('UTF-8'))
+        categories.insert(5, '--')
 
         # Add categories to dropdown and sections to sectionlist
         schema = """
@@ -588,6 +590,10 @@ class Events:
             sections = self.configuration.get_sections()
         elif category == config.INSTALLED or category == config.UPGRADEABLE:
             sections = self.configuration.installed.sections()
+        elif category == config.NOT_INSTALLED:
+            sections = [item for item in self.configuration.get_sections() if item not in self.configuration.installed.sections()]
+        elif category == config.PROCESSING:
+            sections = self.get_checked_sections(True)
         elif category == '--':
             return
         else:
@@ -618,7 +624,8 @@ class Events:
         row = 0
         children = []
         for item in self.resources['gui'].objects['bsizer'].GetChildren():
-            item.GetWindow().reset()
+            if category != config.PROCESSING:
+                item.GetWindow().reset()
             if item.GetWindow() in section_objs:
                 item.Show(True)
                 if category == config.UPGRADEABLE:
@@ -715,12 +722,13 @@ class Events:
         self.resources['gui'].parse_and_run(schema)
         
     # Get all visible and checked sections
-    def get_checked_sections(self):
+    def get_checked_sections(self, name=False):
         checked = []
         items = self.resources['gui'].objects['bsizer'].GetChildren()
         for item in items:
             if item.IsShown() and item.GetWindow().checkbox.IsChecked() == True:
-                checked.append(item.GetWindow())
+                if name: checked.append(item.GetWindow().app_name)
+                else: checked.append(item.GetWindow())
 
         return checked
 
@@ -808,6 +816,11 @@ class Events:
         # Disable GUI
         self.disable_gui()
         
+        # Display only checked sections
+        orig_category = self.resources['gui'].objects['dropdown'].GetStringSelection()
+        self.resources['gui'].objects['dropdown'].SetStringSelection(config.PROCESSING)
+        self.update_section_list(config.PROCESSING)
+        
         # Update status bar
         self.update_status_bar(action[0].capitalize() + action[1:], '')
 
@@ -821,6 +834,14 @@ class Events:
             children.append(child)
             child.start()
 
+        # Clear out threads
+        self.curl_instance.clear_threads(children)
+    
+        # Display all sections by category
+        if len(self.get_checked_sections()) == 0:
+            self.resources['gui'].objects['dropdown'].SetStringSelection(orig_category)
+            self.update_section_list(orig_category)
+        
         # Reset the GUI
         self.update_status_bar('', '')
         self.enable_gui()

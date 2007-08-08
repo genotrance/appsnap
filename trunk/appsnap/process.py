@@ -234,11 +234,18 @@ class process:
             return False
 
         try:
-            # Get uninstall string from registry
-            uninstall = self.replace_version(self.app_config[APP_UNINSTALL], installed_version)
-            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
-            uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
-            _winreg.CloseKey(key)
+            try:
+                # Get uninstall string from registry - LOCAL_MACHINE
+                uninstall = self.replace_version(self.app_config[APP_UNINSTALL], installed_version)
+                key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
+                uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
+                _winreg.CloseKey(key)
+            except WindowsError:
+                # Get uninstall string from registry - CURRENT_USER
+                uninstall = self.replace_version(self.app_config[APP_UNINSTALL], installed_version)
+                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
+                uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
+                _winreg.CloseKey(key)
 
             # Run uninstaller, check return value
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('\.exe', '.exe"', uninstall_string.lower())
@@ -493,6 +500,8 @@ class process:
         
     # Expand string containing environment variable
     def expand_env(self, string):
+        if string == '': return string
+        
         pipe = os.popen("cmd /c echo " + string)
         exp_string = pipe.read()
         pipe.close()

@@ -210,6 +210,16 @@ class curl:
                 if not threads[i].isAlive():
                     threads.pop(i)
                     break
+
+    # Clear out all threads in queue
+    def clear_threads(self, threads):
+        while len(threads):
+            for i in range(len(threads)):
+                threads[i].join(defines.NUM_SECONDS_PER_THREAD_JOIN)
+                if not threads[i].isAlive():
+                    threads.pop(i)
+                    break
+
     # Destructor
     def __del__(self):
         for i in range(self.download):
