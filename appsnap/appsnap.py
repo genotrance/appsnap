@@ -246,3 +246,6 @@ if __name__ == '__main__':
                                                          test])
         children.append(child)
         child.start()
+        
+    # Clear out threads
+    curl_instance.clear_threads(children)

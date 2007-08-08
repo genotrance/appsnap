@@ -97,9 +97,11 @@ NAME = _('Name')
 NO_CHANGES_FOUND = _('No changes found')
 NO_SUCH_APPLICATION = _('No such application')
 NOT_AVAILABLE = _('Not available')
+NOT_INSTALLED = _('Not installed')
 
 ##
 
+PROCESSING = _('Processing')
 PROXY_AUTHENTICATION_FAILED = _('Proxy authentication failed. Check config.ini')
 
 ##
