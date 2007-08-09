@@ -2,6 +2,7 @@ import defines
 import distutils.core
 import getopt
 import glob
+import os
 import os.path
 import py2exe
 import re
@@ -93,7 +94,7 @@ class build:
         # Resource files to include
         self.py2exe['data_files'] = [(
                             "" , 
-                            ["appsnap.ico","db.ini","config.ini","appsnap.html"]
+                            ["appsnap.ico","db.ini","config.ini","appsnap.html", os.path.join(os.getenv("systemroot"), "system32", "msvcp71.dll")]
                             )]
         
         # Name of zip file to generate

@@ -51,6 +51,9 @@ ACT_INSTALL       = 'install'
 ACT_UNINSTALL     = 'uninstall'
 ACT_UPGRADE       = 'upgrade'
 
+# Meta commands
+REGISTRY_SEARCH   = 'REGISTRY_SEARCH'
+
 # Version cache
 cached_versions = {}
 
@@ -232,22 +235,34 @@ class process:
         # Execute pre-uninstall command if any
         if self.execute_script(APP_PREUNINSTALL) != True:
             return False
+        
+        # Process uninstall string if required
+        command = self.app_config[APP_UNINSTALL].split(':')
+        if len(command) == 2 and command[0] == REGISTRY_SEARCH:
+            value = command[1].split('=')
+            if len(value) == 2:
+                app_uninstall = self.registry_search_uninstall_entry(value[0], value[1])
+            else:
+                app_uninstall = self.registry_search_uninstall_entry(value[0], '')
+        else:
+            app_uninstall = self.app_config[APP_UNINSTALL]
 
         try:
             try:
                 # Get uninstall string from registry - LOCAL_MACHINE
-                uninstall = self.replace_version(self.app_config[APP_UNINSTALL], installed_version)
+                uninstall = self.replace_version(app_uninstall, installed_version)
                 key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
                 uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
                 _winreg.CloseKey(key)
             except WindowsError:
                 # Get uninstall string from registry - CURRENT_USER
-                uninstall = self.replace_version(self.app_config[APP_UNINSTALL], installed_version)
+                uninstall = self.replace_version(app_uninstall, installed_version)
                 key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
                 uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
                 _winreg.CloseKey(key)
 
             # Run uninstaller, check return value
+            uninstall_string = re.sub('msiexec.exe /i', 'msiexec.exe /x', uninstall_string.lower())
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('\.exe', '.exe"', uninstall_string.lower())
             try: uninstparam = ' ' + self.replace_install_dir(self.app_config[APP_UNINSTPARAM])
             except KeyError: uninstparam = ''
@@ -507,3 +522,38 @@ class process:
         pipe.close()
 
         return exp_string[:-1]
+    
+    # ***
+    # Registry searching
+    
+    # Search for uninstall entry based on name and value provided
+    def registry_search_uninstall_entry(self, name, value):
+        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+        uninstall_key = self.registry_search(key, name, value)
+        _winreg.CloseKey(key)
+        
+        if uninstall_key == '':
+            key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+            uninstall_key = self.registry_search(key, name, value)
+            _winreg.CloseKey(key)
+            
+        return uninstall_key
+        
+    # Search for registry key
+    def registry_search(self, key, name, value):
+        i = 0
+        try:
+            while 1:
+                subkey_name = _winreg.EnumKey(key, i)
+                i += 1
+                try:
+                    subkey = _winreg.OpenKey(key, subkey_name)
+                    subvalue, temp = _winreg.QueryValueEx(subkey, name)
+                    _winreg.CloseKey(subkey)
+                except WindowsError:
+                    continue
+                if re.match(value, subvalue) != None:
+                    return subkey_name
+        except EnvironmentError: pass
+        
+        return ''
