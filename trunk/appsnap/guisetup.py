@@ -85,6 +85,14 @@ schema = """
       weight : wx.FONTWEIGHT_BOLD
       face : Courier New
 
+    - name : cancelfont
+      type : wx.Font
+      pointSize : 8
+      family : wx.FONTFAMILY_DEFAULT
+      style : wx.FONTSTYLE_NORMAL
+      weight : wx.FONTWEIGHT_NORMAL
+      underline : True
+
     - name : tbpanel
       type : wx.Panel
       parent : frame
