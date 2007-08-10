@@ -21,6 +21,7 @@ AVAILABLE_CATEGORIES = _('Available Categories')
 
 ##
 
+CANCEL = _('Cancel')
 CATEGORY = _('Category')
 COMPARING = _('Comparing')
 
@@ -32,6 +33,7 @@ DONE = _('Done')
 DOWNLOAD = _('Download')
 DOWNLOADED = _('Downloaded')
 DOWNLOADING = _('Downloading')
+DOWNLOAD_CANCELLED = _('Download cancelled')
 DOWNLOAD_DESCRIPTION = _('Download selected applications')
 DOWNLOAD_FAILED = _('Download failed')
 DOWNLOAD_SUCCEEDED = _('Download succeeded')

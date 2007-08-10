@@ -36,6 +36,12 @@ class ApplicationPanel(wx.Panel):
         
         self.status = wx.StaticText(self, -1, '')
         
+        self.cancelled = False
+        self.cancel = wx.StaticText(self, -1, strings.CANCEL)
+        self.cancel.SetForegroundColour(self.gui.objects['bluecolour'])
+        self.cancel.SetFont(self.gui.objects['cancelfont'])
+        self.cancel.Hide()
+        
         # Size
         self.SetMinSize(size)
         self.SetMaxSize(size)
@@ -44,6 +50,7 @@ class ApplicationPanel(wx.Panel):
         self.setup_click_event([self, self.label, self.description, self.version, self.installed_version])
         wx.EVT_CHECKBOX(self.gui.objects['frame'], self.checkbox.GetId(), self.on_checkbox_click)
         wx.EVT_LEFT_DOWN(self.url, self.on_url_click)
+        wx.EVT_LEFT_DOWN(self.cancel, self.on_cancel)
     
     #####
     # Setup helpers
@@ -117,6 +124,7 @@ class ApplicationPanel(wx.Panel):
     def hide_status(self):
         self.status.SetLabel('')
         self.status.SetPosition((0, 0))
+        self.cancel.Hide()
 
     # Show version information
     def show_info(self):
@@ -245,6 +253,11 @@ class ApplicationPanel(wx.Panel):
     # When url is clicked
     def on_url_click(self, event):
         os.startfile(self.app_url)
+        
+    # When cancel is clicked
+    def on_cancel(self, event):
+        self.cancelled = True
+        self.cancel.Hide()
 
     # Perform specified action
     def do_action(self, action):
@@ -254,8 +267,14 @@ class ApplicationPanel(wx.Panel):
         if action == process.ACT_DOWNLOAD or action == process.ACT_INSTALL or action == process.ACT_UPGRADE:
             # Download latest version
             self.set_status_text(strings.WAITING + ' ...')
+            self.cancel.SetPosition((40 + self.status.GetSize().GetWidth() + 10, self.status.GetPosition().y))
+            self.cancel.Show()
             if self.process.download_latest_version(self.update_download_status) == False:
-                return self.error_out(strings.DOWNLOAD_FAILED)
+                if self.cancelled == True:
+                    self.cancelled = False
+                    return self.error_out(strings.DOWNLOAD_CANCELLED)
+                else: return self.error_out(strings.DOWNLOAD_FAILED)
+            self.cancel.Hide()
 
         if action == process.ACT_UNINSTALL or (action == process.ACT_UPGRADE and self.process.app_config[process.APP_UPGRADES] == 'true'):
             # Perform the uninstall, use lock to ensure only one install/uninstall at a time
@@ -303,6 +322,10 @@ class ApplicationPanel(wx.Panel):
             percentage_string = ''
 
         self.set_status_text(strings.DOWNLOADED + ' ' + dl_current_string + ' / ' + dl_total_string + percentage_string)
+        self.cancel.SetPosition((40 + self.status.GetSize().GetWidth() + 10, -1))
+            
+        if self.cancelled == True:
+            return 1
 
     # Error out if any action fails
     def error_out(self, action):
