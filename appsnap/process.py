@@ -44,6 +44,7 @@ APP_PREINSTALL    = 'preinstall'
 APP_POSTINSTALL   = 'postinstall'
 APP_PREUNINSTALL  = 'preuninstall'
 APP_POSTUNINSTALL = 'postuninstall'
+APP_INSTVERSION   = 'instversion'
 
 # Actions
 ACT_DOWNLOAD      = 'download'
@@ -53,6 +54,7 @@ ACT_UPGRADE       = 'upgrade'
 
 # Meta commands
 REGISTRY_SEARCH   = 'REGISTRY_SEARCH'
+USE_UNINSTALL     = 'USE_UNINSTALL'
 
 # Version cache
 cached_versions = {}
@@ -227,7 +229,7 @@ class process:
     # Uninstall the currently installed version of the application
     def uninstall_version(self):
         # Get installed version
-        installed_version = self.global_config.get_installed_version(self.app)
+        installed_version = self.get_installed_version()
         if installed_version == '':
             if self.latestversion == None: self.get_latest_version()
             installed_version = self.latestversion
@@ -237,15 +239,7 @@ class process:
             return False
         
         # Process uninstall string if required
-        command = self.app_config[APP_UNINSTALL].split(':')
-        if len(command) == 2 and command[0] == REGISTRY_SEARCH:
-            value = command[1].split('=')
-            if len(value) == 2:
-                app_uninstall = self.registry_search_uninstall_entry(value[0], value[1])
-            else:
-                app_uninstall = self.registry_search_uninstall_entry(value[0], '')
-        else:
-            app_uninstall = self.app_config[APP_UNINSTALL]
+        app_uninstall, matchobj = self.parse_uninstall_entry()
 
         try:
             try:
@@ -262,8 +256,8 @@ class process:
                 _winreg.CloseKey(key)
 
             # Run uninstaller, check return value
-            uninstall_string = re.sub('msiexec.exe /i', 'msiexec.exe /x', uninstall_string.lower())
-            if uninstall_string[0] != '"': uninstall_string = '"' + re.sub('\.exe', '.exe"', uninstall_string.lower())
+            uninstall_string = re.sub(re.compile('msiexec.exe /i', re.IGNORECASE), 'msiexec.exe /x', uninstall_string)
+            if uninstall_string[0] != '"': uninstall_string = '"' + re.sub(re.compile('\.exe', re.IGNORECASE), '.exe"', uninstall_string)
             try: uninstparam = ' ' + self.replace_install_dir(self.app_config[APP_UNINSTPARAM])
             except KeyError: uninstparam = ''
             retval = os.popen('"' + uninstall_string + uninstparam + '"').close()
@@ -319,7 +313,7 @@ class process:
             version = None
         # Installed version for uninstallation
         elif type == APP_PREUNINSTALL or type == APP_POSTUNINSTALL:
-            version = self.global_config.get_installed_version(self.app)
+            version = self.get_installed_version()
             if version == '':
                 version = None
         
@@ -526,19 +520,78 @@ class process:
     # ***
     # Registry searching
     
+    def get_installed_version(self):
+        if self.app_config.has_key(APP_INSTVERSION):
+            if self.app_config[APP_INSTVERSION] == USE_UNINSTALL:
+                uninstall_key, matchobj = self.parse_uninstall_entry()
+                if uninstall_key != '' and matchobj != None and len(matchobj.groups()):
+                    return matchobj.groups()[0]
+            else:
+                command = self.app_config[APP_INSTVERSION].split(':')
+                if len(command) == 2 and command[0] == REGISTRY_SEARCH:
+                    uninstall_key, matchobj = self.parse_uninstall_entry()
+                    if uninstall_key != '':
+                        value = command[1].split('=')
+                        if len(value) == 2:
+                            return self.registry_search_installed_version(uninstall_key, value[0], value[1])
+                        else:
+                            return self.registry_search_installed_version(uninstall_key, value[0], '')
+        else:
+            return self.global_config.get_installed_version(self.app)
+        
+        return ''
+
+    def parse_uninstall_entry(self):
+        command = self.app_config[APP_UNINSTALL].split(':')
+        if len(command) == 2 and command[0] == REGISTRY_SEARCH:
+            value = command[1].split('=')
+            if len(value) == 2:
+                uninstall_key, matchobj = self.registry_search_uninstall_entry(value[0], value[1])
+            else:
+                uninstall_key, matchobj = self.registry_search_uninstall_entry(value[0], '')
+        else:
+            uninstall_key = self.app_config[APP_UNINSTALL]
+            matchobj = None
+
+        return uninstall_key, matchobj
+    
     # Search for uninstall entry based on name and value provided
     def registry_search_uninstall_entry(self, name, value):
         key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-        uninstall_key = self.registry_search(key, name, value)
+        uninstall_key, matchobj = self.registry_search(key, name, value)
         _winreg.CloseKey(key)
         
         if uninstall_key == '':
             key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-            uninstall_key = self.registry_search(key, name, value)
+            uninstall_key, matchobj = self.registry_search(key, name, value)
             _winreg.CloseKey(key)
-            
-        return uninstall_key
+
+        return uninstall_key, matchobj
         
+    # Search for installed version based on key, name and value provided
+    def registry_search_installed_version(self, uninstall_key, name, value):
+        try:
+            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
+            subvalue, temp = _winreg.QueryValueEx(key, name)
+            _winreg.CloseKey(key)
+        except WindowsError:
+            subvalue = ''
+        
+        if subvalue == '':
+            try:
+                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
+                subvalue, temp = _winreg.QueryValueEx(key, name)
+                _winreg.CloseKey(key)
+            except WindowsError:
+                subvalue = ''
+                
+        if subvalue != '':
+            matchobj = re.match(value, subvalue)
+            if matchobj != None and len(matchobj.groups()):
+                return matchobj.groups()[0]
+            
+        return ''
+    
     # Search for registry key
     def registry_search(self, key, name, value):
         i = 0
@@ -552,8 +605,9 @@ class process:
                     _winreg.CloseKey(subkey)
                 except WindowsError:
                     continue
-                if re.match(value, subvalue) != None:
-                    return subkey_name
+                matchobj = re.match(value, subvalue)
+                if matchobj != None:
+                    return subkey_name, matchobj
         except EnvironmentError: pass
         
-        return ''
+        return '', None

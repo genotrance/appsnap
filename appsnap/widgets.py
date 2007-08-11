@@ -130,9 +130,13 @@ class ApplicationPanel(wx.Panel):
     def show_info(self):
         # Get configuration
         items = self.event.configuration.get_section_items(self.app_name)
-
+        
+        # Create process object if not already
+        if not self.process:
+            self.process = process.process(self.event.configuration, self.event.curl_instance, self.app_name, items)
+            
         # Get installed version
-        installed_version = self.event.configuration.get_installed_version(self.app_name)
+        installed_version = self.process.get_installed_version()
         if installed_version != '':
             installed_version = strings.INSTALLED_VERSION + ' : ' + installed_version
             self.set_installed_version(installed_version)
@@ -144,8 +148,6 @@ class ApplicationPanel(wx.Panel):
         self.update_layout()
         
         # Get the latest version
-        if not self.process:
-            self.process = process.process(self.event.configuration, self.event.curl_instance, self.app_name, items)
         latest_version = self.process.get_latest_version()
         if latest_version == None:
             latest_version = strings.FAILED_TO_CONNECT
@@ -185,7 +187,7 @@ class ApplicationPanel(wx.Panel):
         self.SetBackgroundColour(self.gui.objects['lightbluecolour'])
         self.show_info()
         
-        installed_version = self.event.configuration.get_installed_version(self.app_name)
+        installed_version = self.process.get_installed_version()
         latest_version = self.process.get_latest_version()
         if installed_version >= latest_version:
             self.select(False)

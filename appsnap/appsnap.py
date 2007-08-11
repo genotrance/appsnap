@@ -88,7 +88,7 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
             if latest_version == None:
                 latest_version = strings.FAILED_TO_CONNECT
             output += strings.LATEST_VERSION + ' : ' + latest_version + '\n'
-            installed = configuration.get_installed_version(name)
+            installed = p.get_installed_version()
             if installed != '':
                 output += strings.INSTALLED_VERSION + ' : ' + installed + '\n'
             print output
