@@ -166,7 +166,7 @@ if __name__ == '__main__':
             sys.exit(defines.ERROR_HELP)
         if o == '-i': install = True
         if o == '-l': list = True
-        if o == '-n': names = a.split(',')
+        if o == '-n': names = [item.strip() for item in a.split(',')]
         if o == '-s': stringfilter = a
         if o == '-t': test = True
         if o == '-u': upgrade = True
