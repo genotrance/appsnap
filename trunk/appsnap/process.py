@@ -68,25 +68,32 @@ class process:
         self.curl_instance = curl_instance
         self.app = app
         self.app_config = app_config
-
-        # Get version only if scrape specified
+        self.init = False
+        self.latestversion = None
+        self.installedversion = ''
         self.versions = None
         self.splitversions = None
         self.width = 0
-        if APP_SCRAPE in self.app_config and APP_VERSION in self.app_config:
-            self.latestversion = self.global_config.get_cached_latest_version(self.app)
-            if self.latestversion == None:
-                self.versions = self.get_versions()
-                self.splitversions = self.get_split_versions()
-                self.width = self.get_width()
-        else:
-            self.latestversion = strings.NOT_AVAILABLE
+        
+        self.get_installed_version()
 
     # ***
     # External functions
 
     # Get the latest version
     def get_latest_version(self):
+        if self.init == False:
+            self.init = True
+            # Get version only if scrape specified
+            if APP_SCRAPE in self.app_config and APP_VERSION in self.app_config:
+                self.latestversion = self.global_config.get_cached_latest_version(self.app)
+                if self.latestversion == None:
+                    self.versions = self.get_versions()
+                    self.splitversions = self.get_split_versions()
+                    self.width = self.get_width()
+            else:
+                self.latestversion = strings.NOT_AVAILABLE
+
         # No versioning or cached version available
         if self.latestversion != None: return self.latestversion
 
@@ -521,11 +528,13 @@ class process:
     # Registry searching
     
     def get_installed_version(self):
+        if self.installedversion != '': return self.installedversion
+        
         if self.app_config.has_key(APP_INSTVERSION):
             if self.app_config[APP_INSTVERSION] == USE_UNINSTALL:
                 uninstall_key, matchobj = self.parse_uninstall_entry()
-                if uninstall_key != '' and matchobj != None and len(matchobj.groups()):
-                    return matchobj.groups()[0]
+                if uninstall_key != '' and matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
+                    self.installedversion = matchobj.groups()[0]
             else:
                 command = self.app_config[APP_INSTVERSION].split(':')
                 if len(command) == 2 and command[0] == REGISTRY_SEARCH:
@@ -533,13 +542,16 @@ class process:
                     if uninstall_key != '':
                         value = command[1].split('=')
                         if len(value) == 2:
-                            return self.registry_search_installed_version(uninstall_key, value[0], value[1])
+                            self.installedversion = self.registry_search_installed_version(uninstall_key, value[0], value[1])
                         else:
-                            return self.registry_search_installed_version(uninstall_key, value[0], '')
+                            self.installedversion = self.registry_search_installed_version(uninstall_key, value[0], '')
         else:
-            return self.global_config.get_installed_version(self.app)
+            self.installedversion = self.global_config.get_installed_version(self.app)
+            
+        if self.installedversion != '': self.global_config.add_installed_version(self.app, self.installedversion)
+        else: self.global_config.delete_installed_version(self.app)
         
-        return ''
+        return self.installedversion
 
     def parse_uninstall_entry(self):
         command = self.app_config[APP_UNINSTALL].split(':')
@@ -587,7 +599,7 @@ class process:
                 
         if subvalue != '':
             matchobj = re.match(value, subvalue)
-            if matchobj != None and len(matchobj.groups()):
+            if matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
                 return matchobj.groups()[0]
             
         return ''

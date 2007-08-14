@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-08-09 20:13-0600\n"
+"PO-Revision-Date: 2007-08-14 09:56-0600\n"
 "Last-Translator: \n"
 "Language-Team: Søren Pedersen\n"
 "MIME-Version: 1.0\n"
@@ -225,194 +225,198 @@ msgid "Not available"
 msgstr "Ikke tilgængelig"
 
 #: strings.py:102
-msgid "Not installed"
+msgid "Not Installed"
 msgstr ""
 
-#: strings.py:106
-msgid "Processing"
+#: strings.py:103
+msgid "Not Installed Applications"
 msgstr ""
 
 #: strings.py:107
+msgid "Processing"
+msgstr ""
+
+#: strings.py:108
 msgid "Proxy authentication failed. Check config.ini"
 msgstr "Proxy authentication mislykkedes. Tjeck config.ini"
 
-#: strings.py:111
+#: strings.py:112
 msgid "Reload"
 msgstr "Indlæs igen"
 
-#: strings.py:112
+#: strings.py:113
 msgid "Reloading database"
 msgstr "Indlæser database"
 
-#: strings.py:113
+#: strings.py:114
 msgid "Reload configuration"
 msgstr "Indlæser konfiguration"
 
-#: strings.py:114
+#: strings.py:115
 msgid "Report Bug"
 msgstr "Rapportér Bug"
 
-#: strings.py:115
+#: strings.py:116
 msgid "Report a bug"
 msgstr "Rapportér en Bug (programfejl)"
 
-#: strings.py:119
+#: strings.py:120
 msgid "Section"
 msgstr "Sektion"
 
-#: strings.py:120
+#: strings.py:121
 msgid "Starting"
 msgstr "Starter"
 
-#: strings.py:121
+#: strings.py:122
 msgid "Status"
 msgstr "Status"
 
-#: strings.py:122
+#: strings.py:123
 msgid "String"
 msgstr "Tekst streng"
 
-#: strings.py:123
+#: strings.py:124
 msgid "Supported Applications"
 msgstr "Understøttede programmer"
 
-#: strings.py:127
+#: strings.py:128
 msgid "Test download only"
 msgstr "Test download"
 
-#: strings.py:128
+#: strings.py:129
 msgid "Testing"
 msgstr "Tester"
 
-#: strings.py:129
+#: strings.py:130
 msgid "This help screen"
 msgstr "Denne \"Hjælp\" skærm"
 
-#: strings.py:133
+#: strings.py:134
 msgid "Unable to write to db.ini"
 msgstr "Kunne ikke skrive til db.ini"
 
-#: strings.py:134
+#: strings.py:135
 msgid "Uninstall"
 msgstr "Afinstallér"
 
-#: strings.py:135
+#: strings.py:136
 msgid "Uninstalling"
 msgstr "Afinstallerer"
 
-#: strings.py:136
+#: strings.py:137
 msgid "Uninstall selected applications"
 msgstr "Afinstallérvalgte programmer"
 
-#: strings.py:137
+#: strings.py:138
 msgid "Uninstall failed"
 msgstr "Afinstallation mislykkedes"
 
-#: strings.py:138
+#: strings.py:139
 msgid "Uninstall succeeded"
 msgstr "Afinstallation gennemført"
 
-#: strings.py:139
+#: strings.py:140
 msgid "Update database failed"
 msgstr "Database opdatering mislykkedes"
 
-#: strings.py:140
+#: strings.py:141
 msgid "Update database succeeded"
 msgstr "Database opdatering gennemført"
 
-#: strings.py:141
+#: strings.py:142
 msgid "Update DB"
 msgstr "Opdatér DB"
 
-#: strings.py:142
+#: strings.py:143
 msgid "Update application database"
 msgstr "Opdatér program database"
 
-#: strings.py:143
+#: strings.py:144
 msgid "implies -i, -x if not upgradeable"
 msgstr "medfører -i, -x hvis det ikke kan opgraderes"
 
-#: strings.py:144
+#: strings.py:145
 msgid "Updating database"
 msgstr "Opdaterer database"
 
-#: strings.py:145
+#: strings.py:146
 msgid "Updating local database"
 msgstr "Opdaterer lokal database"
 
-#: strings.py:146
+#: strings.py:147
 msgid "Upgrade"
 msgstr "Opgradér"
 
-#: strings.py:147
+#: strings.py:148
 msgid "Upgradeable"
 msgstr "Kan opgraderes"
 
-#: strings.py:148
+#: strings.py:149
 msgid "Upgrade selected applications"
 msgstr "Opgradér valgte programmer"
 
-#: strings.py:149
+#: strings.py:150
 msgid "Upgrade failed"
 msgstr "Opgradering mislykkedes"
 
-#: strings.py:150
+#: strings.py:151
 msgid "Upgrade succeeded"
 msgstr "Opgradering gennemført"
 
-#: strings.py:151
+#: strings.py:152
 msgid "Upgrading"
 msgstr "Opgraderer"
 
-#: strings.py:155
+#: strings.py:156
 msgid "Waiting"
 msgstr "Venter"
 
-#: strings.py:156
+#: strings.py:157
 msgid "Website"
 msgstr "Hjemmeside"
 
-#: strings.py:162
+#: strings.py:163
 msgid "Build executable using Py2Exe"
 msgstr "Opret program med Py2Exe"
 
-#: strings.py:163
+#: strings.py:164
 msgid "Build failed."
 msgstr "Kunne ikke oprette Program"
 
-#: strings.py:167
+#: strings.py:168
 msgid "Compress executables using UPX"
 msgstr "Pak programmer med UPX"
 
-#: strings.py:168
+#: strings.py:169
 msgid "Create NSIS package"
 msgstr "Opret NSIS pakke"
 
-#: strings.py:169
+#: strings.py:170
 msgid "Create ZIP package"
 msgstr "Opret ZIP pakke"
 
-#: strings.py:173
+#: strings.py:174
 msgid "NSIS not available"
 msgstr "NSIS er ikke tilgængelig"
 
-#: strings.py:177
+#: strings.py:178
 msgid "OPTIONS"
 msgstr "Indstillinger"
 
-#: strings.py:181
+#: strings.py:182
 msgid "Rezip shared library using 7-Zip"
 msgstr "Zip delt bibliotek igen med 7-Zip"
 
-#: strings.py:185
+#: strings.py:186
 msgid "7-Zip not available"
 msgstr "7-Zip ikke tilgængelig"
 
-#: strings.py:189
+#: strings.py:190
 msgid "UPX not available"
 msgstr "UPX ikke tilgængelig"
 
-#: strings.py:190
+#: strings.py:191
 msgid "Usage"
 msgstr "Brug"
 

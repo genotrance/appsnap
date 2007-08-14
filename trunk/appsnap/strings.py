@@ -99,7 +99,8 @@ NAME = _('Name')
 NO_CHANGES_FOUND = _('No changes found')
 NO_SUCH_APPLICATION = _('No such application')
 NOT_AVAILABLE = _('Not available')
-NOT_INSTALLED = _('Not installed')
+NOT_INSTALLED = _('Not Installed')
+NOT_INSTALLED_APPLICATIONS = _('Not Installed Applications')
 
 ##
 

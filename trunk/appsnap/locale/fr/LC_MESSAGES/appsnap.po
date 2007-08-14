@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-08-09 20:14-0600\n"
+"PO-Revision-Date: 2007-08-14 09:57-0600\n"
 "Last-Translator: \n"
 "Language-Team: Gonzague Dambricourt <gonzaguedambricourt@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -226,194 +226,198 @@ msgid "Not available"
 msgstr "Non disponible"
 
 #: strings.py:102
-msgid "Not installed"
-msgstr "Non installé"
+msgid "Not Installed"
+msgstr ""
 
-#: strings.py:106
+#: strings.py:103
+msgid "Not Installed Applications"
+msgstr ""
+
+#: strings.py:107
 msgid "Processing"
 msgstr "Traitement"
 
-#: strings.py:107
+#: strings.py:108
 msgid "Proxy authentication failed. Check config.ini"
 msgstr "L'authentification via proxy a échoué, merci de vérifier le fichier config.ini"
 
-#: strings.py:111
+#: strings.py:112
 msgid "Reload"
 msgstr "Recharger"
 
-#: strings.py:112
+#: strings.py:113
 msgid "Reloading database"
 msgstr "Rechargement de la base de données"
 
-#: strings.py:113
+#: strings.py:114
 msgid "Reload configuration"
 msgstr "Recharger la configuration"
 
-#: strings.py:114
+#: strings.py:115
 msgid "Report Bug"
 msgstr "Reporter un bug"
 
-#: strings.py:115
+#: strings.py:116
 msgid "Report a bug"
 msgstr "Reporter un bug"
 
-#: strings.py:119
+#: strings.py:120
 msgid "Section"
 msgstr "Partie"
 
-#: strings.py:120
+#: strings.py:121
 msgid "Starting"
 msgstr "Démarrage"
 
-#: strings.py:121
+#: strings.py:122
 msgid "Status"
 msgstr "Statut"
 
-#: strings.py:122
+#: strings.py:123
 msgid "String"
 msgstr "Chaîne"
 
-#: strings.py:123
+#: strings.py:124
 msgid "Supported Applications"
 msgstr "Applications supportées"
 
-#: strings.py:127
+#: strings.py:128
 msgid "Test download only"
 msgstr "Tester le téléchargement uniquement"
 
-#: strings.py:128
+#: strings.py:129
 msgid "Testing"
 msgstr "Test en cours..."
 
-#: strings.py:129
+#: strings.py:130
 msgid "This help screen"
 msgstr "Cet écran d'aide"
 
-#: strings.py:133
+#: strings.py:134
 msgid "Unable to write to db.ini"
 msgstr "Impossible d'écrire dans le fichier db.ini"
 
-#: strings.py:134
+#: strings.py:135
 msgid "Uninstall"
 msgstr "Désinstaller"
 
-#: strings.py:135
+#: strings.py:136
 msgid "Uninstalling"
 msgstr "Désinstallation"
 
-#: strings.py:136
+#: strings.py:137
 msgid "Uninstall selected applications"
 msgstr "Désinstallation des applications sélectionnées"
 
-#: strings.py:137
+#: strings.py:138
 msgid "Uninstall failed"
 msgstr "La désinstallation a échoué"
 
-#: strings.py:138
+#: strings.py:139
 msgid "Uninstall succeeded"
 msgstr "Désinstallation réussie"
 
-#: strings.py:139
+#: strings.py:140
 msgid "Update database failed"
 msgstr "La mise à jour de la base de données a échoué"
 
-#: strings.py:140
+#: strings.py:141
 msgid "Update database succeeded"
 msgstr "Mise à jour de la base de données réussie"
 
-#: strings.py:141
+#: strings.py:142
 msgid "Update DB"
 msgstr "Maj. BDD"
 
-#: strings.py:142
+#: strings.py:143
 msgid "Update application database"
 msgstr "Mise à jour de la base de données d'applications"
 
-#: strings.py:143
+#: strings.py:144
 msgid "implies -i, -x if not upgradeable"
 msgstr "Implique la commande -i, -x si ne peut être mis à jour"
 
-#: strings.py:144
+#: strings.py:145
 msgid "Updating database"
 msgstr "Mise à jour de la base de données"
 
-#: strings.py:145
+#: strings.py:146
 msgid "Updating local database"
 msgstr "Mise à jour de la base de données locale"
 
-#: strings.py:146
+#: strings.py:147
 msgid "Upgrade"
 msgstr "Mettre à jour"
 
-#: strings.py:147
+#: strings.py:148
 msgid "Upgradeable"
 msgstr "Compatible mise à jour"
 
-#: strings.py:148
+#: strings.py:149
 msgid "Upgrade selected applications"
 msgstr "Mettre à jour les applications sélectionnées"
 
-#: strings.py:149
+#: strings.py:150
 msgid "Upgrade failed"
 msgstr "La mise à jour a échoué"
 
-#: strings.py:150
+#: strings.py:151
 msgid "Upgrade succeeded"
 msgstr "Mise à jour réussie"
 
-#: strings.py:151
+#: strings.py:152
 msgid "Upgrading"
 msgstr "Mse à jour en cours"
 
-#: strings.py:155
+#: strings.py:156
 msgid "Waiting"
 msgstr "En attente"
 
-#: strings.py:156
+#: strings.py:157
 msgid "Website"
 msgstr "Site web"
 
-#: strings.py:162
+#: strings.py:163
 msgid "Build executable using Py2Exe"
 msgstr "Faire un exécutable depuis Py2Exe"
 
-#: strings.py:163
+#: strings.py:164
 msgid "Build failed."
 msgstr "Impossible de créer le fichier"
 
-#: strings.py:167
+#: strings.py:168
 msgid "Compress executables using UPX"
 msgstr "Compresser l'exécutable avec UPX"
 
-#: strings.py:168
+#: strings.py:169
 msgid "Create NSIS package"
 msgstr "Créer un package NSIS"
 
-#: strings.py:169
+#: strings.py:170
 msgid "Create ZIP package"
 msgstr "Créer un package ZIP"
 
-#: strings.py:173
+#: strings.py:174
 msgid "NSIS not available"
 msgstr "NSIS est indisponible"
 
-#: strings.py:177
+#: strings.py:178
 msgid "OPTIONS"
 msgstr "OPTIONS"
 
-#: strings.py:181
+#: strings.py:182
 msgid "Rezip shared library using 7-Zip"
 msgstr "Rezipper la librairie en utilisant 7-Zip"
 
-#: strings.py:185
+#: strings.py:186
 msgid "7-Zip not available"
 msgstr "7-Zip est indisponible"
 
-#: strings.py:189
+#: strings.py:190
 msgid "UPX not available"
 msgstr "UPX est indisponible"
 
-#: strings.py:190
+#: strings.py:191
 msgid "Usage"
 msgstr "Utilisation"
 
