@@ -23,6 +23,7 @@ MAJORMINORSUB_VERSION      = '#MAJORMINORSUB_VERSION#'
 DOTLESS_VERSION            = '#DOTLESS_VERSION#'
 DASHTODOT_VERSION          = '#DASHTODOT_VERSION#'
 DOTTOUNDERSCORE_VERSION    = '#DOTTOUNDERSCORE_VERSION#'
+DOTTODASH_VERSION          = '#DOTTODASH_VERSION#'
 INSTALL_DIR                = '#INSTALL_DIR#'
 
 # DB.ini entries
@@ -354,6 +355,7 @@ class process:
         dotless_version = re.sub(DELIMITERS, '', version)
         dashtodot_version = re.sub('-', '.', version)
         dottounderscore_version = re.sub('\.', '_', version)
+        dottodash_version = re.sub('\.', '-', version)
 
         # Replace in the specified string
         string = re.sub(VERSION, version, string)
@@ -363,6 +365,7 @@ class process:
         string = re.sub(DOTLESS_VERSION, dotless_version, string)
         string = re.sub(DASHTODOT_VERSION, dashtodot_version, string)
         string = re.sub(DOTTOUNDERSCORE_VERSION, dottounderscore_version, string)
+        string = re.sub(DOTTODASH_VERSION, dottodash_version, string)
 
         return string
 
