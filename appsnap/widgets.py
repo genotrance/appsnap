@@ -69,6 +69,10 @@ class ApplicationPanel(wx.Panel):
     # Set event object
     def set_event(self, event):
         self.event = event
+        
+        # Create process object
+        items = self.event.configuration.get_section_items(self.app_name)
+        self.process = process.process(self.event.configuration, self.event.curl_instance, self.app_name, items)
 
     # Setup left click event
     def setup_click_event(self, widgets):
@@ -128,13 +132,6 @@ class ApplicationPanel(wx.Panel):
 
     # Show version information
     def show_info(self):
-        # Get configuration
-        items = self.event.configuration.get_section_items(self.app_name)
-        
-        # Create process object if not already
-        if not self.process:
-            self.process = process.process(self.event.configuration, self.event.curl_instance, self.app_name, items)
-            
         # Get installed version
         installed_version = self.process.get_installed_version()
         if installed_version != '':

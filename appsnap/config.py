@@ -82,9 +82,7 @@ class config:
                 self.installed.remove_section(section)
                 
         # Add AppSnap to installed applications list
-        if not self.installed.has_section(version.APPNAME):
-            self.installed.add_section(version.APPNAME)
-        self.installed.set(version.APPNAME, process.APP_VERSION, version.APPVERSION)
+        self.add_installed_version(version.APPNAME, version.APPVERSION)
         
         # Load the version cache
         self.latest_ini = os.path.join(self.cache[CACHE_LOCATION], LATEST_INI)
@@ -164,6 +162,10 @@ class config:
             sections = self.installed.sections()
             category = ''
             print strings.INSTALLED_APPLICATIONS + '\n'
+        elif category == NOT_INSTALLED:
+            sections = [item for item in self.get_sections() if item not in self.installed.sections()]
+            category = ''
+            print strings.NOT_INSTALLED_APPLICATIONS + '\n'
         else:
             sections = self.get_sections()
             print strings.SUPPORTED_APPLICATIONS + '\n'
@@ -184,6 +186,11 @@ class config:
     #####
     # Installed Version
     #####
+
+    def add_installed_version(self, appname, appversion):
+        if not self.installed.has_section(appname):
+            self.installed.add_section(appname)
+        self.installed.set(appname, process.APP_VERSION, appversion)
 
     # Get installed version
     def get_installed_version(self, section):

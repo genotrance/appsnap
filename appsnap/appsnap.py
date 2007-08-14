@@ -192,6 +192,19 @@ if __name__ == '__main__':
         configuration.display_categories()
         sys.exit(defines.ERROR_SUCCESS)
     elif list == True:
+        if categoryfilter == config.INSTALLED or categoryfilter == config.NOT_INSTALLED:
+            names = configuration.get_sections()
+            children = []
+            for name in names:
+                curl_instance.limit_threads(children)
+                items = configuration.get_section_items(name)
+                child = threading.Thread(target=process.process, args=[configuration, curl_instance, name, items])
+                children.append(child)
+                child.start()
+        
+            # Clear out threads
+            curl_instance.clear_threads(children)                
+
         configuration.display_available_sections(categoryfilter, stringfilter)
         sys.exit(defines.ERROR_SUCCESS)
 
