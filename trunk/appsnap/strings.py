@@ -86,6 +86,7 @@ LATEST_VERSION = _('Latest Version')
 LIST_ALL_APPLICATION_CATEGORIES = _('List all application categories')
 LIST_SUPPORTED_APPLICATIONS = _('List supported applications')
 LOADING = _('Loading')
+LOADING_DATABASE = _('Loading database')
 
 ##
 
@@ -112,6 +113,7 @@ PROXY_AUTHENTICATION_FAILED = _('Proxy authentication failed. Check config.ini')
 RELOAD = _('Reload')
 RELOADING_DATABASE = _('Reloading database')
 RELOAD_DESCRIPTION = _('Reload configuration')
+REMOVABLE = _('Removable')
 REPORT_BUG = _('Report Bug')
 REPORT_BUG_DESCRIPTION = _('Report a bug')
 

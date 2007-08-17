@@ -343,9 +343,12 @@ class Events:
         # A lock object to serialize
         self.lock = threading.Lock()
 
-        # Create toolbar only once
-        self.toolbar = False
-
+        # Initialize only once
+        self.init = False
+        
+        # Toolbar tools
+        self.toolbar_tools = []
+        
     # Setup the event object
     def setup(self):
         # Load the configuration
@@ -360,8 +363,9 @@ class Events:
         categories.insert(1, config.INSTALLED.encode('UTF-8'))
         categories.insert(2, config.NOT_INSTALLED.encode('UTF-8'))
         categories.insert(3, config.UPGRADEABLE.encode('UTF-8'))
-        categories.insert(4, config.PROCESSING.encode('UTF-8'))
-        categories.insert(5, '--')
+        categories.insert(4, config.REMOVABLE.encode('UTF-8'))
+        categories.insert(5, config.PROCESSING.encode('UTF-8'))
+        categories.insert(6, '--')
 
         # Add categories to dropdown and sections to sectionlist
         schema = """
@@ -377,13 +381,31 @@ class Events:
             """ % (category)
         self.resources['gui'].parse_and_run(schema)
         self.resources['gui'].execute([{'name' : 'dropdown', 'method' : 'Select', 'n' : 0}])
+        
+        # Disable GUI
+        self.disable_gui()
 
+        # Initialize
+        if self.init == False:
+            self.init = True
+            
+            # Clear toolbar
+            self.create_toolbar()
+            
+            # Setup timer to initialize after MainLoop
+            self.update_status_bar(strings.LOADING_DATABASE, '')
+            self.timer = wx.Timer(self.resources['gui'].objects['frame'])
+            self.timer.Start(milliseconds=100, oneShot=True)
+            wx.EVT_TIMER(self.resources['gui'].objects['frame'], -1, self.initialize)
+        else:
+            self.initialize(None)
+        
+    # Initialize GUI after load
+    def initialize(self, event):
         # Get all sections
         self.initialize_section_list()
         self.update_section_list(config.ALL)
-        
-        if self.toolbar == False:
-            self.create_toolbar()
+        self.update_status_bar('', '')
 
     # Create the toolbar
     def create_toolbar(self):
@@ -508,9 +530,7 @@ class Events:
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[15].GetId(), self.do_reload)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[19].GetId(), self.do_report)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[21].GetId(), self.do_help)
-        
-        # Create toolbar only once
-        self.toolbar = True
+        self.toolbar_tools = retval
 
     # Resize the GUI on drag or startup
     def resize_all(self, event):
@@ -543,36 +563,39 @@ class Events:
     
     # Get the title of a section
     def get_section_title(self, section):
-        return "section_" + re.sub(' ', '', section)
-    
+        return "section_" + re.sub('[ \(\)]', '', section)
+
     # Initialize section list
     def initialize_section_list(self):
-        # Section list
-        sections = self.configuration.get_sections()
-        
         # Clear sizer and hide scrollwindow
         schema = """
             methods:
             - name : bsizer
               method : Clear
               deleteWindows : True
-              
+
             - name : scrollwindow
               method : Hide
         """
         self.resources['gui'].parse_and_run(schema)
+
+        # Section list
+        sections = self.configuration.get_sections()            
+        sections.extend(self.configuration.get_arp_sections())
         
         for section in sections:
             section_title = self.get_section_title(section)
             items = self.configuration.get_section_items(section)
+            if items == None:  items = self.configuration.get_arp_section_items(section)
+            
             schema = """
                 objects:
                 - name : %s
                   type : widgets.ApplicationPanel
                   parent : scrollwindow
-                  label : %s
-                  description : %s
-                  url : %s
+                  label : '%s'
+                  description : '%s'
+                  url : '%s'
                   size : %s
                   gui : self
                   
@@ -589,10 +612,15 @@ class Events:
                    section_title
                    )
             self.resources['gui'].parse_and_run(schema)
-            self.resources['gui'].objects[section_title].set_event(self)
+            self.resources['gui'].objects[section_title].set_event(self, items)
 
     # Update the section list
     def update_section_list(self, category):
+        if category == '--': return
+            
+        # Disable GUI
+        self.disable_gui()
+
         # Get sections by category
         if category == config.ALL:
             sections = self.configuration.get_sections()
@@ -600,15 +628,18 @@ class Events:
             sections = self.configuration.installed.sections()
         elif category == config.NOT_INSTALLED:
             sections = [item for item in self.configuration.get_sections() if item not in self.configuration.installed.sections()]
+        elif category == config.REMOVABLE:
+            sections = self.configuration.get_arp_sections()
         elif category == config.PROCESSING:
             sections = self.get_checked_sections(True)
-        elif category == '--':
-            return
         else:
             sections = self.configuration.get_sections_by_category(category)
 
-        # Disable GUI
-        self.disable_gui()
+        # Disable toolbar for ARP if required
+        if len(sections) and re.search(config.ARP_ID, sections[0]) != None:
+            self.disable_toolbar_for_arp()
+        else:
+            self.enable_toolbar()
 
         # Get filter string if any
         filter = self.resources['gui'].objects['filterbox'].GetValue().lower()
@@ -616,12 +647,12 @@ class Events:
             filter = ''
 
         # Construct section list
-        section_objs = []
+        filtered_sections = []
         for section in sections:
-            if (len(filter) == 0) or (len(filter) and section.lower().find(filter) != -1):
-                section_objs.append(self.resources['gui'].objects[self.get_section_title(section)])
+            if (len(filter) == 0) or (len(filter) and section.lower().find(filter.lower()) != -1):
+                filtered_sections.append(section)
 
-        # Show scrollwindow
+        # Hide scrollwindow
         schema = """
             methods:
             - name : scrollwindow
@@ -632,16 +663,17 @@ class Events:
         row = 0
         children = []
         for item in self.resources['gui'].objects['bsizer'].GetChildren():
+            app_panel = item.GetWindow()
             if category != config.PROCESSING:
-                item.GetWindow().reset()
-            if item.GetWindow() in section_objs:
+                app_panel.reset()
+            if app_panel.app_name in filtered_sections:
                 item.Show(True)
                 if category == config.UPGRADEABLE:
                     self.refresh_section_list()
-                    children.append(threading.Thread(target=item.GetWindow().display_if_upgradeable, args=[item]))
+                    children.append(threading.Thread(target=app_panel.display_if_upgradeable, args=[item]))
                     children[row].start()
                 else:
-                    item.GetWindow().set_colour_by_row(row)
+                    app_panel.set_colour_by_row(row)
                 row = row + 1
             else:
                 item.Show(False)
@@ -780,6 +812,7 @@ class Events:
               
             - name : application
               method : Yield
+              onlyIfNeeded : True
         """
         self.resources['gui'].parse_and_run(schema)
 
@@ -801,12 +834,59 @@ class Events:
 
             - name : statusbar
               method : Refresh
-
-            - name : application
-              method : Yield
         """
         self.resources['gui'].parse_and_run(schema)
         
+    # Disable Download, Install and Upgrade on toolbar
+    def disable_toolbar_for_arp(self):
+        schema = """
+            methods:
+            - name : toolbar
+              method : EnableTool
+              id : %s
+              enable : False
+              
+            - name : toolbar
+              method : EnableTool
+              id : %s
+              enable : False
+
+            - name : toolbar
+              method : EnableTool
+              id : %s
+              enable : False
+        """ % (
+               self.toolbar_tools[3].GetId(),
+               self.toolbar_tools[5].GetId(),
+               self.toolbar_tools[7].GetId()
+               )
+        self.resources['gui'].parse_and_run(schema)
+
+    # Enable Download, Install and Upgrade on toolbar
+    def enable_toolbar(self):
+        schema = """
+            methods:
+            - name : toolbar
+              method : EnableTool
+              id : %s
+              enable : True
+              
+            - name : toolbar
+              method : EnableTool
+              id : %s
+              enable : True
+
+            - name : toolbar
+              method : EnableTool
+              id : %s
+              enable : True
+        """ % (
+               self.toolbar_tools[3].GetId(),
+               self.toolbar_tools[5].GetId(),
+               self.toolbar_tools[7].GetId()
+               )
+        self.resources['gui'].parse_and_run(schema)
+
     # Start an action thread
     def do_threaded_action(self, action):
         child = threading.Thread(target=self.do_action, args=[action])

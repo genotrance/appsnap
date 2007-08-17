@@ -9,21 +9,33 @@ import wx
 
 OLD_STDOUT = None
 
-# Open debug log if -d specified
+# Open debug log if -d specified, -s pipes to stdout
 def start_debug():
-    if len(sys.argv) == 2 and sys.argv[1] == '-d':
-        OLD_STDOUT = sys.stdout
-        sys.stdout = open('debug.log', 'a')
-        print '\n========================'
-        print time.asctime()
-        print '========================\n'
+    if len(sys.argv) == 2:
+        if sys.argv[1] == '--debug' or sys.argv[1] == '-d':
+            outfile = 'debug.log'
+        elif sys.argv[1] == '--stdout' or sys.argv[1] == '-s':
+            return
+    else:
+        outfile = 'nul'
+    
+    OLD_STDOUT = sys.stdout
+    OLD_STDERR = sys.stderr
+    sys.stdout = open(outfile, 'a')
+    sys.stderr = sys.stdout
+    print '\n========================'
+    print time.asctime()
+    print '========================\n'
 
 # Close debug log if -d specified
-def end_debug():    
-    if len(sys.argv) == 2 and sys.argv[1] == '-d':
-        sys.stdout.close()
-        sys.stdout = OLD_STDOUT
-        
+def end_debug():
+    if len(sys.argv) == 2 and (sys.argv[1] == '--stdout' or sys.argv[1] == '-s'):
+        return
+    
+    sys.stdout.close()
+    sys.stdout = OLD_STDOUT
+    sys.stderr = OLD_STDERR
+
 # Main function
 if __name__ == '__main__':
     # Start debug if requested

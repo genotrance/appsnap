@@ -1,6 +1,8 @@
+import config
 import defines
 import os
 import process
+import re
 import strings
 import threading
 import time
@@ -20,7 +22,7 @@ class ApplicationPanel(wx.Panel):
         self.process = False
         
         # Widgets
-        self.label = wx.StaticText(self, -1, label)
+        self.label = wx.StaticText(self, -1, re.sub(config.ARP_ID, '', label))
         self.label.SetFont(self.gui.objects['sectionfont'])
 
         self.checkbox = wx.CheckBox(self, -1)
@@ -33,6 +35,7 @@ class ApplicationPanel(wx.Panel):
         self.url.SetFont(self.gui.objects['urlfont'])
         self.url.SetToolTipString(url)
         self.url.SetForegroundColour(self.gui.objects['bluecolour'])
+        if url == '': self.url.Hide()
         
         self.status = wx.StaticText(self, -1, '')
         
@@ -64,14 +67,16 @@ class ApplicationPanel(wx.Panel):
         if self.version.GetLabel() != '':
             self.version.SetPosition((40, 45))
         if self.installed_version.GetLabel() != '':
-            self.installed_version.SetPosition((40, 60))
+            if self.process.app_config[process.APP_CATEGORY] != config.REMOVABLE:
+                self.installed_version.SetPosition((40, 60))
+            else:
+                self.installed_version.SetPosition((40, 45))
 
     # Set event object
-    def set_event(self, event):
+    def set_event(self, event, items):
         self.event = event
         
         # Create process object
-        items = self.event.configuration.get_section_items(self.app_name)
         self.process = process.process(self.event.configuration, self.event.curl_instance, self.app_name, items)
 
     # Setup left click event
@@ -103,8 +108,11 @@ class ApplicationPanel(wx.Panel):
     def set_installed_version(self, installed_version):
         if self.selected == True:
             self.installed_version.SetLabel(installed_version)
-            self.installed_version.SetPosition((40, 60))
-
+            if self.process.app_config[process.APP_CATEGORY] != config.REMOVABLE:
+                self.installed_version.SetPosition((40, 60))
+            else:
+                self.installed_version.SetPosition((40, 45))
+                
     # Hide installed version
     def unset_installed_version(self):
         self.installed_version.SetLabel('')
@@ -117,10 +125,16 @@ class ApplicationPanel(wx.Panel):
     # Display status information
     def display_status(self):
         if self.selected == True:
-            if self.installed_version.GetLabel() != '':
-                self.status.SetPosition((40, 75))
+            if self.process.app_config[process.APP_CATEGORY] != config.REMOVABLE:
+                if self.installed_version.GetLabel() != '':
+                    self.status.SetPosition((40, 75))
+                else:
+                    self.status.SetPosition((40, 60))
             else:
-                self.status.SetPosition((40, 60))
+                if self.installed_version.GetLabel() != '':
+                    self.status.SetPosition((40, 60))
+                else:
+                    self.status.SetPosition((40, 45))
             self.set_status_text(strings.STARTING + ' ...')
             self.update_layout()
             
@@ -139,16 +153,18 @@ class ApplicationPanel(wx.Panel):
             self.set_installed_version(installed_version)
 
         # Display latest version text
-        self.set_version(strings.LATEST_VERSION + ' : ' + strings.LOADING + ' ...')
+        if self.process.app_config[process.APP_CATEGORY] != config.REMOVABLE:
+            self.set_version(strings.LATEST_VERSION + ' : ' + strings.LOADING + ' ...')
         
         # Update layout
         self.update_layout()
         
         # Get the latest version
-        latest_version = self.process.get_latest_version()
-        if latest_version == None:
-            latest_version = strings.FAILED_TO_CONNECT
-        self.set_version(strings.LATEST_VERSION + ' : ' + latest_version)
+        if self.process.app_config[process.APP_CATEGORY] != config.REMOVABLE:
+            latest_version = self.process.get_latest_version()
+            if latest_version == None:
+                latest_version = strings.FAILED_TO_CONNECT
+            self.set_version(strings.LATEST_VERSION + ' : ' + latest_version)
 
     # Hide information
     def hide_info(self):

@@ -76,18 +76,22 @@ help = header + """
 # Perform an action on the specified application
 def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall, test):
     items = configuration.get_section_items(name)
+    if items == None: items = configuration.get_arp_section_items(name + config.ARP_ID)
     if items != None:
         p = process.process(configuration, curl_instance, name, items)
         
         if getversion == True:
             output = '\n'
             output += strings.APPLICATION + ' : ' + name + '\n'
-            output += strings.DESCRIPTION + ' : ' + items[process.APP_DESCRIBE] + '\n'
-            output += strings.WEBSITE + ' : ' + items[process.APP_WEBSITE] + '\n'
-            latest_version = p.get_latest_version()
-            if latest_version == None:
-                latest_version = strings.FAILED_TO_CONNECT
-            output += strings.LATEST_VERSION + ' : ' + latest_version + '\n'
+            if items[process.APP_DESCRIBE] != '':
+                output += strings.DESCRIPTION + ' : ' + items[process.APP_DESCRIBE] + '\n'
+            if items[process.APP_WEBSITE] != '':
+                output += strings.WEBSITE + ' : ' + items[process.APP_WEBSITE] + '\n'
+            if items[process.APP_CATEGORY] != config.REMOVABLE:
+                latest_version = p.get_latest_version()
+                if latest_version == None:
+                    latest_version = strings.FAILED_TO_CONNECT
+                output += strings.LATEST_VERSION + ' : ' + latest_version + '\n'
             installed = p.get_installed_version()
             if installed != '':
                 output += strings.INSTALLED_VERSION + ' : ' + installed + '\n'
