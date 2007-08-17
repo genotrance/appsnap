@@ -3,12 +3,14 @@ import ConfigParser
 import defines
 import os.path
 import process
+import re
 import shutil
 import strings
 import sys
 import threading
 import time
 import version
+import _winreg
 
 # Configuration file
 DB_INI        = 'db.ini'
@@ -39,6 +41,10 @@ INSTALLED      = strings.INSTALLED
 NOT_INSTALLED  = strings.NOT_INSTALLED
 PROCESSING     = strings.PROCESSING
 UPGRADEABLE    = strings.UPGRADEABLE
+REMOVABLE      = strings.REMOVABLE
+
+# Add/Remove program section identifier
+ARP_ID         = '@ARP@'
 
 # Configuration loading class
 class config:
@@ -68,6 +74,9 @@ class config:
         # Remove file: from cache location if specified
         if self.cache[CACHE_LOCATION][:5].lower() == 'file:':
             self.cache[CACHE_LOCATION] = self.cache[CACHE_LOCATION][5:]
+        
+        # Expand environment variables in cache location if any
+        self.cache[CACHE_LOCATION] = self.expand_env(self.cache[CACHE_LOCATION])
             
         # Copy database to cache location if not already done
         self.copy_database_to_cache()
@@ -88,6 +97,9 @@ class config:
         self.latest_ini = os.path.join(self.cache[CACHE_LOCATION], LATEST_INI)
         self.latest = ConfigParser.SafeConfigParser()
         self.latest.read(self.latest_ini)
+        
+        # Load Add/Remove programs list
+        self.arp_list = self.load_arp()
 
     #####
     # Get
@@ -149,7 +161,8 @@ class config:
     # Display categories
     def display_categories(self):
         # Get the categories
-        categories = self.get_categories()
+        categories = [INSTALLED, NOT_INSTALLED, REMOVABLE]
+        categories.extend(self.get_categories())
 
         print strings.AVAILABLE_CATEGORIES + '\n'
         for category in categories:
@@ -166,6 +179,8 @@ class config:
             sections = [item for item in self.get_sections() if item not in self.installed.sections()]
             category = ''
             print strings.NOT_INSTALLED_APPLICATIONS + '\n'
+        elif category == REMOVABLE:
+            sections = self.get_arp_sections()
         else:
             sections = self.get_sections()
             print strings.SUPPORTED_APPLICATIONS + '\n'
@@ -177,10 +192,13 @@ class config:
         for section in sections:
             if string == '' or (string != '' and section.lower().find(string.lower()) != -1):
                 items = self.get_section_items(section)
+                if items == None: items = self.get_arp_section_items(section)
                 if category == '' or (category == items[process.APP_CATEGORY]):
-                    print strings.APPLICATION + ' : ' + section
-                    print strings.DESCRIPTION + ' : ' + items[process.APP_DESCRIBE]
-                    print strings.WEBSITE + ' : ' + items[process.APP_WEBSITE]
+                    print strings.APPLICATION + ' : ' + re.sub(ARP_ID, '', section)
+                    if items[process.APP_DESCRIBE] != '':
+                        print strings.DESCRIPTION + ' : ' + items[process.APP_DESCRIBE]
+                    if items[process.APP_WEBSITE] != '':
+                        print strings.WEBSITE + ' : ' + items[process.APP_WEBSITE]
                     print
 
     #####
@@ -264,7 +282,7 @@ class config:
     def create_cache_directory(self):
         if not os.path.exists(self.cache[CACHE_LOCATION]):
             try:
-                os.mkdir(self.cache[CACHE_LOCATION])
+                os.makedirs(self.cache[CACHE_LOCATION])
             except IOError:
                 print strings.FAILED_CREATE_CACHE_DIR + ' : ' + self.cache[CACHE_LOCATION]
                 
@@ -315,3 +333,123 @@ class config:
             options = self.userdb.options(user_section)
             for option in options:
                 self.db.set(user_section, option, self.userdb.get(user_section, option))
+    
+    # Expand string containing environment variable
+    def expand_env(self, string):
+        if string == '': return string
+        
+        pipe = os.popen("cmd /c echo " + string)
+        exp_string = pipe.read()
+        pipe.close()
+
+        return exp_string[:-1]
+    
+    #####
+    # Add/Remove Programs
+    #####
+    
+    # Create Add/Remove program list
+    def load_arp(self):
+        arp_list = {}
+        named = self.registry_search_arp('DisplayName')
+        uninstallable = self.registry_search_arp('UninstallString')
+        for un in uninstallable:
+            if not re.match('KB[0-9]+[.*]*', un) and named.get(un) != None:
+                arp_list[named.get(un) + ARP_ID] = {
+                                           process.APP_CATEGORY: REMOVABLE,
+                                           process.APP_DESCRIBE: '',
+                                           process.APP_WEBSITE: '',
+                                           process.APP_UNINSTALL: un,
+                                           process.APP_INSTVERSION: 'REGISTRY_SEARCH:DisplayVersion=(.*)'
+                                           }
+
+        return arp_list
+    
+    # Get ARP sections
+    def get_arp_sections(self):
+        sections = self.arp_list.keys()
+        sections.sort(lambda a,b: cmp(a.upper(), b.upper()))
+        return sections
+    
+    # Get ARP items
+    def get_arp_section_items(self, section):
+        if self.arp_list.has_key(section):
+            return self.arp_list[section]
+        else:
+            return None
+        
+    #####
+    # Registry Searching
+    #####
+    
+    # Search for uninstall entry based on name and value provided
+    def registry_search_uninstall_entry(self, name, value):
+        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+        uninstall_key, matchobj = self.registry_search(key, name, value)
+        _winreg.CloseKey(key)
+        
+        if uninstall_key == '':
+            key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+            uninstall_key, matchobj = self.registry_search(key, name, value)
+            _winreg.CloseKey(key)
+
+        return uninstall_key, matchobj
+        
+    # Search for installed version based on key, name and value provided
+    def registry_search_installed_version(self, uninstall_key, name, value):
+        try:
+            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
+            subvalue, temp = _winreg.QueryValueEx(key, name)
+            _winreg.CloseKey(key)
+        except WindowsError:
+            subvalue = ''
+        
+        if subvalue == '':
+            try:
+                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
+                subvalue, temp = _winreg.QueryValueEx(key, name)
+                _winreg.CloseKey(key)
+            except WindowsError:
+                subvalue = ''
+                
+        if subvalue != '':
+            matchobj = re.match(value, subvalue)
+            if matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
+                return matchobj.groups()[0]
+            
+        return ''
+    
+    # Find all Add/Remove applications in the registry
+    def registry_search_arp(self, subkey):
+        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+        uninstallable = self.registry_search(key, subkey, '(.*)', True)
+        _winreg.CloseKey(key)
+        
+        key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+        uninstallable.update(self.registry_search(key, subkey, '(.*)', True))
+        _winreg.CloseKey(key)
+
+        return uninstallable
+    
+    # Search for registry key
+    def registry_search(self, key, name, value, all=False):
+        i = 0
+        matching = {}
+        try:
+            while 1:
+                subkey_name = _winreg.EnumKey(key, i)
+                i += 1
+                try:
+                    subkey = _winreg.OpenKey(key, subkey_name)
+                    subvalue, temp = _winreg.QueryValueEx(subkey, name)
+                    _winreg.CloseKey(subkey)
+                except WindowsError:
+                    continue
+                matchobj = re.match(value, subvalue)
+                if matchobj != None:
+                    if all == False: return subkey_name, matchobj
+                    else: matching[subkey_name] = matchobj.groups()[0]
+        except EnvironmentError: pass
+        
+        if all == False: return '', None
+        else: return matching

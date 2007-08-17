@@ -1,4 +1,5 @@
 # Import required libraries
+import config
 import defines
 import glob
 import os
@@ -114,6 +115,34 @@ class process:
 
         return None
 
+    # Get the installed version of the application
+    def get_installed_version(self):
+        if self.installedversion != '': return self.installedversion
+        
+        if self.app_config.has_key(APP_INSTVERSION):
+            if self.app_config[APP_INSTVERSION] == USE_UNINSTALL:
+                uninstall_key, matchobj = self.parse_uninstall_entry()
+                if uninstall_key != '' and matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
+                    self.installedversion = matchobj.groups()[0]
+            else:
+                command = self.app_config[APP_INSTVERSION].split(':')
+                if len(command) == 2 and command[0] == REGISTRY_SEARCH:
+                    uninstall_key, matchobj = self.parse_uninstall_entry()
+                    if uninstall_key != '':
+                        value = command[1].split('=')
+                        if len(value) == 2:
+                            self.installedversion = self.global_config.registry_search_installed_version(uninstall_key, value[0], value[1])
+                        else:
+                            self.installedversion = self.global_config.registry_search_installed_version(uninstall_key, value[0], '')
+        else:
+            self.installedversion = self.global_config.get_installed_version(self.app)
+            
+        if self.app_config[APP_CATEGORY] != config.REMOVABLE:
+            if self.installedversion != '': self.global_config.add_installed_version(self.app, self.installedversion)
+            else: self.global_config.delete_installed_version(self.app)
+        
+        return self.installedversion
+
     # Download the latest version of the application's installer
     def download_latest_version(self, progress_callback=None, test=False):
         # Get latest version if not already done
@@ -124,7 +153,10 @@ class process:
 
         # Get download URL, default to scrape
         try: download = self.replace_version(self.app_config[APP_DOWNLOAD])
-        except KeyError: download = self.app_config[APP_SCRAPE]
+        except KeyError:
+            try: download = self.app_config[APP_SCRAPE]
+            except KeyError:
+                return False
 
         # Get filename
         filename = self.replace_version(self.app_config[APP_FILENAME])
@@ -300,13 +332,31 @@ class process:
 
         return True
 
+    # Locate the uninstall entry for the application in the registry
+    def parse_uninstall_entry(self):
+        command = self.app_config[APP_UNINSTALL].split(':')
+        if len(command) == 2 and command[0] == REGISTRY_SEARCH:
+            value = command[1].split('=')
+            if len(value) == 2:
+                uninstall_key, matchobj = self.global_config.registry_search_uninstall_entry(value[0], value[1])
+            else:
+                uninstall_key, matchobj = self.global_config.registry_search_uninstall_entry(value[0], '')
+        else:
+            uninstall_key = self.app_config[APP_UNINSTALL]
+            matchobj = None
+
+        return uninstall_key, matchobj
+    
     # Upgrade to latest version
     def upgrade_version(self):
         cont = True
-        if self.app_config[APP_UPGRADES] == 'false':
-            cont = self.uninstall_version()
-        if cont == True:
-            cont = self.install_latest_version()
+        try:
+            if self.app_config[APP_UPGRADES] == 'false':
+                cont = self.uninstall_version()
+            if cont == True:
+                cont = self.install_latest_version()
+        except KeyError:
+            return False
 
         return cont
     
@@ -377,7 +427,7 @@ class process:
         # Replace install directory
         string = re.sub(INSTALL_DIR, install_dir, string)
 
-        return self.expand_env(string)
+        return self.global_config.expand_env(string)
 
     # Get all the versions from the scrape page
     def get_versions(self):
@@ -516,113 +566,3 @@ class process:
         try: os.rmdir(directory)
         except WindowsError:
             pass
-        
-    # Expand string containing environment variable
-    def expand_env(self, string):
-        if string == '': return string
-        
-        pipe = os.popen("cmd /c echo " + string)
-        exp_string = pipe.read()
-        pipe.close()
-
-        return exp_string[:-1]
-    
-    # ***
-    # Registry searching
-    
-    def get_installed_version(self):
-        if self.installedversion != '': return self.installedversion
-        
-        if self.app_config.has_key(APP_INSTVERSION):
-            if self.app_config[APP_INSTVERSION] == USE_UNINSTALL:
-                uninstall_key, matchobj = self.parse_uninstall_entry()
-                if uninstall_key != '' and matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
-                    self.installedversion = matchobj.groups()[0]
-            else:
-                command = self.app_config[APP_INSTVERSION].split(':')
-                if len(command) == 2 and command[0] == REGISTRY_SEARCH:
-                    uninstall_key, matchobj = self.parse_uninstall_entry()
-                    if uninstall_key != '':
-                        value = command[1].split('=')
-                        if len(value) == 2:
-                            self.installedversion = self.registry_search_installed_version(uninstall_key, value[0], value[1])
-                        else:
-                            self.installedversion = self.registry_search_installed_version(uninstall_key, value[0], '')
-        else:
-            self.installedversion = self.global_config.get_installed_version(self.app)
-            
-        if self.installedversion != '': self.global_config.add_installed_version(self.app, self.installedversion)
-        else: self.global_config.delete_installed_version(self.app)
-        
-        return self.installedversion
-
-    def parse_uninstall_entry(self):
-        command = self.app_config[APP_UNINSTALL].split(':')
-        if len(command) == 2 and command[0] == REGISTRY_SEARCH:
-            value = command[1].split('=')
-            if len(value) == 2:
-                uninstall_key, matchobj = self.registry_search_uninstall_entry(value[0], value[1])
-            else:
-                uninstall_key, matchobj = self.registry_search_uninstall_entry(value[0], '')
-        else:
-            uninstall_key = self.app_config[APP_UNINSTALL]
-            matchobj = None
-
-        return uninstall_key, matchobj
-    
-    # Search for uninstall entry based on name and value provided
-    def registry_search_uninstall_entry(self, name, value):
-        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-        uninstall_key, matchobj = self.registry_search(key, name, value)
-        _winreg.CloseKey(key)
-        
-        if uninstall_key == '':
-            key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-            uninstall_key, matchobj = self.registry_search(key, name, value)
-            _winreg.CloseKey(key)
-
-        return uninstall_key, matchobj
-        
-    # Search for installed version based on key, name and value provided
-    def registry_search_installed_version(self, uninstall_key, name, value):
-        try:
-            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
-            subvalue, temp = _winreg.QueryValueEx(key, name)
-            _winreg.CloseKey(key)
-        except WindowsError:
-            subvalue = ''
-        
-        if subvalue == '':
-            try:
-                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
-                subvalue, temp = _winreg.QueryValueEx(key, name)
-                _winreg.CloseKey(key)
-            except WindowsError:
-                subvalue = ''
-                
-        if subvalue != '':
-            matchobj = re.match(value, subvalue)
-            if matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
-                return matchobj.groups()[0]
-            
-        return ''
-    
-    # Search for registry key
-    def registry_search(self, key, name, value):
-        i = 0
-        try:
-            while 1:
-                subkey_name = _winreg.EnumKey(key, i)
-                i += 1
-                try:
-                    subkey = _winreg.OpenKey(key, subkey_name)
-                    subvalue, temp = _winreg.QueryValueEx(subkey, name)
-                    _winreg.CloseKey(subkey)
-                except WindowsError:
-                    continue
-                matchobj = re.match(value, subvalue)
-                if matchobj != None:
-                    return subkey_name, matchobj
-        except EnvironmentError: pass
-        
-        return '', None
