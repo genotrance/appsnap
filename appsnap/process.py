@@ -135,7 +135,17 @@ class process:
                         else:
                             self.installedversion = self.global_config.registry_search_installed_version(uninstall_key, value[0], '')
         else:
-            self.installedversion = self.global_config.get_installed_version(self.app)
+            # Get installed version from file
+            installed_version = self.global_config.get_installed_version(self.app)
+            
+            # Check if app is still installed
+            app_uninstall, matchobj = self.parse_uninstall_entry()
+            uninstall_string = self.get_uninstall_string(app_uninstall, installed_version)
+            if uninstall_string == '':
+                self.global_config.delete_installed_version(self.app)
+                self.installedversion = ''
+            else:
+                self.installedversion = installed_version
             
         if self.app_config[APP_CATEGORY] != config.REMOVABLE:
             if self.installedversion != '': self.global_config.add_installed_version(self.app, self.installedversion)
@@ -282,18 +292,8 @@ class process:
         app_uninstall, matchobj = self.parse_uninstall_entry()
 
         try:
-            try:
-                # Get uninstall string from registry - LOCAL_MACHINE
-                uninstall = self.replace_version(app_uninstall, installed_version)
-                key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
-                uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
-                _winreg.CloseKey(key)
-            except WindowsError:
-                # Get uninstall string from registry - CURRENT_USER
-                uninstall = self.replace_version(app_uninstall, installed_version)
-                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
-                uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
-                _winreg.CloseKey(key)
+            uninstall_string = self.get_uninstall_string(app_uninstall, installed_version)
+            if uninstall_string == None: raise WindowsError
 
             # Run uninstaller, check return value
             uninstall_string = re.sub(re.compile('msiexec.exe /i', re.IGNORECASE), 'msiexec.exe /x', uninstall_string)
@@ -346,6 +346,25 @@ class process:
             matchobj = None
 
         return uninstall_key, matchobj
+
+    def get_uninstall_string(self, app_uninstall, installed_version):
+        try:
+            # Get uninstall string from registry - LOCAL_MACHINE
+            uninstall = self.replace_version(app_uninstall, installed_version)
+            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
+            uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
+            _winreg.CloseKey(key)
+        except WindowsError:
+            try:
+                # Get uninstall string from registry - CURRENT_USER
+                uninstall = self.replace_version(app_uninstall, installed_version)
+                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
+                uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
+                _winreg.CloseKey(key)
+            except WindowsError:
+                return None
+            
+        return uninstall_string
     
     # Upgrade to latest version
     def upgrade_version(self):

@@ -224,7 +224,9 @@ class config:
             self.installed.add_section(section)
         self.installed.set(section, process.APP_VERSION, version)
         try:
-            self.installed.write(open(INSTALLED_INI, 'w'))
+            inifile = open(INSTALLED_INI, 'w')
+            self.installed.write(inifile)
+            inifile.close()
         except IOError:
             print strings.INSTALLED_INI_UPDATE_FAILED
             
@@ -237,7 +239,9 @@ class config:
         if self.installed.has_section(section) == True:
             self.installed.remove_section(section)
             try:
-                self.installed.write(open(INSTALLED_INI, 'w'))
+                inifile = open(INSTALLED_INI, 'w')
+                self.installed.write(inifile)
+                inifile.close()
             except:
                 print strings.INSTALLED_INI_UPDATE_FAILED
                 
@@ -268,7 +272,9 @@ class config:
     
         # Save version
         try:
-            self.latest.write(open(self.latest_ini, 'w'))
+            inifile = open(self.latest_ini, 'w')
+            self.latest.write(inifile)
+            inifile.close()
         except IOError:
             print strings.LATEST_INI_UPDATE_FAILED
     
