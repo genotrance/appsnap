@@ -37,7 +37,7 @@ class MakeGui:
         objects = []
 
         # Use yaml parser
-        schema = yaml.load(string)
+        schema = yaml.load(string.encode('utf-8'))
 
         # Parse any standalone methods
         if schema.has_key('methods'): methods = schema['methods']
@@ -90,25 +90,31 @@ class MakeGui:
             for key, value in object.iteritems():
                 # Remove escapers
                 if key[0] == '^': key = key[1:]
-
-                if (key == 'parent'):
-                    if (value.__str__() != 'None'):
-                        code += key + "=self.objects['" + value.__str__() + "'],"
+                
+                try:
+                    if (key == 'parent'):
+                        if (value.__str__() != 'None'):
+                            code += key + "=self.objects['" + value.__str__() + "'],"
+                        else:
+                            code += key + "=None,"
+                    elif (value.__str__() != "" and value.__str__()[0] == '~'):
+                        code += key + "=self.objects['" + value.__str__()[1:] + "'],"
                     else:
-                        code += key + "=None,"
-                elif (value.__str__() != "" and value.__str__()[0] == '~'):
-                    code += key + "=self.objects['" + value.__str__()[1:] + "'],"
-                else:
-                    try:
-                        if (eval(value.__str__())):
-                            code += key + "=" + value.__str__() + ","
-                    except (NameError, SyntaxError):
-                        code += key + "='" + value.__str__() + "',"
+                        try:
+                            if (eval(value.__str__())):
+                                code += key + "=" + value.__str__() + ","
+                        except (NameError, SyntaxError):
+                            code += key + "='" + value.__str__() + "',"
+                except UnicodeEncodeError:
+                    code += key + "=u\"" + value + "\","
             code = code[:len(code)-1] + " )"
 
             # Save in object list
             self.objects[name] = eval(code)
-            print '>>> ' + name + ' = ' + code + '\n... ' + self.objects[name].__str__()
+            try:
+                print '>>> ' + name + ' = ' + code + '\n... ' + self.objects[name].__str__()
+            except UnicodeEncodeError:
+                print '>>> ' + name.encode("utf-8") + ' = ' + code.encode("utf-8") + '\n... ' + self.objects[name].__str__()
 
     # Run gui object methods
     def execute(self, methods):
@@ -139,9 +145,12 @@ class MakeGui:
                             if (type(eval(value.__str__()))):
                                 code += key + "=" + value.__str__() + ","
                         except (NameError, SyntaxError):
-                            code += key + "='" + value.__str__() + "',"
+                            code += key + "=u\"" + value.__str__() + "\","
                 except UnicodeEncodeError:
-                    code += key + "=u\"" + value + "\","
+                    if value[0] == '~':
+                        code += key + "=self.objects[u\"" + value[1:] + "\"],"
+                    else:
+                        code += key + "=u\"" + value + "\","
             code = code[:len(code)-1] + " )"
 
             # Execute and capture return value
