@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-08-26 13:00-0600\n"
+"PO-Revision-Date: 2007-08-26 13:29-0600\n"
 "Last-Translator: \n"
 "Language-Team: Gonzague Dambricourt <gonzaguedambricourt@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -199,7 +199,7 @@ msgstr "Chargement"
 
 #: strings.py:89
 msgid "Loading database"
-msgstr ""
+msgstr "Chargement de la base de données"
 
 #: strings.py:93
 msgid "Neither 'scrape' nor 'download' specified"
@@ -259,7 +259,7 @@ msgstr "Recharger la configuration"
 
 #: strings.py:116
 msgid "Removable"
-msgstr ""
+msgstr "Amovible"
 
 #: strings.py:117
 msgid "Report Bug"

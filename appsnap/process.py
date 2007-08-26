@@ -308,6 +308,7 @@ class process:
     
             # Delete installed version
             self.global_config.delete_installed_version(self.app)
+            self.installedversion = ''
         except (WindowsError, KeyError):
             filename = self.app_config[APP_FILENAME]
             if filename[-3:] == 'zip':
@@ -322,6 +323,7 @@ class process:
                     
                     # Delete installed version
                     self.global_config.delete_installed_version(self.app)
+                    self.installedversion = ''
             else:
                 # No uninstall method available
                 return False

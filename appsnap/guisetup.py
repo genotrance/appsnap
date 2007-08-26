@@ -9,6 +9,7 @@ import strings
 import threading
 import time
 import version
+import widgets
 import wx
 
 # Setup localization
@@ -583,35 +584,24 @@ class Events:
         sections = self.configuration.get_sections()            
         sections.extend(self.configuration.get_arp_sections())
         
+        scrollwindow = self.resources['gui'].objects['scrollwindow']
+        bsizer = self.resources['gui'].objects['bsizer']
+        apsize = (defines.GUI_WIDTH-defines.TOOLBAR_WIDTH-100, defines.SECTION_HEIGHT)
+
         for section in sections:
             section_title = self.get_section_title(section)
             items = self.configuration.get_section_items(section)
             if items == None:  items = self.configuration.get_arp_section_items(section)
             
-            schema = """
-                objects:
-                - name : %s
-                  type : widgets.ApplicationPanel
-                  parent : scrollwindow
-                  label : '%s'
-                  description : '%s'
-                  url : '%s'
-                  size : %s
-                  gui : self
-                  
-                methods:
-                - name : bsizer
-                  method : Add
-                  item : ~%s
-                  flag : wx.GROW
-            """ % (section_title, 
-                   section, 
-                   items[process.APP_DESCRIBE], 
-                   items[process.APP_WEBSITE], 
-                   (defines.GUI_WIDTH-defines.TOOLBAR_WIDTH-100, defines.SECTION_HEIGHT), 
-                   section_title
-                   )
-            self.resources['gui'].parse_and_run(schema)
+            self.resources['gui'].objects[section_title] = widgets.ApplicationPanel(
+                                                                                    scrollwindow,
+                                                                                    section,
+                                                                                    items[process.APP_DESCRIBE], 
+                                                                                    items[process.APP_WEBSITE], 
+                                                                                    self.resources['gui'],
+                                                                                    apsize
+                                                                                    )
+            bsizer.Add(self.resources['gui'].objects[section_title], flag=wx.GROW)
             self.resources['gui'].objects[section_title].set_event(self, items)
 
     # Update the section list
