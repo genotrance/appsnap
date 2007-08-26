@@ -1,6 +1,7 @@
 # Import required libraries
 import ConfigParser
 import defines
+import filecmp
 import os.path
 import process
 import re
@@ -18,6 +19,9 @@ USERDB_INI    = 'userdb.ini'
 CONFIG_INI    = 'config.ini'
 INSTALLED_INI = 'installed.ini'
 LATEST_INI    = 'latest.ini'
+
+# Paths
+SYSTEM_PATH   = '%ALLUSERSPROFILE%\Application Data\AppSnap'
 
 # Config.ini entries
 USER           = 'user'
@@ -81,9 +85,15 @@ class config:
         # Copy database to cache location if not already done
         self.copy_database_to_cache()
 
+        # Ensure system path exists
+        self.system_path = self.expand_env(SYSTEM_PATH)
+        if not os.path.exists(self.system_path):
+            os.makedirs(self.system_path)
+
         # Load the installed applications
+        self.installed_ini = os.path.join(self.system_path, INSTALLED_INI)
         self.installed = ConfigParser.SafeConfigParser()
-        self.installed.read(INSTALLED_INI)
+        self.installed.read(self.installed_ini)
         
         # Filter out sections that aren't in main db
         for section in self.installed.sections():
@@ -224,7 +234,7 @@ class config:
             self.installed.add_section(section)
         self.installed.set(section, process.APP_VERSION, version)
         try:
-            inifile = open(INSTALLED_INI, 'w')
+            inifile = open(self.installed_ini, 'w')
             self.installed.write(inifile)
             inifile.close()
         except IOError:
@@ -239,7 +249,7 @@ class config:
         if self.installed.has_section(section) == True:
             self.installed.remove_section(section)
             try:
-                inifile = open(INSTALLED_INI, 'w')
+                inifile = open(self.installed_ini, 'w')
                 self.installed.write(inifile)
                 inifile.close()
             except:
@@ -296,7 +306,7 @@ class config:
     def copy_database_to_cache(self, overwrite=False):
         cached_db = os.path.join(self.cache[CACHE_LOCATION], DB_INI)
         self.create_cache_directory()
-        if not os.path.exists(cached_db) or overwrite == True:
+        if not os.path.exists(cached_db) or overwrite == True or filecmp.cmp(DB_INI, cached_db) == False:
             shutil.copy(DB_INI, cached_db)
 
     # Check if a section has all the expected fields

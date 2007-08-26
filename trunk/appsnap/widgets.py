@@ -11,7 +11,7 @@ import wx
 # Application panel
 class ApplicationPanel(wx.Panel):
     # Constructor
-    def __init__(self, parent, label, description, url, gui, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.TAB_TRAVERSAL | wx.NO_BORDER):
+    def __init__(self, parent, label, description, url, gui, size=wx.DefaultSize, pos=wx.DefaultPosition, style=wx.TAB_TRAVERSAL | wx.NO_BORDER):
         wx.Panel.__init__(self, parent, -1, pos=pos, size=size, style=style)
 
         # State information
@@ -157,8 +157,15 @@ class ApplicationPanel(wx.Panel):
             self.set_version(strings.LATEST_VERSION + ' : ' + strings.LOADING + ' ...')
         
         # Update layout
+        self.Thaw()
         self.update_layout()
+
+        child = threading.Thread(target=self.populate_latest_version)
+        child.setDaemon(True)
+        child.start()        
         
+    # Get latest version and display
+    def populate_latest_version(self):
         # Get the latest version
         if self.process.app_config[process.APP_CATEGORY] != config.REMOVABLE:
             latest_version = self.process.get_latest_version()
@@ -171,6 +178,7 @@ class ApplicationPanel(wx.Panel):
         self.unset_version()
         self.unset_installed_version()
         self.hide_status()
+        self.Thaw()
         self.update_layout()
 
     # Update the layout of this panel
@@ -196,9 +204,7 @@ class ApplicationPanel(wx.Panel):
     # Select if upgradeable
     def display_if_upgradeable(self, sizeritem):
         # Get the version information populated
-        self.selected = True
-        self.SetBackgroundColour(self.gui.objects['lightbluecolour'])
-        self.show_info()
+        self.select(True)
         
         installed_version = self.process.get_installed_version()
         latest_version = self.process.get_latest_version()
@@ -211,12 +217,14 @@ class ApplicationPanel(wx.Panel):
 
     # Select application
     def select(self, value):
+        self.Freeze()
         if value == True:
             self.selected = True
-            self.SetBackgroundColour(self.gui.objects['lightredcolour'])
-            child = threading.Thread(target=self.show_info)
-            child.setDaemon(True)
-            child.start()
+            if self.checkbox.IsChecked() == True:
+                self.SetBackgroundColour(self.gui.objects['lightredcolour'])
+            else:
+                self.SetBackgroundColour(self.gui.objects['lightbluecolour'])
+            self.show_info()
         else:
             self.selected = False
             self.SetBackgroundColour(self.row_colour)
@@ -247,18 +255,26 @@ class ApplicationPanel(wx.Panel):
     
     # When panel or text is clicked
     def on_click(self, event):
+        child = threading.Thread(target=self.click)
+        child.setDaemon(True)
+        child.start()        
+    
+    # When panel or text is clicked
+    def click(self):
         self.SetFocus()
         if self.selected == True and self.checkbox.IsChecked() == False:
             self.select(False)
         elif self.selected == False and self.checkbox.IsChecked() == False:
-            self.selected = True
-            self.SetBackgroundColour(self.gui.objects['lightbluecolour'])
-            child = threading.Thread(target=self.show_info)
-            child.setDaemon(True)
-            child.start()
+            self.select(True)
         
     # When checkbox is clicked
     def on_checkbox_click(self, event):
+        child = threading.Thread(target=self.checkbox_click, args=[event])
+        child.setDaemon(True)
+        child.start()        
+
+    # When checkbox is clicked
+    def checkbox_click(self, event):
         self.SetFocus()
         if event.IsChecked() == True:
             self.select(True)

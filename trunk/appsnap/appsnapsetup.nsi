@@ -63,6 +63,12 @@ Section "Installer" SEC01
   StrCpy $R1 $R0 -10
   ExecWait '$R0 /S _?=$R1'
   Delete $R0
+  ; Move 1.3.0 cache and installed.ini
+  SetShellVarContext all
+  SetOutPath "$APPDATA\${PRODUCT_NAME}"
+  Rename "$R1\cache" "$APPDATA\${PRODUCT_NAME}\cache"
+  Rename "$R1\installed.ini" "$APPDATA\${PRODUCT_NAME}\installed.ini"
+  RMDir $R1
   uninstalldone:
 
   ; Copy install files
