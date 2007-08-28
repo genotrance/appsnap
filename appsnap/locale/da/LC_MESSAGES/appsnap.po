@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-08-26 13:02-0600\n"
+"PO-Revision-Date: 2007-08-27 23:10-0600\n"
 "Last-Translator: \n"
 "Language-Team: Søren Pedersen\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgstr "Mulige kategorier"
 
 #: strings.py:24
 msgid "Cancel"
-msgstr ""
+msgstr "Annullér"
 
 #: strings.py:25
 msgid "Category"
@@ -70,7 +70,7 @@ msgstr "Downloader"
 
 #: strings.py:36
 msgid "Download cancelled"
-msgstr ""
+msgstr "Download afbrudt"
 
 #: strings.py:37
 msgid "Download selected applications"
@@ -198,7 +198,7 @@ msgstr "Henter"
 
 #: strings.py:89
 msgid "Loading database"
-msgstr ""
+msgstr "Ladning database"
 
 #: strings.py:93
 msgid "Neither 'scrape' nor 'download' specified"
@@ -230,15 +230,15 @@ msgstr "Ikke tilgængelig"
 
 #: strings.py:103
 msgid "Not Installed"
-msgstr ""
+msgstr "Ikke installeret"
 
 #: strings.py:104
 msgid "Not Installed Applications"
-msgstr ""
+msgstr "Ikke installerede programmer"
 
 #: strings.py:108
 msgid "Processing"
-msgstr ""
+msgstr "Arbejder"
 
 #: strings.py:109
 msgid "Proxy authentication failed. Check config.ini"
@@ -258,7 +258,7 @@ msgstr "Indlæser konfiguration"
 
 #: strings.py:116
 msgid "Removable"
-msgstr ""
+msgstr "Afsættelig"
 
 #: strings.py:117
 msgid "Report Bug"
