@@ -1,0 +1,430 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: AppSnap\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2007-08-26 14:08-0600\n"
+"Last-Translator: \n"
+"Language-Team: Momchil Bojinov\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Bulgarian\n"
+"X-Poedit-Basepath: ..\\..\\..\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: strings.py:16
+msgid "All"
+msgstr "Всички"
+
+#: strings.py:17
+msgid "Application"
+msgstr "Програми"
+
+#: strings.py:18
+msgid "Application names, comma separated or * to filter"
+msgstr "Имена на програмите, разделени със запетая или * за да филтрирате"
+
+#: strings.py:19
+msgid "Application specific functions"
+msgstr "Функции на програмата"
+
+#: strings.py:20
+msgid "Available Categories"
+msgstr "Съществуващи категории"
+
+#: strings.py:24
+msgid "Cancel"
+msgstr "Отказ"
+
+#: strings.py:25
+msgid "Category"
+msgstr "Категория"
+
+#: strings.py:26
+msgid "Comparing"
+msgstr "Сравняване"
+
+#: strings.py:30
+msgid "Default"
+msgstr "По подразбиране"
+
+#: strings.py:31
+msgid "Description"
+msgstr "Описание"
+
+#: strings.py:32
+msgid "Done"
+msgstr "Готово!"
+
+#: strings.py:33
+msgid "Download"
+msgstr "Свали"
+
+#: strings.py:34
+msgid "Downloaded"
+msgstr "Свалено"
+
+#: strings.py:35
+msgid "Downloading"
+msgstr "Сваляне"
+
+#: strings.py:36
+msgid "Download cancelled"
+msgstr "Свалянето пркратено"
+
+#: strings.py:37
+msgid "Download selected applications"
+msgstr "Свалете избраните програми"
+
+#: strings.py:38
+msgid "Download failed"
+msgstr "Свалянето неуспешно"
+
+#: strings.py:39
+msgid "Download succeeded"
+msgstr "Свалянето успешно"
+
+#: strings.py:43
+msgid "Error"
+msgstr "Грешка"
+
+#: strings.py:47
+msgid "Failed to create cache location"
+msgstr "Неуспешно създаване на кеша"
+
+#: strings.py:48
+msgid "Failed to connect"
+msgstr "Неуспешно свързване"
+
+#: strings.py:49
+msgid "Filter"
+msgstr "Търсене"
+
+#: strings.py:50
+msgid "Filter applications by category"
+msgstr "Сортирай по категория"
+
+#: strings.py:51
+msgid "Filter applications by string"
+msgstr "Сортирай по дума"
+
+#: strings.py:52
+msgid "Filter list by category"
+msgstr "Сортирай списъка по категория"
+
+#: strings.py:53
+msgid "Filter list by string"
+msgstr "Сортирай списъка по дума"
+
+#: strings.py:57
+msgid "Get latest version"
+msgstr "Свали актуалната версия"
+
+#: strings.py:58
+msgid "Global functions"
+msgstr "Глобални функции"
+
+#: strings.py:62
+msgid "Help"
+msgstr "Помощ"
+
+#: strings.py:63
+msgid "Open documentation"
+msgstr "Отвори местоположение"
+
+#: strings.py:67
+msgid "Install"
+msgstr "Инсталирай"
+
+#: strings.py:68
+msgid "Installed"
+msgstr "Инсталирани"
+
+#: strings.py:69
+msgid "Installed Applications"
+msgstr "Инсталирани програми"
+
+#: strings.py:70
+msgid "Failed to update installed.ini. Is it writable?"
+msgstr "Неуспешен ъпдейт на installed.ini. Да не е read only?"
+
+#: strings.py:71
+msgid "Installed Version"
+msgstr "Инсталирана версия"
+
+#: strings.py:72
+msgid "Installing"
+msgstr "Инсталирване"
+
+#: strings.py:73
+msgid "Download and install selected applications"
+msgstr "Свали и инсталирай избраните програми"
+
+#: strings.py:74
+msgid "Install failed"
+msgstr "Инсталацията неуспешна"
+
+#: strings.py:75
+msgid "implies -d"
+msgstr "implies -d"
+
+#: strings.py:76
+msgid "Install succeeded"
+msgstr "Инсталацията успешна"
+
+#: strings.py:80
+msgid "Key"
+msgstr "Ключ"
+
+#: strings.py:84
+msgid "Failed to update latest.ini. Is it writable?"
+msgstr "Неуспешен ъпдейт на latest.ini. Да не е read only?"
+
+#: strings.py:85
+msgid "Latest Version"
+msgstr "Актуална версия"
+
+#: strings.py:86
+msgid "List all application categories"
+msgstr "Списък на всички категории"
+
+#: strings.py:87
+msgid "List supported applications"
+msgstr "Лист на включените програми"
+
+#: strings.py:88
+msgid "Loading"
+msgstr "Зареждане"
+
+#: strings.py:89
+msgid "Loading database"
+msgstr "Зареждане база данни"
+
+#: strings.py:93
+msgid "Neither 'scrape' nor 'download' specified"
+msgstr "Нито 'Премахване' нито 'Сваляне' въведено"
+
+#: strings.py:94
+msgid "Missing section key in db.ini"
+msgstr "Липсва ключ в db.ini"
+
+#: strings.py:95
+msgid "Missing key 'version' when 'scrape' specified"
+msgstr "Липсва ключ 'версия'"
+
+#: strings.py:99
+msgid "Name"
+msgstr "Име"
+
+#: strings.py:100
+msgid "No changes found"
+msgstr "Не са намерени промени"
+
+#: strings.py:101
+msgid "No such application"
+msgstr "Няма такава програма"
+
+#: strings.py:102
+msgid "Not available"
+msgstr "Не е достъпна"
+
+#: strings.py:103
+msgid "Not Installed"
+msgstr "Не инсталиран"
+
+#: strings.py:104
+msgid "Not Installed Applications"
+msgstr "Не инсталирани програми "
+
+#: strings.py:108
+msgid "Processing"
+msgstr "Обработване"
+
+#: strings.py:109
+msgid "Proxy authentication failed. Check config.ini"
+msgstr "Прокси аутерификация невалидна. Проверете config.ini"
+
+#: strings.py:113
+msgid "Reload"
+msgstr "Презареждане"
+
+#: strings.py:114
+msgid "Reloading database"
+msgstr "Презареждане на базата данни"
+
+#: strings.py:115
+msgid "Reload configuration"
+msgstr "Презареждане на конфигурацията"
+
+#: strings.py:116
+msgid "Removable"
+msgstr "Премахваема"
+
+#: strings.py:117
+msgid "Report Bug"
+msgstr "Бъг?"
+
+#: strings.py:118
+msgid "Report a bug"
+msgstr "Бъг?"
+
+#: strings.py:122
+msgid "Section"
+msgstr "Раздел"
+
+#: strings.py:123
+msgid "Starting"
+msgstr "Стартиране"
+
+#: strings.py:124
+msgid "Status"
+msgstr "Статус"
+
+#: strings.py:125
+msgid "String"
+msgstr "Дума"
+
+#: strings.py:126
+msgid "Supported Applications"
+msgstr "Включени програми"
+
+#: strings.py:130
+msgid "Test download only"
+msgstr "Тестване на връзката"
+
+#: strings.py:131
+msgid "Testing"
+msgstr "Тестване"
+
+#: strings.py:132
+msgid "This help screen"
+msgstr "Този помощен екран"
+
+#: strings.py:136
+msgid "Unable to write to db.ini"
+msgstr "Невъзможност за промяна на db.ini"
+
+#: strings.py:137
+msgid "Uninstall"
+msgstr "Премахване"
+
+#: strings.py:138
+msgid "Uninstalling"
+msgstr "Премахване"
+
+#: strings.py:139
+msgid "Uninstall selected applications"
+msgstr "Премахване на избраните програми"
+
+#: strings.py:140
+msgid "Uninstall failed"
+msgstr "Премахване неуспешно"
+
+#: strings.py:141
+msgid "Uninstall succeeded"
+msgstr "Премахване успешно"
+
+#: strings.py:142
+msgid "Update database failed"
+msgstr "Неуспешно обновляване на базата данни"
+
+#: strings.py:143
+msgid "Update database succeeded"
+msgstr "Обновляване на базата данни успешно"
+
+#: strings.py:144
+msgid "Update DB"
+msgstr "Обнови БД"
+
+#: strings.py:145
+msgid "Update application database"
+msgstr "Обновляване на базата данни"
+
+#: strings.py:146
+msgid "implies -i, -x if not upgradeable"
+msgstr "implies -i, -x ако е невъзможен ъпдейт"
+
+#: strings.py:147
+msgid "Updating database"
+msgstr "Обновляване на базата данни"
+
+#: strings.py:148
+msgid "Updating local database"
+msgstr "Обновляване на локалната база данни"
+
+#: strings.py:149
+msgid "Upgrade"
+msgstr "Обновление"
+
+#: strings.py:150
+msgid "Upgradeable"
+msgstr "За обновление"
+
+#: strings.py:151
+msgid "Upgrade selected applications"
+msgstr "Обновляване на избраните програми"
+
+#: strings.py:152
+msgid "Upgrade failed"
+msgstr "Обновляване неуспешно"
+
+#: strings.py:153
+msgid "Upgrade succeeded"
+msgstr "Обновляване успешно"
+
+#: strings.py:154
+msgid "Upgrading"
+msgstr "Обновляване"
+
+#: strings.py:158
+msgid "Waiting"
+msgstr "Моля изчакайте"
+
+#: strings.py:159
+msgid "Website"
+msgstr "Страница"
+
+#: strings.py:165
+msgid "Build executable using Py2Exe"
+msgstr "Създайте програмата с Py2Exe"
+
+#: strings.py:166
+msgid "Build failed."
+msgstr "Създаване неуспешно."
+
+#: strings.py:170
+msgid "Compress executables using UPX"
+msgstr "Компресирайте програмата с UPX"
+
+#: strings.py:171
+msgid "Create NSIS package"
+msgstr "Създайте NSIS пакет"
+
+#: strings.py:172
+msgid "Create ZIP package"
+msgstr "Създайте ZIP пакет"
+
+#: strings.py:176
+msgid "NSIS not available"
+msgstr "NSIS не е дъстъпна"
+
+#: strings.py:180
+msgid "OPTIONS"
+msgstr "Свойства"
+
+#: strings.py:184
+msgid "Rezip shared library using 7-Zip"
+msgstr "Прекомпресирайте с 7-Zip"
+
+#: strings.py:188
+msgid "7-Zip not available"
+msgstr "7-Zip не е достъпен"
+
+#: strings.py:192
+msgid "UPX not available"
+msgstr "UPX не е достъпен"
+
+#: strings.py:193
+msgid "Usage"
+msgstr "Употреба"
+
