@@ -37,7 +37,7 @@ class MakeGui:
         objects = []
 
         # Use yaml parser
-        schema = yaml.load(string.encode('utf-8'))
+        schema = yaml.load(string)
 
         # Parse any standalone methods
         if schema.has_key('methods'): methods = schema['methods']

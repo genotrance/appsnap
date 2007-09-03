@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-08-26 13:29-0600\n"
+"PO-Revision-Date: 2007-09-03 13:32-0600\n"
 "Last-Translator: \n"
 "Language-Team: Gonzague Dambricourt <gonzaguedambricourt@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -263,7 +263,7 @@ msgstr "Amovible"
 
 #: strings.py:117
 msgid "Report Bug"
-msgstr "Reporter un bug"
+msgstr "Reporter bug"
 
 #: strings.py:118
 msgid "Report a bug"

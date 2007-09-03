@@ -400,14 +400,22 @@ class config:
     
     # Search for uninstall entry based on name and value provided
     def registry_search_uninstall_entry(self, name, value):
-        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-        uninstall_key, matchobj = self.registry_search(key, name, value)
-        _winreg.CloseKey(key)
-        
-        if uninstall_key == '':
-            key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+        uninstall_key = ''
+        matchobj = None
+        try:
+            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
             uninstall_key, matchobj = self.registry_search(key, name, value)
             _winreg.CloseKey(key)
+        except WindowsError:
+            pass
+        
+        if uninstall_key == '':
+            try:
+                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+                uninstall_key, matchobj = self.registry_search(key, name, value)
+                _winreg.CloseKey(key)
+            except WindowsError:
+                pass
 
         return uninstall_key, matchobj
         
@@ -437,13 +445,20 @@ class config:
     
     # Find all Add/Remove applications in the registry
     def registry_search_arp(self, subkey):
-        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-        uninstallable = self.registry_search(key, subkey, '(.*)', True)
-        _winreg.CloseKey(key)
+        uninstallable = {}
+        try:
+            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+            uninstallable = self.registry_search(key, subkey, '(.*)', True)
+            _winreg.CloseKey(key)
+        except WindowsError:
+            pass
         
-        key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-        uninstallable.update(self.registry_search(key, subkey, '(.*)', True))
-        _winreg.CloseKey(key)
+        try:
+            key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+            uninstallable.update(self.registry_search(key, subkey, '(.*)', True))
+            _winreg.CloseKey(key)
+        except WindowsError:
+            pass
 
         return uninstallable
     
