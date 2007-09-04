@@ -336,16 +336,20 @@ class process:
 
     # Locate the uninstall entry for the application in the registry
     def parse_uninstall_entry(self):
-        command = self.app_config[APP_UNINSTALL].split(':')
-        if len(command) == 2 and command[0] == REGISTRY_SEARCH:
-            value = command[1].split('=')
-            if len(value) == 2:
-                uninstall_key, matchobj = self.global_config.registry_search_uninstall_entry(value[0], value[1])
-            else:
-                uninstall_key, matchobj = self.global_config.registry_search_uninstall_entry(value[0], '')
+        if not self.app_config.has_key(APP_UNINSTALL):
+            uninstall_key = ''
+            matchobj = ''
         else:
-            uninstall_key = self.app_config[APP_UNINSTALL]
-            matchobj = None
+            command = self.app_config[APP_UNINSTALL].split(':')
+            if len(command) == 2 and command[0] == REGISTRY_SEARCH:
+                value = command[1].split('=')
+                if len(value) == 2:
+                    uninstall_key, matchobj = self.global_config.registry_search_uninstall_entry(value[0], value[1])
+                else:
+                    uninstall_key, matchobj = self.global_config.registry_search_uninstall_entry(value[0], '')
+            else:
+                uninstall_key = self.app_config[APP_UNINSTALL]
+                matchobj = None
 
         return uninstall_key, matchobj
 

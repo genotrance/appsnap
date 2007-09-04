@@ -891,13 +891,13 @@ class Events:
         # Return if nothing checked
         if not len(checked): return
         
-        # Disable GUI
-        self.disable_gui()
-        
         # Display only checked sections
         orig_category = self.resources['gui'].objects['dropdown'].GetStringSelection()
         self.resources['gui'].objects['dropdown'].SetStringSelection(config.PROCESSING)
         self.update_section_list(config.PROCESSING)
+        
+        # Disable GUI
+        self.disable_gui()
         
         # Update status bar
         self.update_status_bar(action[0].capitalize() + action[1:], '')
