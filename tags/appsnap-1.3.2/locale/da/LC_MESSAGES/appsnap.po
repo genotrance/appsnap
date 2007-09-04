@@ -1,0 +1,430 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: AppSnap\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2007-09-03 13:48-0600\n"
+"Last-Translator: \n"
+"Language-Team: Søren Pedersen\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Danish\n"
+"X-Poedit-Basepath: ..\\..\\..\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: strings.py:16
+msgid "All"
+msgstr "Alle"
+
+#: strings.py:17
+msgid "Application"
+msgstr "Program"
+
+#: strings.py:18
+msgid "Application names, comma separated or * to filter"
+msgstr "Program navne, komma separeret eller * for at sortere"
+
+#: strings.py:19
+msgid "Application specific functions"
+msgstr "Program specifikke funktioner"
+
+#: strings.py:20
+msgid "Available Categories"
+msgstr "Mulige kategorier"
+
+#: strings.py:24
+msgid "Cancel"
+msgstr "Annullér"
+
+#: strings.py:25
+msgid "Category"
+msgstr "Ketegori"
+
+#: strings.py:26
+msgid "Comparing"
+msgstr "Sammenligner"
+
+#: strings.py:30
+msgid "Default"
+msgstr "Standard"
+
+#: strings.py:31
+msgid "Description"
+msgstr "Beskrivelse"
+
+#: strings.py:32
+msgid "Done"
+msgstr "Færdig"
+
+#: strings.py:33
+msgid "Download"
+msgstr "Download"
+
+#: strings.py:34
+msgid "Downloaded"
+msgstr "Downloaded"
+
+#: strings.py:35
+msgid "Downloading"
+msgstr "Downloader"
+
+#: strings.py:36
+msgid "Download cancelled"
+msgstr "Download afbrudt"
+
+#: strings.py:37
+msgid "Download selected applications"
+msgstr "Download valgte programmer"
+
+#: strings.py:38
+msgid "Download failed"
+msgstr "Kunne ikke downloade"
+
+#: strings.py:39
+msgid "Download succeeded"
+msgstr "Download gennemført"
+
+#: strings.py:43
+msgid "Error"
+msgstr "Fejl"
+
+#: strings.py:47
+msgid "Failed to create cache location"
+msgstr "Kunne ikke oprette cache lokalitet"
+
+#: strings.py:48
+msgid "Failed to connect"
+msgstr "Kunne ikke få forbindelse"
+
+#: strings.py:49
+msgid "Filter"
+msgstr "Sorter"
+
+#: strings.py:50
+msgid "Filter applications by category"
+msgstr "Sorter programmer efter kategori"
+
+#: strings.py:51
+msgid "Filter applications by string"
+msgstr "Sorter programmer efter søgning"
+
+#: strings.py:52
+msgid "Filter list by category"
+msgstr "Sorter listen efter kategori"
+
+#: strings.py:53
+msgid "Filter list by string"
+msgstr "Sorter listen efter søgning"
+
+#: strings.py:57
+msgid "Get latest version"
+msgstr "Hent nyeste version"
+
+#: strings.py:58
+msgid "Global functions"
+msgstr "Globale funktioner"
+
+#: strings.py:62
+msgid "Help"
+msgstr "Hjælp"
+
+#: strings.py:63
+msgid "Open documentation"
+msgstr "Åbn dokumentation"
+
+#: strings.py:67
+msgid "Install"
+msgstr "Installér"
+
+#: strings.py:68
+msgid "Installed"
+msgstr "Installeret"
+
+#: strings.py:69
+msgid "Installed Applications"
+msgstr "Installerede programmer"
+
+#: strings.py:70
+msgid "Failed to update installed.ini. Is it writable?"
+msgstr "Kunne ikke opdatere installed.ini. Er den skrivebeskyttet?"
+
+#: strings.py:71
+msgid "Installed Version"
+msgstr "Installeret version"
+
+#: strings.py:72
+msgid "Installing"
+msgstr "Installerer"
+
+#: strings.py:73
+msgid "Download and install selected applications"
+msgstr "Download og installér valgte programmer"
+
+#: strings.py:74
+msgid "Install failed"
+msgstr "Kunne ikke installere"
+
+#: strings.py:75
+msgid "implies -d"
+msgstr "antyder -d"
+
+#: strings.py:76
+msgid "Install succeeded"
+msgstr "Installetion gennemført"
+
+#: strings.py:80
+msgid "Key"
+msgstr "Nøgle"
+
+#: strings.py:84
+msgid "Failed to update latest.ini. Is it writable?"
+msgstr "Kunne ikke opdatere  latest.ini.  Er den skrivebeskyttet?"
+
+#: strings.py:85
+msgid "Latest Version"
+msgstr "Nyeste version"
+
+#: strings.py:86
+msgid "List all application categories"
+msgstr "Vis alle program kategorier"
+
+#: strings.py:87
+msgid "List supported applications"
+msgstr "Vis understøttede programmer"
+
+#: strings.py:88
+msgid "Loading"
+msgstr "Henter"
+
+#: strings.py:89
+msgid "Loading database"
+msgstr "Henter database"
+
+#: strings.py:93
+msgid "Neither 'scrape' nor 'download' specified"
+msgstr "Hverken 'scrape' eller 'download' angivet"
+
+#: strings.py:94
+msgid "Missing section key in db.ini"
+msgstr "Manglende sektionsangivelse i db.ini"
+
+#: strings.py:95
+msgid "Missing key 'version' when 'scrape' specified"
+msgstr "Manglende 'version' når 'scrape' er specificeret"
+
+#: strings.py:99
+msgid "Name"
+msgstr "Navn"
+
+#: strings.py:100
+msgid "No changes found"
+msgstr "Ingen ændringer fundet"
+
+#: strings.py:101
+msgid "No such application"
+msgstr "Ingen programmer"
+
+#: strings.py:102
+msgid "Not available"
+msgstr "Ikke tilgængelig"
+
+#: strings.py:103
+msgid "Not Installed"
+msgstr "Ikke installeret"
+
+#: strings.py:104
+msgid "Not Installed Applications"
+msgstr "Ikke installerede programmer"
+
+#: strings.py:108
+msgid "Processing"
+msgstr "Arbejder"
+
+#: strings.py:109
+msgid "Proxy authentication failed. Check config.ini"
+msgstr "Proxy authentication mislykkedes. Tjeck config.ini"
+
+#: strings.py:113
+msgid "Reload"
+msgstr "Indlæs igen"
+
+#: strings.py:114
+msgid "Reloading database"
+msgstr "Indlæser database"
+
+#: strings.py:115
+msgid "Reload configuration"
+msgstr "Indlæser konfiguration"
+
+#: strings.py:116
+msgid "Removable"
+msgstr "Kan fjernes"
+
+#: strings.py:117
+msgid "Report Bug"
+msgstr "Rapportér Bug"
+
+#: strings.py:118
+msgid "Report a bug"
+msgstr "Rapportér en Bug (programfejl)"
+
+#: strings.py:122
+msgid "Section"
+msgstr "Sektion"
+
+#: strings.py:123
+msgid "Starting"
+msgstr "Starter"
+
+#: strings.py:124
+msgid "Status"
+msgstr "Status"
+
+#: strings.py:125
+msgid "String"
+msgstr "Tekst streng"
+
+#: strings.py:126
+msgid "Supported Applications"
+msgstr "Understøttede programmer"
+
+#: strings.py:130
+msgid "Test download only"
+msgstr "Test download"
+
+#: strings.py:131
+msgid "Testing"
+msgstr "Tester"
+
+#: strings.py:132
+msgid "This help screen"
+msgstr "Denne \"Hjælp\" skærm"
+
+#: strings.py:136
+msgid "Unable to write to db.ini"
+msgstr "Kunne ikke skrive til db.ini"
+
+#: strings.py:137
+msgid "Uninstall"
+msgstr "Afinstallér"
+
+#: strings.py:138
+msgid "Uninstalling"
+msgstr "Afinstallerer"
+
+#: strings.py:139
+msgid "Uninstall selected applications"
+msgstr "Afinstallérvalgte programmer"
+
+#: strings.py:140
+msgid "Uninstall failed"
+msgstr "Afinstallation mislykkedes"
+
+#: strings.py:141
+msgid "Uninstall succeeded"
+msgstr "Afinstallation gennemført"
+
+#: strings.py:142
+msgid "Update database failed"
+msgstr "Database opdatering mislykkedes"
+
+#: strings.py:143
+msgid "Update database succeeded"
+msgstr "Database opdatering gennemført"
+
+#: strings.py:144
+msgid "Update DB"
+msgstr "Opdatér DB"
+
+#: strings.py:145
+msgid "Update application database"
+msgstr "Opdatér program database"
+
+#: strings.py:146
+msgid "implies -i, -x if not upgradeable"
+msgstr "medfører -i, -x hvis det ikke kan opgraderes"
+
+#: strings.py:147
+msgid "Updating database"
+msgstr "Opdaterer database"
+
+#: strings.py:148
+msgid "Updating local database"
+msgstr "Opdaterer lokal database"
+
+#: strings.py:149
+msgid "Upgrade"
+msgstr "Opgradér"
+
+#: strings.py:150
+msgid "Upgradeable"
+msgstr "Kan opgraderes"
+
+#: strings.py:151
+msgid "Upgrade selected applications"
+msgstr "Opgradér valgte programmer"
+
+#: strings.py:152
+msgid "Upgrade failed"
+msgstr "Opgradering mislykkedes"
+
+#: strings.py:153
+msgid "Upgrade succeeded"
+msgstr "Opgradering gennemført"
+
+#: strings.py:154
+msgid "Upgrading"
+msgstr "Opgraderer"
+
+#: strings.py:158
+msgid "Waiting"
+msgstr "Venter"
+
+#: strings.py:159
+msgid "Website"
+msgstr "Hjemmeside"
+
+#: strings.py:165
+msgid "Build executable using Py2Exe"
+msgstr "Opret program med Py2Exe"
+
+#: strings.py:166
+msgid "Build failed."
+msgstr "Kunne ikke oprette Program"
+
+#: strings.py:170
+msgid "Compress executables using UPX"
+msgstr "Pak programmer med UPX"
+
+#: strings.py:171
+msgid "Create NSIS package"
+msgstr "Opret NSIS pakke"
+
+#: strings.py:172
+msgid "Create ZIP package"
+msgstr "Opret ZIP pakke"
+
+#: strings.py:176
+msgid "NSIS not available"
+msgstr "NSIS er ikke tilgængelig"
+
+#: strings.py:180
+msgid "OPTIONS"
+msgstr "Indstillinger"
+
+#: strings.py:184
+msgid "Rezip shared library using 7-Zip"
+msgstr "Zip delt bibliotek igen med 7-Zip"
+
+#: strings.py:188
+msgid "7-Zip not available"
+msgstr "7-Zip ikke tilgængelig"
+
+#: strings.py:192
+msgid "UPX not available"
+msgstr "UPX ikke tilgængelig"
+
+#: strings.py:193
+msgid "Usage"
+msgstr "Brug"
+
