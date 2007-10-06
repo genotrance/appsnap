@@ -134,6 +134,7 @@ THIS_HELP_SCREEN = _('This help screen')
 ##
 
 UNABLE_TO_WRITE_DB_INI = _('Unable to write to db.ini')
+UNCAUGHT_EXCEPTION = _('A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience.')
 UNINSTALL = _('Uninstall')
 UNINSTALLING = _('Uninstalling')
 UNINSTALL_DESCRIPTION = _('Uninstall selected applications')

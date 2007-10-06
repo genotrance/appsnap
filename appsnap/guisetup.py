@@ -509,9 +509,6 @@ class Events:
               bitmap : ~helpbmp
               label : "%s"
               shortHelp : "%s"
-
-            - name : toolbar
-              method : Realize
         """ % (strings.DOWNLOAD, strings.DOWNLOAD_DESCRIPTION,
                strings.INSTALL, strings.INSTALL_DESCRIPTION,
                strings.UPGRADE, strings.UPGRADE_DESCRIPTION,
@@ -532,6 +529,10 @@ class Events:
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[19].GetId(), self.do_report)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[21].GetId(), self.do_help)
         self.toolbar_tools = retval
+        try:
+            self.resources['gui'].objects['toolbar'].Realize()
+        except wx.PyAssertionError:
+            pass
 
     # Resize the GUI on drag or startup
     def resize_all(self, event):
