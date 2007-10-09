@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-09-03 13:32-0600\n"
+"PO-Revision-Date: 2007-10-09 02:34-0600\n"
 "Last-Translator: \n"
 "Language-Team: Gonzague Dambricourt <gonzaguedambricourt@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -306,126 +306,130 @@ msgid "Unable to write to db.ini"
 msgstr "Impossible d'écrire dans le fichier db.ini"
 
 #: strings.py:137
+msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
+msgstr ""
+
+#: strings.py:138
 msgid "Uninstall"
 msgstr "Désinstaller"
 
-#: strings.py:138
+#: strings.py:139
 msgid "Uninstalling"
 msgstr "Désinstallation"
 
-#: strings.py:139
+#: strings.py:140
 msgid "Uninstall selected applications"
 msgstr "Désinstallation des applications sélectionnées"
 
-#: strings.py:140
+#: strings.py:141
 msgid "Uninstall failed"
 msgstr "La désinstallation a échoué"
 
-#: strings.py:141
+#: strings.py:142
 msgid "Uninstall succeeded"
 msgstr "Désinstallation réussie"
 
-#: strings.py:142
+#: strings.py:143
 msgid "Update database failed"
 msgstr "La mise à jour de la base de données a échoué"
 
-#: strings.py:143
+#: strings.py:144
 msgid "Update database succeeded"
 msgstr "Mise à jour de la base de données réussie"
 
-#: strings.py:144
+#: strings.py:145
 msgid "Update DB"
 msgstr "Maj. BDD"
 
-#: strings.py:145
+#: strings.py:146
 msgid "Update application database"
 msgstr "Mise à jour de la base de données d'applications"
 
-#: strings.py:146
+#: strings.py:147
 msgid "implies -i, -x if not upgradeable"
 msgstr "Implique la commande -i, -x si ne peut être mis à jour"
 
-#: strings.py:147
+#: strings.py:148
 msgid "Updating database"
 msgstr "Mise à jour de la base de données"
 
-#: strings.py:148
+#: strings.py:149
 msgid "Updating local database"
 msgstr "Mise à jour de la base de données locale"
 
-#: strings.py:149
+#: strings.py:150
 msgid "Upgrade"
 msgstr "Mettre à jour"
 
-#: strings.py:150
+#: strings.py:151
 msgid "Upgradeable"
 msgstr "Compatible mise à jour"
 
-#: strings.py:151
+#: strings.py:152
 msgid "Upgrade selected applications"
 msgstr "Mettre à jour les applications sélectionnées"
 
-#: strings.py:152
+#: strings.py:153
 msgid "Upgrade failed"
 msgstr "La mise à jour a échoué"
 
-#: strings.py:153
+#: strings.py:154
 msgid "Upgrade succeeded"
 msgstr "Mise à jour réussie"
 
-#: strings.py:154
+#: strings.py:155
 msgid "Upgrading"
 msgstr "Mse à jour en cours"
 
-#: strings.py:158
+#: strings.py:159
 msgid "Waiting"
 msgstr "En attente"
 
-#: strings.py:159
+#: strings.py:160
 msgid "Website"
 msgstr "Site web"
 
-#: strings.py:165
+#: strings.py:166
 msgid "Build executable using Py2Exe"
 msgstr "Faire un exécutable depuis Py2Exe"
 
-#: strings.py:166
+#: strings.py:167
 msgid "Build failed."
 msgstr "Impossible de créer le fichier"
 
-#: strings.py:170
+#: strings.py:171
 msgid "Compress executables using UPX"
 msgstr "Compresser l'exécutable avec UPX"
 
-#: strings.py:171
+#: strings.py:172
 msgid "Create NSIS package"
 msgstr "Créer un package NSIS"
 
-#: strings.py:172
+#: strings.py:173
 msgid "Create ZIP package"
 msgstr "Créer un package ZIP"
 
-#: strings.py:176
+#: strings.py:177
 msgid "NSIS not available"
 msgstr "NSIS est indisponible"
 
-#: strings.py:180
+#: strings.py:181
 msgid "OPTIONS"
 msgstr "OPTIONS"
 
-#: strings.py:184
+#: strings.py:185
 msgid "Rezip shared library using 7-Zip"
 msgstr "Rezipper la librairie en utilisant 7-Zip"
 
-#: strings.py:188
+#: strings.py:189
 msgid "7-Zip not available"
 msgstr "7-Zip est indisponible"
 
-#: strings.py:192
+#: strings.py:193
 msgid "UPX not available"
 msgstr "UPX est indisponible"
 
-#: strings.py:193
+#: strings.py:194
 msgid "Usage"
 msgstr "Utilisation"
 
