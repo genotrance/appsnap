@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-09-03 13:48-0600\n"
+"PO-Revision-Date: 2007-10-09 02:33-0600\n"
 "Last-Translator: \n"
 "Language-Team: Søren Pedersen\n"
 "MIME-Version: 1.0\n"
@@ -305,126 +305,130 @@ msgid "Unable to write to db.ini"
 msgstr "Kunne ikke skrive til db.ini"
 
 #: strings.py:137
+msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
+msgstr ""
+
+#: strings.py:138
 msgid "Uninstall"
 msgstr "Afinstallér"
 
-#: strings.py:138
+#: strings.py:139
 msgid "Uninstalling"
 msgstr "Afinstallerer"
 
-#: strings.py:139
+#: strings.py:140
 msgid "Uninstall selected applications"
 msgstr "Afinstallérvalgte programmer"
 
-#: strings.py:140
+#: strings.py:141
 msgid "Uninstall failed"
 msgstr "Afinstallation mislykkedes"
 
-#: strings.py:141
+#: strings.py:142
 msgid "Uninstall succeeded"
 msgstr "Afinstallation gennemført"
 
-#: strings.py:142
+#: strings.py:143
 msgid "Update database failed"
 msgstr "Database opdatering mislykkedes"
 
-#: strings.py:143
+#: strings.py:144
 msgid "Update database succeeded"
 msgstr "Database opdatering gennemført"
 
-#: strings.py:144
+#: strings.py:145
 msgid "Update DB"
 msgstr "Opdatér DB"
 
-#: strings.py:145
+#: strings.py:146
 msgid "Update application database"
 msgstr "Opdatér program database"
 
-#: strings.py:146
+#: strings.py:147
 msgid "implies -i, -x if not upgradeable"
 msgstr "medfører -i, -x hvis det ikke kan opgraderes"
 
-#: strings.py:147
+#: strings.py:148
 msgid "Updating database"
 msgstr "Opdaterer database"
 
-#: strings.py:148
+#: strings.py:149
 msgid "Updating local database"
 msgstr "Opdaterer lokal database"
 
-#: strings.py:149
+#: strings.py:150
 msgid "Upgrade"
 msgstr "Opgradér"
 
-#: strings.py:150
+#: strings.py:151
 msgid "Upgradeable"
 msgstr "Kan opgraderes"
 
-#: strings.py:151
+#: strings.py:152
 msgid "Upgrade selected applications"
 msgstr "Opgradér valgte programmer"
 
-#: strings.py:152
+#: strings.py:153
 msgid "Upgrade failed"
 msgstr "Opgradering mislykkedes"
 
-#: strings.py:153
+#: strings.py:154
 msgid "Upgrade succeeded"
 msgstr "Opgradering gennemført"
 
-#: strings.py:154
+#: strings.py:155
 msgid "Upgrading"
 msgstr "Opgraderer"
 
-#: strings.py:158
+#: strings.py:159
 msgid "Waiting"
 msgstr "Venter"
 
-#: strings.py:159
+#: strings.py:160
 msgid "Website"
 msgstr "Hjemmeside"
 
-#: strings.py:165
+#: strings.py:166
 msgid "Build executable using Py2Exe"
 msgstr "Opret program med Py2Exe"
 
-#: strings.py:166
+#: strings.py:167
 msgid "Build failed."
 msgstr "Kunne ikke oprette Program"
 
-#: strings.py:170
+#: strings.py:171
 msgid "Compress executables using UPX"
 msgstr "Pak programmer med UPX"
 
-#: strings.py:171
+#: strings.py:172
 msgid "Create NSIS package"
 msgstr "Opret NSIS pakke"
 
-#: strings.py:172
+#: strings.py:173
 msgid "Create ZIP package"
 msgstr "Opret ZIP pakke"
 
-#: strings.py:176
+#: strings.py:177
 msgid "NSIS not available"
 msgstr "NSIS er ikke tilgængelig"
 
-#: strings.py:180
+#: strings.py:181
 msgid "OPTIONS"
 msgstr "Indstillinger"
 
-#: strings.py:184
+#: strings.py:185
 msgid "Rezip shared library using 7-Zip"
 msgstr "Zip delt bibliotek igen med 7-Zip"
 
-#: strings.py:188
+#: strings.py:189
 msgid "7-Zip not available"
 msgstr "7-Zip ikke tilgængelig"
 
-#: strings.py:192
+#: strings.py:193
 msgid "UPX not available"
 msgstr "UPX ikke tilgængelig"
 
-#: strings.py:193
+#: strings.py:194
 msgid "Usage"
 msgstr "Brug"
 

@@ -126,7 +126,7 @@ schema = """
       type : wx.TextCtrl
       parent : panel
       size : (%s, %s)
-      pos : (200, 3)
+      pos : (215, 3)
       methods:
       - method : SetFont
         font : ~filterfont
