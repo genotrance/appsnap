@@ -476,6 +476,8 @@ class config:
                     _winreg.CloseKey(subkey)
                 except WindowsError:
                     continue
+                except TypeError:
+                    continue
                 matchobj = re.match(value, subvalue)
                 if matchobj != None:
                     if all == False: return subkey_name, matchobj

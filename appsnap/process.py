@@ -141,11 +141,13 @@ class process:
             # Check if app is still installed
             app_uninstall, matchobj = self.parse_uninstall_entry()
             uninstall_string = self.get_uninstall_string(app_uninstall, installed_version)
-            if uninstall_string == '':
-                self.global_config.delete_installed_version(self.app)
+            if uninstall_string == None:
                 self.installedversion = ''
             else:
-                self.installedversion = installed_version
+                if installed_version == '':
+                    self.installedversion = strings.NOT_AVAILABLE
+                else:
+                    self.installedversion = installed_version
             
         if self.app_config[APP_CATEGORY] != config.REMOVABLE:
             if self.installedversion != '': self.global_config.add_installed_version(self.app, self.installedversion)
