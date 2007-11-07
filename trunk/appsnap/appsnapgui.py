@@ -31,7 +31,7 @@ def end_debug():
     if len(sys.argv) == 2 and (sys.argv[1] == '--debug' or sys.argv[1] == '-d'):
         # Save to debug.log
         dbg = open('debug.log', 'a')
-        dbg.write(sys.stdout.getvalue())
+        dbg.write(sys.stdout.getvalue().encode('utf-8'))
         dbg.close()
     
     sys.stdout.close()
@@ -63,7 +63,7 @@ def handle_exceptions(type, value, tb):
     
     # Save to debug.log
     dbg = open('debug.log', 'a')
-    dbg.write(sys.stdout.getvalue())
+    dbg.write(sys.stdout.getvalue().encode('utf-8'))
     dbg.close()
 
 # Main function

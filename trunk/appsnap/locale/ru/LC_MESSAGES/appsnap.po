@@ -1,0 +1,438 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: AppSnap\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2007-11-05 09:32-0600\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Russian\n"
+"X-Poedit-Basepath: ..\\..\\..\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: strings.py:16
+msgid "All"
+msgstr "Все"
+
+#: strings.py:17
+msgid "Application"
+msgstr "Приложение"
+
+#: strings.py:18
+msgid "Application names, comma separated or * to filter"
+msgstr "Названия приложений, разделенные запятыми или символ * для фильтрации"
+
+#: strings.py:19
+msgid "Application specific functions"
+msgstr "Функции, специфичные для приложения"
+
+#: strings.py:20
+msgid "Available Categories"
+msgstr "Доступные категории"
+
+#: strings.py:24
+msgid "Cancel"
+msgstr "Отмена"
+
+#: strings.py:25
+msgid "Category"
+msgstr "Категория"
+
+#: strings.py:26
+msgid "Comparing"
+msgstr "Сравнение"
+
+#: strings.py:30
+msgid "Default"
+msgstr "По умолчанию"
+
+#: strings.py:31
+msgid "Description"
+msgstr "Описание"
+
+#: strings.py:32
+msgid "Done"
+msgstr "Готово"
+
+#: strings.py:33
+msgid "Download"
+msgstr "Скачать"
+
+#: strings.py:34
+msgid "Downloaded"
+msgstr "Скачано"
+
+#: strings.py:35
+msgid "Downloading"
+msgstr "Закачивается"
+
+#: strings.py:36
+msgid "Download cancelled"
+msgstr "Закачка отменена"
+
+#: strings.py:37
+msgid "Download selected applications"
+msgstr "Скачать выбранные приложения"
+
+#: strings.py:38
+msgid "Download failed"
+msgstr "Ошибка закачки"
+
+#: strings.py:39
+msgid "Download succeeded"
+msgstr "Закачка успешно завершена"
+
+#: strings.py:43
+msgid "Error"
+msgstr "Ошибка"
+
+#: strings.py:47
+msgid "Failed to create cache location"
+msgstr ""
+
+#: strings.py:48
+msgid "Failed to connect"
+msgstr "Не могу соединиться"
+
+#: strings.py:49
+msgid "Filter"
+msgstr "Фильтр"
+
+#: strings.py:50
+msgid "Filter applications by category"
+msgstr "Фильтровать приложения по категориям"
+
+#: strings.py:51
+msgid "Filter applications by string"
+msgstr "Фильтровать приложения по строке"
+
+#: strings.py:52
+msgid "Filter list by category"
+msgstr "Список фильтров по категориям"
+
+#: strings.py:53
+msgid "Filter list by string"
+msgstr "Список фильтров по строкам"
+
+#: strings.py:57
+msgid "Get latest version"
+msgstr "Скачать свежую версию"
+
+#: strings.py:58
+msgid "Global functions"
+msgstr "Глобальные функции"
+
+#: strings.py:62
+msgid "Help"
+msgstr "Справка"
+
+#: strings.py:63
+#, fuzzy
+msgid "Open documentation"
+msgstr "Открыть документацию"
+
+#: strings.py:67
+msgid "Install"
+msgstr "Установить"
+
+#: strings.py:68
+msgid "Installed"
+msgstr "Установленные"
+
+#: strings.py:69
+msgid "Installed Applications"
+msgstr "Установленные приложения"
+
+#: strings.py:70
+msgid "Failed to update installed.ini. Is it writable?"
+msgstr "Не могу записать в installed.ini. Доступен ли он для записи?"
+
+#: strings.py:71
+msgid "Installed Version"
+msgstr "Установленная версия"
+
+#: strings.py:72
+msgid "Installing"
+msgstr "Устанаваливаю"
+
+#: strings.py:73
+msgid "Download and install selected applications"
+msgstr "Скачать и установить выбранные приложения"
+
+#: strings.py:74
+msgid "Install failed"
+msgstr "Ошибка установки"
+
+#: strings.py:75
+msgid "implies -d"
+msgstr ""
+
+#: strings.py:76
+msgid "Install succeeded"
+msgstr "Установка успешно завершена"
+
+#: strings.py:80
+#, fuzzy
+msgid "Key"
+msgstr "Ключ"
+
+#: strings.py:84
+msgid "Failed to update latest.ini. Is it writable?"
+msgstr "Не могу записать в latest.ini. Доступен ли он для записи?"
+
+#: strings.py:85
+msgid "Latest Version"
+msgstr "Свежая версия"
+
+#: strings.py:86
+msgid "List all application categories"
+msgstr "Список всех категорий приложений"
+
+#: strings.py:87
+msgid "List supported applications"
+msgstr "Список поддерживаемых приложений"
+
+#: strings.py:88
+msgid "Loading"
+msgstr "Загрузка"
+
+#: strings.py:89
+#, fuzzy
+msgid "Loading database"
+msgstr "Перезагружаю базу данных"
+
+#: strings.py:93
+msgid "Neither 'scrape' nor 'download' specified"
+msgstr ""
+
+#: strings.py:94
+msgid "Missing section key in db.ini"
+msgstr "Ошибочное имя секции в db.ini"
+
+#: strings.py:95
+msgid "Missing key 'version' when 'scrape' specified"
+msgstr ""
+
+#: strings.py:99
+msgid "Name"
+msgstr "Имя"
+
+#: strings.py:100
+msgid "No changes found"
+msgstr "Изменений не обнаружено"
+
+#: strings.py:101
+msgid "No such application"
+msgstr "Приложение не найдено"
+
+#: strings.py:102
+msgid "Not available"
+msgstr "Недоступно"
+
+#: strings.py:103
+msgid "Not Installed"
+msgstr "Не установленые"
+
+#: strings.py:104
+msgid "Not Installed Applications"
+msgstr "Неустановленные приложения"
+
+#: strings.py:108
+msgid "Processing"
+msgstr "Обработка"
+
+#: strings.py:109
+msgid "Proxy authentication failed. Check config.ini"
+msgstr "Неверный логин и/или пароль для прокси. Проверьте config.ini"
+
+#: strings.py:113
+msgid "Reload"
+msgstr "Перезагрузка"
+
+#: strings.py:114
+msgid "Reloading database"
+msgstr "Перезагружаю базу данных"
+
+#: strings.py:115
+msgid "Reload configuration"
+msgstr "Перезагружаю конфигурацию"
+
+#: strings.py:116
+msgid "Removable"
+msgstr ""
+
+#: strings.py:117
+msgid "Report Bug"
+msgstr "Я нашел ошибку!"
+
+#: strings.py:118
+msgid "Report a bug"
+msgstr "Я нашел ошибку!"
+
+#: strings.py:122
+msgid "Section"
+msgstr "Секция"
+
+#: strings.py:123
+msgid "Starting"
+msgstr "Запуск"
+
+#: strings.py:124
+msgid "Status"
+msgstr "Статус"
+
+#: strings.py:125
+msgid "String"
+msgstr "Строка"
+
+#: strings.py:126
+msgid "Supported Applications"
+msgstr "Поддерживаемые приложения"
+
+#: strings.py:130
+msgid "Test download only"
+msgstr "Только проверить возможность скачивания"
+
+#: strings.py:131
+msgid "Testing"
+msgstr "Тестирование"
+
+#: strings.py:132
+msgid "This help screen"
+msgstr "Этот справочный экран"
+
+#: strings.py:136
+msgid "Unable to write to db.ini"
+msgstr "Не могу записать в db.ini"
+
+#: strings.py:137
+msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
+msgstr ""
+
+#: strings.py:138
+msgid "Uninstall"
+msgstr "Удаление"
+
+#: strings.py:139
+msgid "Uninstalling"
+msgstr "Удаляю"
+
+#: strings.py:140
+msgid "Uninstall selected applications"
+msgstr "Удалить выбранные приложения"
+
+#: strings.py:141
+msgid "Uninstall failed"
+msgstr "Удалить не удалось"
+
+#: strings.py:142
+msgid "Uninstall succeeded"
+msgstr "Успешно удален(ы)"
+
+#: strings.py:143
+msgid "Update database failed"
+msgstr "Ошибка обновления базы данных"
+
+#: strings.py:144
+msgid "Update database succeeded"
+msgstr "База данных успешно обновлена"
+
+#: strings.py:145
+msgid "Update DB"
+msgstr "Обновление базы"
+
+#: strings.py:146
+msgid "Update application database"
+msgstr "Обновить информацию о приложениях"
+
+#: strings.py:147
+msgid "implies -i, -x if not upgradeable"
+msgstr ""
+
+#: strings.py:148
+msgid "Updating database"
+msgstr "Обновление информации о приложениях"
+
+#: strings.py:149
+msgid "Updating local database"
+msgstr "Обновление локальной базы данных"
+
+#: strings.py:150
+msgid "Upgrade"
+msgstr "Обновить"
+
+#: strings.py:151
+msgid "Upgradeable"
+msgstr "Есть обновления"
+
+#: strings.py:152
+msgid "Upgrade selected applications"
+msgstr "Обновить выбранные приложения"
+
+#: strings.py:153
+msgid "Upgrade failed"
+msgstr "Ошибка обновления"
+
+#: strings.py:154
+msgid "Upgrade succeeded"
+msgstr "Успешно обновлено(обновлены)"
+
+#: strings.py:155
+msgid "Upgrading"
+msgstr "Обновление"
+
+#: strings.py:159
+msgid "Waiting"
+msgstr "Ожидаю"
+
+#: strings.py:160
+msgid "Website"
+msgstr "Веб-страница"
+
+#: strings.py:166
+msgid "Build executable using Py2Exe"
+msgstr ""
+
+#: strings.py:167
+msgid "Build failed."
+msgstr ""
+
+#: strings.py:171
+msgid "Compress executables using UPX"
+msgstr "Сжимаю программу с помощью UPX"
+
+#: strings.py:172
+msgid "Create NSIS package"
+msgstr ""
+
+#: strings.py:173
+msgid "Create ZIP package"
+msgstr "Создать ZIP-архив"
+
+#: strings.py:177
+msgid "NSIS not available"
+msgstr "NSIS недоступен"
+
+#: strings.py:181
+msgid "OPTIONS"
+msgstr "НАСТРОЙКИ"
+
+#: strings.py:185
+#, fuzzy
+msgid "Rezip shared library using 7-Zip"
+msgstr "Повторно сжать общие библиотеки 7-ZIP'ом."
+
+#: strings.py:189
+msgid "7-Zip not available"
+msgstr "7-Zip недоступен"
+
+#: strings.py:193
+msgid "UPX not available"
+msgstr "UPX недоступен"
+
+#: strings.py:194
+msgid "Usage"
+msgstr "Использование"
+
