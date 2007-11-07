@@ -529,10 +529,16 @@ class Events:
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[19].GetId(), self.do_report)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[21].GetId(), self.do_help)
         self.toolbar_tools = retval
-        try:
-            self.resources['gui'].objects['toolbar'].Realize()
-        except wx.PyAssertionError:
-            pass
+
+        # Widen tools to fit toolbar space
+        while self.resources['gui'].objects['toolbar'].GetToolSize().GetWidth() < defines.TOOLBAR_WIDTH-5:
+            label = self.toolbar_tools[-1].GetLabel()
+            self.toolbar_tools[-1].SetLabel(u' ' + label + u' ')
+
+            try:
+                self.resources['gui'].objects['toolbar'].Realize()
+            except wx.PyAssertionError:
+                pass
 
     # Resize the GUI on drag or startup
     def resize_all(self, event):
