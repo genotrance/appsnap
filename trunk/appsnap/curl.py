@@ -152,13 +152,12 @@ class curl:
         self.global_config.create_cache_directory()
 
         # If test mode, download to different file and set timeout
-        cached_filename = self.get_cached_name(filename)
         if test == True:
             self.curl[i].setopt(pycurl.TIMEOUT, defines.NUM_SECONDS_TO_TEST_DOWNLOAD)
-            cached_filename += '.tmp'
+            filename += '.tmp'
 
         # Open download filename
-        self.download_data[i] = open(cached_filename, 'wb')
+        self.download_data[i] = open(filename, 'wb')
 
         # Set progress callback if specified
         if progress_callback != None:
@@ -167,15 +166,15 @@ class curl:
             
         # Download data
         self.curl[i].setopt(pycurl.REFERER, referer)
-        response = self.get_url(url + filename, i, self.call_back_download, True)
+        response = self.get_url(url, i, self.call_back_download, True)
         if response >= 300:
             # Close and delete download file
             self.download_data[i].close()
-            os.remove(cached_filename)
+            os.remove(filename)
 
             # Print the message
             if response == 407: print '\n' + strings.PROXY_AUTHENTICATION_FAILED
-            else: print '\n' + strings.ERROR + ' ' + response.__str__() + '. URL = ' + url + filename
+            else: print '\n' + strings.ERROR + ' ' + response.__str__() + '. URL = ' + url
 
             # Failure occurred so return false
             self.free_lock(i)
@@ -188,7 +187,7 @@ class curl:
         self.free_lock(i)
         
         # Delete file if test mode
-        if test == True: os.remove(cached_filename)
+        if test == True: os.remove(filename)
 
         # Success
         return True
@@ -199,7 +198,9 @@ class curl:
         self.download_data[i].write(buf)
 
     # Return the filename with the cache dir prepended
-    def get_cached_name(self, filename):
+    # Use rename instead of filename if rename != ''
+    def get_cached_name(self, filename, rename):
+        if rename != '': filename = rename
         return os.path.join(self.global_config.cache[config.CACHE_LOCATION], filename)
 
     # Ensure # of threads per curl object is limited

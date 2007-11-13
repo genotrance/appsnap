@@ -35,6 +35,7 @@ APP_SCRAPE        = 'scrape'
 APP_VERSION       = 'version'
 APP_DOWNLOAD      = 'download'
 APP_FILENAME      = 'filename'
+APP_RENAME        = 'rename'
 APP_REFERER       = 'referer'
 APP_INSTALLER     = 'installer'
 APP_INSTPARAM     = 'instparam'
@@ -172,6 +173,9 @@ class process:
 
         # Get filename
         filename = self.replace_version(self.app_config[APP_FILENAME])
+        try: rename_orig = self.app_config[APP_RENAME]
+        except KeyError: rename_orig = ''
+        rename = self.replace_version(rename_orig)
 
         # Get referer
         try: referer = self.replace_version(self.app_config[APP_REFERER])
@@ -180,36 +184,44 @@ class process:
             except KeyError: referer = self.app_config[APP_DOWNLOAD]
 
         # Get cached location to save file to
-        cached_filename = self.curl_instance.get_cached_name(filename)
+        cached_filename = self.curl_instance.get_cached_name(filename, rename)
         
-        # Download if new version not already downloaded or if filename does not
-        # contain version information and more than a day old (we have no way to
-        # know if the file has changed)
+        # Download file depending on conditions below
         cache_timeout = int(self.global_config.cache['cache_timeout']) * defines.NUM_SECONDS_IN_DAY
-        if not os.path.exists(cached_filename) or (
-                                                   filename == self.app_config[APP_FILENAME] and
-                                                   os.path.exists(cached_filename) and
-                                                   (time.time() - os.stat(cached_filename).st_ctime > cache_timeout)
-                                                   ):
+        perform_download = False
+        if not os.path.exists(cached_filename):
+            # File not downloaded yet
+            perform_download = True
+        else:
+            # File already exists
+            if time.time() - os.stat(cached_filename).st_ctime > cache_timeout:
+                # Timeout expired
+                if rename == '':
+                    # No renaming specified, check filename
+                    if filename == self.app_config[APP_FILENAME]:
+                        # No version information in filename
+                        perform_download = True
+                else:
+                    # Renaming specified, check rename instead
+                    if rename == rename_orig:
+                        # No version information in rename
+                        perform_download = True
+                    
+        if perform_download == True:
             # Delete any older cached versions
             self.delete_older_versions()
 
             # Return false if download fails
-            if self.curl_instance.download_web_data(download, filename, referer, progress_callback, test) != True: return False
+            if self.curl_instance.download_web_data(download + filename, cached_filename, referer, progress_callback, test) != True: return False
 
         return cached_filename
 
     # Delete older application installers
     def delete_older_versions(self):
-        # Create pattern for filename
-        filename = self.app_config[APP_FILENAME]
-        filename = re.sub(VERSION, '*', filename)
-        filename = re.sub(MAJOR_VERSION, '*', filename)
-        filename = re.sub(MAJORMINOR_VERSION, '*', filename)
-        filename = re.sub(MAJORMINORSUB_VERSION, '*', filename)
-        filename = re.sub(DOTLESS_VERSION, '*', filename)
-        filename = re.sub(DASHTODOT_VERSION, '*', filename)
-        filename = self.curl_instance.get_cached_name(filename)
+        filename = self.replace_version_with_mask(self.app_config[APP_FILENAME])
+        try: rename = self.replace_version_with_mask(self.app_config[APP_RENAME])
+        except KeyError: rename = ''
+        filename = self.curl_instance.get_cached_name(filename, rename)
 
         # Find all older versions
         older_files = glob.glob(filename)
@@ -313,6 +325,9 @@ class process:
             self.installedversion = ''
         except (WindowsError, KeyError):
             filename = self.app_config[APP_FILENAME]
+            try: rename = self.app_config[APP_RENAME]
+            except KeyError: rename = ''
+            if rename != '': filename = rename
             if filename[-3:] == 'zip':
                 try:
                     # Installer didn't provide uninstall method
@@ -444,6 +459,18 @@ class process:
         string = re.sub(DOTTOUNDERSCORE_VERSION, dottounderscore_version, string)
         string = re.sub(DOTTODASH_VERSION, dottodash_version, string)
 
+        return string
+
+    # Replace version strings with *
+    def replace_version_with_mask(self, string):
+        string = re.sub(VERSION, '*', string)
+        string = re.sub(MAJOR_VERSION, '*', string)
+        string = re.sub(MAJORMINOR_VERSION, '*', string)
+        string = re.sub(MAJORMINORSUB_VERSION, '*', string)
+        string = re.sub(DOTLESS_VERSION, '*', string)
+        string = re.sub(DASHTODOT_VERSION, '*', string)
+        string = re.sub(DOTTOUNDERSCORE_VERSION, '*', string)
+        string = re.sub(DOTTODASH_VERSION, '*', string)
         return string
 
     # Replace install dir string with appropriate value
