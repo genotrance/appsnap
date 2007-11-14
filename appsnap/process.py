@@ -255,12 +255,12 @@ class process:
 
         # If installer command to be executed
         if installer == True:
-            # Add instparam flags if available
-            try:
-                if self.app_config[APP_INSTPARAM] != '':
+            # Add instparam flags if available and if silent install requested
+            if self.global_config.user[config.SILENT_INSTALL] == 'True':
+                try:
                     command += ' ' + self.replace_install_dir(self.app_config[APP_INSTPARAM])
-            except KeyError:
-                pass
+                except KeyError:
+                    pass
     
             # Add the install directory if available
             try:
@@ -306,14 +306,25 @@ class process:
         app_uninstall, matchobj = self.parse_uninstall_entry()
 
         try:
+            # Get uninstall string from registry
             uninstall_string = self.get_uninstall_string(app_uninstall, installed_version)
             if uninstall_string == None: raise WindowsError
 
-            # Run uninstaller, check return value
-            uninstall_string = re.sub(re.compile('msiexec.exe /i', re.IGNORECASE), 'msiexec.exe /x', uninstall_string)
+            # Fix uninstall string quotes
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub(re.compile('\.exe', re.IGNORECASE), '.exe"', uninstall_string)
-            try: uninstparam = ' ' + self.replace_install_dir(self.app_config[APP_UNINSTPARAM])
-            except KeyError: uninstparam = ''
+
+            # Add uninstparam flags if available and if silent install requested
+            uninstparam = ''
+            if self.global_config.user[config.SILENT_INSTALL] == 'True':
+                # Ensure MSIExec is executed with /x to automatically uninstall
+                uninstall_string = re.sub(re.compile('msiexec.exe /i', re.IGNORECASE), 'msiexec.exe /x', uninstall_string)
+                
+                try:
+                    uninstparam = ' ' + self.replace_install_dir(self.app_config[APP_UNINSTPARAM])
+                except KeyError:
+                    pass
+            
+            # Run uninstaller, check return value    
             retval = os.popen('"' + uninstall_string + uninstparam + '"').close()
             if  retval != None:
                 # MSI returns non-zero as success too
