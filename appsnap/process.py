@@ -9,6 +9,7 @@ import string
 import strings
 import StringIO
 import time
+import types
 import _winreg
 import zipfile
 
@@ -500,8 +501,32 @@ class process:
         web_data = self.curl_instance.get_web_data(self.app_config[APP_SCRAPE])
         if web_data == None: return None
 
+        versions = re.findall(self.app_config[APP_VERSION], web_data)
+        if len(versions) and type(versions[0]) == types.TupleType:
+            # Multipart versions, get delimiters if any
+            delimiters = self.get_multipart_version_delimiters(self.app_config[APP_VERSION])
+            
+            # Combine with delimiters
+            for i in range(len(versions)):
+                combined_version = ''
+                for j in range(len(versions[i])):
+                    combined_version += versions[i][j]
+                    if j < len(delimiters):
+                        combined_version += delimiters[j]
+                versions[i] = combined_version
+
         # Return a list of potential versions
-        return re.findall(self.app_config[APP_VERSION], web_data)
+        return versions
+    
+    # Get multipart version delimiters from application version regex
+    # (?#xxxx) becomes ['x', 'x', 'x', 'x']
+    def get_multipart_version_delimiters(self, string):
+        delimiter_array = []
+        delimiters = re.findall('\(\?#(.*?)\)', string)
+        for delimiter in delimiters:
+            for s in delimiter:
+                delimiter_array.append(s)
+        return delimiter_array
 
     # Split the versions into separate columns
     def get_split_versions(self):

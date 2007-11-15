@@ -295,6 +295,10 @@ class ApplicationPanel(wx.Panel):
         # Display status field
         self.display_status()
         
+        # Wait until latest version is available
+        while self.version.GetLabel() == (strings.LATEST_VERSION + ' : ' + strings.LOADING + ' ...'):
+            time.sleep(0.5)
+        
         if action == process.ACT_DOWNLOAD or action == process.ACT_INSTALL or action == process.ACT_UPGRADE:
             # Download latest version
             self.set_status_text(strings.WAITING + ' ...')
