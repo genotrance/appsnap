@@ -1032,4 +1032,5 @@ class Events:
     # Open help
     def do_help(self, event):
         if os.path.exists('appsnap.html'):
-            os.startfile('appsnap.html')
+            try: os.startfile('appsnap.html')
+            except WindowsError: pass
