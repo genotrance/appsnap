@@ -1,0 +1,438 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: AppSnap\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2007-10-09 02:38-0600\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Basepath: ..\\..\\..\n"
+"X-Poedit-SearchPath-0: .\\\n"
+
+#: .\/strings.py:16
+msgid "All"
+msgstr "Alle"
+
+#: .\/strings.py:17
+msgid "Application"
+msgstr "Programm"
+
+#: .\/strings.py:18
+msgid "Application names, comma separated or * to filter"
+msgstr "Programmnamen, mehrere mit Komma auflisten oder *  zum filtern"
+
+#: .\/strings.py:19
+msgid "Application specific functions"
+msgstr "Programmspezifische Funktionen"
+
+#: .\/strings.py:20
+msgid "Available Categories"
+msgstr "Verfügbare Kategorien"
+
+#: .\/strings.py:24
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: .\/strings.py:25
+msgid "Category"
+msgstr "Kategorie"
+
+#: .\/strings.py:26
+msgid "Comparing"
+msgstr "Vergleichen"
+
+#: .\/strings.py:30
+msgid "Default"
+msgstr "Standart"
+
+#: .\/strings.py:31
+msgid "Description"
+msgstr "Beschreibung"
+
+#: .\/strings.py:32
+msgid "Done"
+msgstr "Fertig"
+
+#: .\/strings.py:33
+msgid "Download"
+msgstr "Herunterladen"
+
+#: .\/strings.py:34
+msgid "Downloaded"
+msgstr "Heruntergeladen"
+
+#: .\/strings.py:35
+msgid "Downloading"
+msgstr "Lädt Herunter"
+
+#: .\/strings.py:36
+msgid "Download cancelled"
+msgstr "Download abgebrochen"
+
+#: .\/strings.py:37
+msgid "Download selected applications"
+msgstr "Ausgewählte Programme herunterladen"
+
+#: .\/strings.py:38
+msgid "Download failed"
+msgstr "Download fehlgeschlagen"
+
+#: .\/strings.py:39
+msgid "Download succeeded"
+msgstr "Download erfolgreich"
+
+#: .\/strings.py:43
+msgid "Error"
+msgstr "Fehler"
+
+#: .\/strings.py:47
+msgid "Failed to create cache location"
+msgstr "Fehler beim erstellen des Cache"
+
+#: .\/strings.py:48
+msgid "Failed to connect"
+msgstr "Verbinden fehlgeschlagen"
+
+#: .\/strings.py:49
+msgid "Filter"
+msgstr "Filtern"
+
+#: .\/strings.py:50
+msgid "Filter applications by category"
+msgstr "Programme nach Kategorie filtern"
+
+#: .\/strings.py:51
+msgid "Filter applications by string"
+msgstr "Programme nach Zeichenfolge filtern"
+
+#: .\/strings.py:52
+msgid "Filter list by category"
+msgstr "Liste nach Kategorie filtern"
+
+#: .\/strings.py:53
+msgid "Filter list by string"
+msgstr "Liste nach Zeichenkette filtern"
+
+#: .\/strings.py:57
+msgid "Get latest version"
+msgstr "Neueste Version herunterladen"
+
+#: .\/strings.py:58
+msgid "Global functions"
+msgstr "Globale Funktionen"
+
+#: .\/strings.py:62
+msgid "Help"
+msgstr "Hilfe"
+
+#: .\/strings.py:63
+msgid "Open documentation"
+msgstr "Anleitung öffnen"
+
+#: .\/strings.py:67
+msgid "Install"
+msgstr "Installieren"
+
+#: .\/strings.py:68
+msgid "Installed"
+msgstr "Installiert"
+
+#: .\/strings.py:69
+msgid "Installed Applications"
+msgstr "Installierte Programme"
+
+#: .\/strings.py:70
+msgid "Failed to update installed.ini. Is it writable?"
+msgstr "installed.ini konnte nicht geupdatet werden. Ist die Datei beschreibbar?"
+
+#: .\/strings.py:71
+msgid "Installed Version"
+msgstr "Installierte Version"
+
+#: .\/strings.py:72
+msgid "Installing"
+msgstr "wird installiert"
+
+#: .\/strings.py:73
+msgid "Download and install selected applications"
+msgstr "Ausgewählte Programme herunterladen und installieren"
+
+#: .\/strings.py:74
+msgid "Install failed"
+msgstr "Installation fehlgeschlagen"
+
+#: .\/strings.py:75
+msgid "implies -d"
+msgstr "verlangt -d"
+
+#: .\/strings.py:76
+msgid "Install succeeded"
+msgstr "Installation erfolgreich"
+
+#: .\/strings.py:80
+msgid "Key"
+msgstr "Key"
+
+#: .\/strings.py:84
+msgid "Failed to update latest.ini. Is it writable?"
+msgstr "installed.ini konnte nicht geupdatet werden. Ist die Datei beschreibbar?"
+
+#: .\/strings.py:85
+msgid "Latest Version"
+msgstr "Neueste Version"
+
+#: .\/strings.py:86
+msgid "List all application categories"
+msgstr "Alle Programmkategorien auflisten"
+
+#: .\/strings.py:87
+msgid "List supported applications"
+msgstr "Alle unterstützten Programme auflisten"
+
+#: .\/strings.py:88
+msgid "Loading"
+msgstr "Lädt"
+
+#: .\/strings.py:89
+msgid "Loading database"
+msgstr ""
+
+#: .\/strings.py:93
+msgid "Neither 'scrape' nor 'download' specified"
+msgstr "Weder 'scrape' noch 'download' angegeben"
+
+#: .\/strings.py:94
+#, fuzzy
+msgid "Missing section key in db.ini"
+msgstr "Fehlende section key in db.ini"
+
+#: .\/strings.py:95
+msgid "Missing key 'version' when 'scrape' specified"
+msgstr "Key 'version' fehlt wenn 'scrape' angegeben"
+
+#: .\/strings.py:99
+msgid "Name"
+msgstr "Name"
+
+#: .\/strings.py:100
+msgid "No changes found"
+msgstr "Keine Veränderungen gefunden"
+
+#: .\/strings.py:101
+msgid "No such application"
+msgstr "Dieses Programm gibt es nicht"
+
+#: .\/strings.py:102
+msgid "Not available"
+msgstr "Nicht verfügbar"
+
+#: .\/strings.py:103
+msgid "Not Installed"
+msgstr "Nicht installiert"
+
+#: .\/strings.py:104
+msgid "Not Installed Applications"
+msgstr "Nicht installierte Programme"
+
+#: .\/strings.py:108
+msgid "Processing"
+msgstr "Arbeitet"
+
+#: .\/strings.py:109
+msgid "Proxy authentication failed. Check config.ini"
+msgstr "Proxy-Authentifikation fehlgeschlagen. Config.ini überprüfen"
+
+#: .\/strings.py:113
+msgid "Reload"
+msgstr "Neu laden"
+
+#: .\/strings.py:114
+msgid "Reloading database"
+msgstr "Datenbank wird neu geladen"
+
+#: .\/strings.py:115
+msgid "Reload configuration"
+msgstr "Einstellungen werden neu geladen"
+
+#: .\/strings.py:116
+msgid "Removable"
+msgstr ""
+
+#: .\/strings.py:117
+msgid "Report Bug"
+msgstr "Bug melden"
+
+#: .\/strings.py:118
+msgid "Report a bug"
+msgstr "Einen Bug melden"
+
+#: .\/strings.py:122
+#, fuzzy
+msgid "Section"
+msgstr "Sektion"
+
+#: .\/strings.py:123
+msgid "Starting"
+msgstr "Wird gestartet"
+
+#: .\/strings.py:124
+msgid "Status"
+msgstr "Status"
+
+#: .\/strings.py:125
+msgid "String"
+msgstr "Zeichenkette"
+
+#: .\/strings.py:126
+msgid "Supported Applications"
+msgstr "Unterstützte Programme"
+
+#: .\/strings.py:130
+#, fuzzy
+msgid "Test download only"
+msgstr "nur den Download testen"
+
+#: .\/strings.py:131
+msgid "Testing"
+msgstr "Wird getestet"
+
+#: .\/strings.py:132
+msgid "This help screen"
+msgstr "Diese Hilfe-Seite"
+
+#: .\/strings.py:136
+msgid "Unable to write to db.ini"
+msgstr "db.ini konnte nicht geschrieben werden"
+
+#: .\/strings.py:137
+msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
+msgstr ""
+
+#: .\/strings.py:138
+msgid "Uninstall"
+msgstr "Deinstallieren"
+
+#: .\/strings.py:139
+msgid "Uninstalling"
+msgstr "Wird deinstalliert"
+
+#: .\/strings.py:140
+msgid "Uninstall selected applications"
+msgstr "Ausgewählte Programme werden deinstalliert"
+
+#: .\/strings.py:141
+msgid "Uninstall failed"
+msgstr "Deinstallation fehlgeschlagen"
+
+#: .\/strings.py:142
+msgid "Uninstall succeeded"
+msgstr "Deinstallation erfolgeich"
+
+#: .\/strings.py:143
+msgid "Update database failed"
+msgstr "Aktualisierung der Datenbank fehlgeschlagen"
+
+#: .\/strings.py:144
+msgid "Update database succeeded"
+msgstr "Aktualisierung der Datenbank erfolgreich"
+
+#: .\/strings.py:145
+msgid "Update DB"
+msgstr "DB aktualisieren "
+
+#: .\/strings.py:146
+msgid "Update application database"
+msgstr "Programmdatenbank aktualisieren"
+
+#: .\/strings.py:147
+#, fuzzy
+msgid "implies -i, -x if not upgradeable"
+msgstr "verlangt -i, -x falls nicht upgradebar"
+
+#: .\/strings.py:148
+msgid "Updating database"
+msgstr "Datenbank wird aktualisiert"
+
+#: .\/strings.py:149
+msgid "Updating local database"
+msgstr "Lokale Datenbank wird aktualisiert"
+
+#: .\/strings.py:150
+msgid "Upgrade"
+msgstr "Aktualisieren"
+
+#: .\/strings.py:151
+msgid "Upgradeable"
+msgstr "Aktualisierbar"
+
+#: .\/strings.py:152
+msgid "Upgrade selected applications"
+msgstr "Ausgewählte Programme Aktualisieren"
+
+#: .\/strings.py:153
+msgid "Upgrade failed"
+msgstr "Auktualisierung fehlgeschlagen"
+
+#: .\/strings.py:154
+msgid "Upgrade succeeded"
+msgstr "Auktualisierung erfolgreich"
+
+#: .\/strings.py:155
+msgid "Upgrading"
+msgstr "Wird aktualisiert"
+
+#: .\/strings.py:159
+msgid "Waiting"
+msgstr "Warten"
+
+#: .\/strings.py:160
+msgid "Website"
+msgstr "Website"
+
+#: .\/strings.py:166
+msgid "Build executable using Py2Exe"
+msgstr "Exe-Datei mit Py2Exe erstellen"
+
+#: .\/strings.py:167
+msgid "Build failed."
+msgstr "Erstellung fehlgeschlagen."
+
+#: .\/strings.py:171
+msgid "Compress executables using UPX"
+msgstr "Exe-Dateien mit UPX komprimieren"
+
+#: .\/strings.py:172
+msgid "Create NSIS package"
+msgstr "NSIS-Archiv erstellen"
+
+#: .\/strings.py:173
+msgid "Create ZIP package"
+msgstr "ZIP-Archiv erstellen"
+
+#: .\/strings.py:177
+msgid "NSIS not available"
+msgstr "NSIS nicht verfügbar"
+
+#: .\/strings.py:181
+msgid "OPTIONS"
+msgstr "EINSTELLUNGEN"
+
+#: .\/strings.py:185
+msgid "Rezip shared library using 7-Zip"
+msgstr "Gemeinsame Bibliothek mit 7-Zip neu zippen"
+
+#: .\/strings.py:189
+msgid "7-Zip not available"
+msgstr "7-Zip nicht verfügbar"
+
+#: .\/strings.py:193
+msgid "UPX not available"
+msgstr "UPX nicht verfügbar"
+
+#: .\/strings.py:194
+msgid "Usage"
+msgstr "Benutzung"
+
