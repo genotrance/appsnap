@@ -141,7 +141,7 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
 if __name__ == '__main__':
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:tuUx')
+        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:tuUwx')
     except getopt.GetoptError:
         print help
         sys.exit(defines.ERROR_GETOPT)
@@ -158,6 +158,7 @@ if __name__ == '__main__':
     upgrade = False
     uninstall = False
     updatedb = False
+    wikidump = False
     test = False
 
     for o, a in opts:
@@ -175,10 +176,11 @@ if __name__ == '__main__':
         if o == '-t': test = True
         if o == '-u': upgrade = True
         if o == '-U': updatedb = True
+        if o == '-w': wikidump = True
         if o == '-x': uninstall = True
 
     # If no application specified, exit
-    if names == None and list == False and categories == False and updatedb == False:
+    if names == None and list == False and categories == False and updatedb == False and wikidump == False:
         print help
         sys.exit(defines.ERROR_NO_OPTIONS_SPECIFIED)
 
@@ -229,6 +231,19 @@ if __name__ == '__main__':
                 print '-> ' + strings.UPDATE_DATABASE_FAILED + '. ' + strings.UNABLE_TO_WRITE_DB_INI
         else:
             print '-> ' + strings.NO_CHANGES_FOUND
+        sys.exit(defines.ERROR_SUCCESS)
+        
+    # Dump application database in wiki format if requested
+    if wikidump == True:
+        categories = configuration.get_categories()
+        for category in categories:
+            print "!!!" + category
+            sections = configuration.get_sections_by_category(category)
+            
+            for section in sections:
+                items = configuration.get_section_items(section)
+                
+                print "* [[" + section + "|" + items[process.APP_WEBSITE] + "]] - \"\"\"" + items[process.APP_DESCRIBE] + "\"\"\"" 
         sys.exit(defines.ERROR_SUCCESS)
 
     # Figure out applications selected
