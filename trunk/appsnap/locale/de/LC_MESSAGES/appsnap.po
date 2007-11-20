@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-10-09 02:38-0600\n"
+"PO-Revision-Date: 2007-11-20 02:34-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -259,7 +259,7 @@ msgstr "Einstellungen werden neu geladen"
 
 #: .\/strings.py:116
 msgid "Removable"
-msgstr ""
+msgstr "Deinstallierbar"
 
 #: .\/strings.py:117
 msgid "Report Bug"

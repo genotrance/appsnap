@@ -208,7 +208,7 @@ class ApplicationPanel(wx.Panel):
         
         installed_version = self.process.get_installed_version()
         latest_version = self.process.get_latest_version()
-        if installed_version >= latest_version:
+        if installed_version >= latest_version or installed_version == strings.NOT_AVAILABLE or latest_version == strings.NOT_AVAILABLE:
             self.select(False)
             sizeritem.Show(False)
 

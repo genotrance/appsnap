@@ -371,8 +371,8 @@ class config:
         named = self.registry_search_arp('DisplayName')
         uninstallable = self.registry_search_arp('UninstallString')
         for un in uninstallable:
-            if not re.match('KB[0-9]+[.*]*', un) and named.get(un) != None:
-                arp_list[named.get(un) + ARP_ID] = {
+            if not re.match('KB[0-9]+[.*]*', un) and named.get(un) != None and named.get(un).groups()[0] != '':
+                arp_list[named.get(un).groups()[0] + ARP_ID] = {
                                            process.APP_CATEGORY: REMOVABLE,
                                            process.APP_DESCRIBE: '',
                                            process.APP_WEBSITE: '',
@@ -405,18 +405,23 @@ class config:
         matchobj = None
         try:
             key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-            uninstall_key, matchobj = self.registry_search(key, name, value)
+            uninstall_keys = self.registry_search(key, name, value, True)
             _winreg.CloseKey(key)
         except WindowsError:
             pass
         
-        if uninstall_key == '':
-            try:
-                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-                uninstall_key, matchobj = self.registry_search(key, name, value)
-                _winreg.CloseKey(key)
-            except WindowsError:
-                pass
+        try:
+            key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+            uninstall_keys.update(self.registry_search(key, name, value, True))
+            _winreg.CloseKey(key)
+        except WindowsError:
+            pass
+
+        # Return only latest version or last found
+        for u_key in uninstall_keys.keys():
+            if matchobj == None or matchobj.groups()[0] < uninstall_keys[u_key].groups()[0]:
+                uninstall_key = u_key
+                matchobj = uninstall_keys[u_key]
 
         return uninstall_key, matchobj
         
@@ -482,7 +487,7 @@ class config:
                 matchobj = re.match(value, subvalue)
                 if matchobj != None:
                     if all == False: return subkey_name, matchobj
-                    else: matching[subkey_name] = matchobj.groups()[0]
+                    else: matching[subkey_name] = matchobj
         except EnvironmentError: pass
         
         if all == False: return '', None
