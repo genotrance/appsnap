@@ -224,7 +224,8 @@ class config:
     # Get installed version
     def get_installed_version(self, section):
         if self.installed.has_section(section) == True:
-            return self.installed.get(section, process.APP_VERSION)
+            try: return self.installed.get(section, process.APP_VERSION)
+            except NoOptionError: return ''
         return ''
 
     # Save installed version to file
@@ -419,7 +420,7 @@ class config:
 
         # Return only latest version or last found
         for u_key in uninstall_keys.keys():
-            if matchobj == None or matchobj.groups()[0] < uninstall_keys[u_key].groups()[0]:
+            if matchobj == None or (len(matchobj.groups()) and len(uninstall_keys[u_key].groups()) and matchobj.groups()[0] < uninstall_keys[u_key].groups()[0]):
                 uninstall_key = u_key
                 matchobj = uninstall_keys[u_key]
 
