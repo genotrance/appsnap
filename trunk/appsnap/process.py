@@ -563,7 +563,7 @@ class process:
         letters = re.findall('[a-z]', version)
 
         # Convert version to a number without the letters
-        nversion = string.atoi(re.sub('[a-z]', '', version))
+        nversion = string.atoi(re.sub('[a-z]', '0', version))
 
         # Convert the letters into a numeric value
         decimal = 0.0
