@@ -1,4 +1,3 @@
-import defines
 import distutils.core
 import getopt
 import glob
@@ -6,19 +5,29 @@ import os
 import os.path
 import py2exe
 import re
-import strings
+import shutil
 import sys
 import types
-import version
 import _winreg
+
+from appsnaplib import defines, strings, version
 
 # Class to build application
 class build:
     # Constructor
     def __init__(self):
+        # Set source directory
+        path = os.path.dirname(sys.argv[0])
+        if path == os.getcwd(): self.path = ''
+        else: self.path = path + os.path.sep
+        
+        # Set appname
+        self.appname = version.APPNAME.lower()
+        
+        [p, r, u, z, n] = self.parse_arguments()
+
         self.setup()
         self.get_dependencies()
-        [p, r, u, z, n] = self.parse_arguments()
         
         if p: self.build_executable()
         if r: self.rezip_shared_library()
@@ -39,7 +48,8 @@ class build:
                                   'appsnap.ico',
                                   'appsnapsetup.nsi',
                                   'appsnap.html',
-                                  'locale' + os.path.sep + '*' + os.path.sep + 'LC_MESSAGES' + os.path.sep + 'appsnap.*'
+                                  'locale' + os.path.sep + '*' + os.path.sep + 'LC_MESSAGES' + os.path.sep + 'appsnap.*',
+                                  'appsnaplib' + os.path.sep + '*.py'
                                   ]
         
         # Create manifest
@@ -71,14 +81,14 @@ class build:
         
         # Console executable
         self.py2exe['console'] = [{
-                         "script"          : "appsnap.py",
-                         "icon_resources"  : [(1, "appsnap.ico")]
+                         "script"          : self.path + "appsnap.py",
+                         "icon_resources"  : [(1, self.path + "appsnap.ico")]
                }]
         
         # GUI executable
         self.py2exe['windows'] = [{
-                         "script"          : "appsnapgui.py",
-                         "icon_resources"  : [(1, "appsnap.ico")],
+                         "script"          : self.path + "appsnapgui.py",
+                         "icon_resources"  : [(1, self.path + "appsnap.ico")],
                          "other_resources" : [(24, 1, manifest)]
                          }]
         
@@ -94,14 +104,18 @@ class build:
         # Resource files to include
         self.py2exe['data_files'] = [(
                             "" , 
-                            ["appsnap.ico","db.ini","config.ini","appsnap.html", os.path.join(os.getenv("systemroot"), "system32", "msvcp71.dll")]
+                            [self.path + "appsnap.ico",
+                             self.path + "db.ini",
+                             self.path + "config.ini",
+                             self.path + "appsnap.html", 
+                             os.path.join(os.getenv("systemroot"), "system32", "msvcp71.dll")]
                             )]
         
         # Name of zip file to generate
         self.py2exe['zipfile'] = "shared.lib"
         
         # Specify py2exe as a command line option
-        sys.argv.append('py2exe')
+        sys.argv = [sys.argv[0], 'py2exe']
         
     # Parse arguments
     def parse_arguments(self):
@@ -123,7 +137,7 @@ class build:
                  )
     
         # Set defaults
-        if len(sys.argv) == 2:
+        if len(sys.argv) == 1:
             p = r = u = z = n = True
         else:
             p = r = u = z = n = False
@@ -192,28 +206,36 @@ class build:
     
     # Delete older packages
     def delete_older_packages(self):
-        appname = version.APPNAME.lower()
-        files = glob.glob(appname + 'setup-*.exe')
-        files.extend(glob.glob(appname + '-*.zip'))
+        files = glob.glob(self.appname + 'setup-*.exe')
+        files.extend(glob.glob(self.appname + '-*.zip'))
         for file in files:
             print file
             os.remove(file)
     
     # Create ZIP package
     def build_zip_package(self):
-        appname = version.APPNAME.lower()
-        command = '""' + self.sevenzip + '" a -tzip -mx9 ' + appname + '-' + version.APPVERSION + '.zip '
+        if self.path != '':
+            pwd = os.getcwd()
+            os.chdir(self.path)
+
+        zipfile = self.appname + '-' + version.APPVERSION + '.zip'
+        command = '""' + self.sevenzip + '" a -tzip -mx9 ' +  zipfile + ' '
         for file in self.zip_package_files:
             command += file + ' '
         command += '"'
         os.system(command)
+
+        if self.path != '':
+            os.chdir(pwd)
+            os.rename(self.path + zipfile, zipfile)
     
     # Package with NSIS
     def build_nsis_package(self):
-        appname = version.APPNAME.lower()
-        lines = open(appname + 'setup.nsi').read()
+        lines = open(self.path + self.appname + 'setup.nsi').read()
+        lines = re.sub('#VERSION#', version.APPVERSION, lines)
+        lines = re.sub('#SRC_PATH#', re.sub('\\\\', '\\\\\\\\', self.path), lines)
         o = open('temp.nsi', 'w')
-        o.write(re.sub('#VERSION#', version.APPVERSION, lines))
+        o.write(lines)
         o.close()
         os.system('""' + self.nsis + '" temp.nsi"')
         os.remove('temp.nsi')

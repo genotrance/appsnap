@@ -4,7 +4,7 @@
 !define PRODUCT_NAME                         "AppSnap"
 !define PRODUCT_VERSION                      "#VERSION#"
 !define PRODUCT_PUBLISHER                    "Ganesh Viswanathan"
-!define PRODUCT_WEB_SITE                     "http://www.genotrance.com"
+!define PRODUCT_WEB_SITE                     "http://appsnap.genotrance.com"
 !define PRODUCT_UNINST_KEY                   "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY              "HKLM"
 
@@ -17,8 +17,11 @@
 ; Location of the installation files
 !define INSTALLATION_FILES_LOCATION          "dist"
 
+; Location of the library files
+!define APPSNAPLIB_FILES_LOCATION            "#SRC_PATH#appsnaplib"
+
 ; Location of the locale files
-!define LOCALE_FILES_LOCATION                 "locale"
+!define LOCALE_FILES_LOCATION                "#SRC_PATH#locale"
 
 ; Messages
 !define ABORT_INSTALL_MESSAGE                 "${PRODUCT_NAME} ${PRODUCT_VERSION} install failed! Aborting installation."
@@ -76,6 +79,10 @@ Section "Installer" SEC01
   File "${INSTALLATION_FILES_LOCATION}\*.*"
   File "appsnap-${PRODUCT_VERSION}.zip"
 
+  ; Copy appsnaplib
+  SetOutPath "$INSTDIR\appsnaplib"
+  File /r /x .svn "${APPSNAPLIB_FILES_LOCATION}\*.py"
+
   ; Copy locale
   SetOutPath "$INSTDIR\locale"
   File /r /x .svn "${LOCALE_FILES_LOCATION}\*.*"
@@ -116,6 +123,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\AppSnapGui.lnk"
 
   ; Delete all installed files and directories
+  RMDir /r "$INSTDIR\appsnaplib"
   RMDir /r "$INSTDIR\locale"
   Delete "$INSTDIR\*.pyd"
   Delete "$INSTDIR\*.exe"
