@@ -138,7 +138,8 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
     else:
         print strings.NO_SUCH_APPLICATION + ' : ' + name
 
-if __name__ == '__main__':
+# Run the CLI
+def appsnap_start():
     # Parse command line arguments
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:tuUwx')

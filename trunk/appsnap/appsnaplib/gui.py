@@ -66,8 +66,8 @@ def handle_exceptions(type, value, tb):
     dbg.write(sys.stdout.getvalue().encode('utf-8'))
     dbg.close()
 
-# Main function
-if __name__ == '__main__':
+# Run the GUI
+def appsnap_start():
     # Remap exception handler
     sys.excepthook = handle_exceptions
     
