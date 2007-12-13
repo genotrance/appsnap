@@ -66,6 +66,11 @@ def handle_exceptions(type, value, tb):
     dbg.write(sys.stdout.getvalue().encode('utf-8'))
     dbg.close()
 
+    # Restore streams
+    sys.stdout.close()
+    sys.stdout = OLD_STDOUT
+    sys.stderr = OLD_STDERR
+    
 # Run the GUI
 def appsnap_start():
     # Remap exception handler
@@ -80,6 +85,7 @@ def appsnap_start():
     print 'PyCurl = ' + pycurl.version
 
     # Create a gui object
+    global gui
     gui = makegui.MakeGui(version.APPNAME + ' ' + version.APPVERSION, None, (defines.GUI_WIDTH, defines.GUI_HEIGHT))
 
     # Parse and run the GUI schema

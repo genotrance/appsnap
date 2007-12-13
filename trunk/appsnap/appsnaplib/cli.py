@@ -8,6 +8,7 @@ import process
 import strings
 import sys
 import threading
+import update
 import version
 import wx
 
@@ -54,7 +55,7 @@ help = header + """
        strings.FILTER_LIST_BY_CATEGORY,
        strings.STRING,
        strings.FILTER_LIST_BY_STRING,
-       strings.UPDATE_DB_DESCRIPTION,
+       strings.UPDATE_APPSNAP_DESCRIPTION,
        strings.APPLICATION_SPECIFIC_FUNCTIONS,
        strings.NAME,
        strings.APPLICATION_NAME_DESCRIPTION,
@@ -69,7 +70,7 @@ help = header + """
        strings.INSTALL_DESCRIPTION,
        strings.INSTALL_IMPLICATION,
        strings.UPGRADE_DESCRIPTION,
-       strings.UPDATE_IMPLICATION,
+       strings.UPGRADE_IMPLICATION,
        strings.UNINSTALL_DESCRIPTION
        )
 
@@ -158,7 +159,7 @@ def appsnap_start():
     list = False
     upgrade = False
     uninstall = False
-    updatedb = False
+    updateall = False
     wikidump = False
     test = False
 
@@ -176,12 +177,12 @@ def appsnap_start():
         if o == '-s': stringfilter = a
         if o == '-t': test = True
         if o == '-u': upgrade = True
-        if o == '-U': updatedb = True
+        if o == '-U': updateall = True
         if o == '-w': wikidump = True
         if o == '-x': uninstall = True
 
     # If no application specified, exit
-    if names == None and list == False and categories == False and updatedb == False and wikidump == False:
+    if names == None and list == False and categories == False and updateall == False and wikidump == False:
         print help
         sys.exit(defines.ERROR_NO_OPTIONS_SPECIFIED)
 
@@ -215,23 +216,25 @@ def appsnap_start():
         configuration.display_available_sections(categoryfilter, stringfilter)
         sys.exit(defines.ERROR_SUCCESS)
 
-    # Update database if requested
-    if updatedb == True:
-        print '-> ' + strings.UPDATING_DATABASE
-        remote = curl_instance.get_web_data(configuration.database[config.LOCATION] + '/?version=' + version.APPVERSION)
-        local = open(config.DB_INI, 'rb').read()
-        if local != remote:
-            # Update the DB file
-            try:
-                db = open(config.DB_INI, 'wb')
-                db.write(remote)
-                db.close()
-                configuration.copy_database_to_cache(True)
-                print '-> ' + strings.UPDATE_DATABASE_SUCCEEDED
-            except IOError:
-                print '-> ' + strings.UPDATE_DATABASE_FAILED + '. ' + strings.UNABLE_TO_WRITE_DB_INI
-        else:
+    # Update AppSnap if requested
+    if updateall == True:
+        print '-> ' + strings.UPDATING_APPSNAP
+        update_obj = update.update(configuration, curl_instance)
+        returned = update_obj.update_appsnap()
+        
+        if returned == update.SUCCESS:
+            print '-> ' + strings.UPDATE_APPSNAP_SUCCEEDED
+        elif returned == update.UNCHANGED:
             print '-> ' + strings.NO_CHANGES_FOUND
+        elif returned == update.NEW_BUILD:
+            print '-> ' + strings.NEW_BUILD_REQUIRED
+        elif returned == update.READ_ERROR:
+            print '-> ' + strings.UPDATE_APPSNAP_FAILED + ' - ' + strings.UNABLE_TO_READ_APPSNAP
+        elif returned == update.WRITE_ERROR:
+            print '-> ' + strings.UPDATE_APPSNAP_FAILED + ' - ' + strings.UNABLE_TO_WRITE_APPSNAP
+        elif returned == update.DOWNLOAD_FAILURE:
+            print '-> ' + strings.UPDATE_APPSNAP_FAILED + ' - ' + strings.DOWNLOAD_FAILED
+            
         sys.exit(defines.ERROR_SUCCESS)
         
     # Dump application database in wiki format if requested

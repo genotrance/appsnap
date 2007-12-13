@@ -6,8 +6,10 @@ import os.path
 import process
 import re
 import strings
+import sys
 import threading
 import time
+import update
 import version
 import widgets
 import wx
@@ -228,20 +230,20 @@ schema = """
       - method : CopyFromIcon
         icon : ~uninstallicon
 
-    - name : dbupdateicon
+    - name : updateicon
       type : wx.Icon
       ^name : '%%systemroot%%\system32\shell32.dll;35'
       ^type : wx.BITMAP_TYPE_ICO
       desiredWidth: 16
       desiredHeight: 16
 
-    - name : dbupdatebmp
+    - name : updatebmp
       type : wx.EmptyBitmap
       width : 16
       height : 16
       methods:
       - method : CopyFromIcon
-        icon : ~dbupdateicon
+        icon : ~updateicon
 
     - name : reloadicon
       type : wx.Icon
@@ -470,7 +472,7 @@ class Events:
             - name : toolbar
               method : AddLabelTool
               id : -1
-              bitmap : ~dbupdatebmp
+              bitmap : ~updatebmp
               label : "%s"
               shortHelp : "%s"
 
@@ -513,7 +515,7 @@ class Events:
                strings.INSTALL, strings.INSTALL_DESCRIPTION,
                strings.UPGRADE, strings.UPGRADE_DESCRIPTION,
                strings.UNINSTALL, strings.UNINSTALL_DESCRIPTION,
-               strings.UPDATE_DB, strings.UPDATE_DB_DESCRIPTION,
+               strings.UPDATE_APPSNAP, strings.UPDATE_APPSNAP_DESCRIPTION,
                strings.RELOAD, strings.RELOAD_DESCRIPTION,
                strings.REPORT_BUG, strings.REPORT_BUG_DESCRIPTION,
                strings.HELP, strings.HELP_DESCRIPTION
@@ -524,7 +526,7 @@ class Events:
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[5].GetId(), self.do_install)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[7].GetId(), self.do_upgrade)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[9].GetId(), self.do_uninstall)
-        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[13].GetId(), self.do_db_update)
+        wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[13].GetId(), self.do_update)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[15].GetId(), self.do_reload)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[19].GetId(), self.do_report)
         wx.EVT_MENU(self.resources['gui'].objects['frame'], retval[21].GetId(), self.do_help)
@@ -960,10 +962,10 @@ class Events:
     def do_upgrade(self, event):
         self.do_threaded_action(process.ACT_UPGRADE)
 
-    # Update database
-    def do_db_update(self, event):
+    # Update AppSnap and database
+    def do_update(self, event):
         # Action name
-        action = strings.UPDATING_DATABASE
+        action = strings.UPDATING_APPSNAP
         
         # Disable GUI
         self.disable_gui()
@@ -971,42 +973,25 @@ class Events:
         # Update statusbar
         self.update_status_bar(action, strings.DOWNLOADING + ' ...')
 
-        # Download latest DB.ini
-        remote = self.curl_instance.get_web_data(self.configuration.database[config.LOCATION] + '/?version=' + version.APPVERSION)
-        time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
+        # Perform the update
+        update_obj = update.update(self.configuration, self.curl_instance)
+        returned = update_obj.update_appsnap()
         
-        # If download failed
-        if remote == None:
-            return self.error_out(action, strings.DOWNLOAD_FAILED)
-
-        # Compare with existing DB
-        self.update_status_bar(action, strings.COMPARING + ' ...')
-        local = open(config.DB_INI, 'rb').read()
-        time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
-
-        if local != remote:
-            # Update the DB file
-            self.update_status_bar(action, strings.UPDATING_LOCAL_DATABASE + ' ...')
-            try:
-                db = open(config.DB_INI, 'wb')
-                db.write(remote)
-                db.close()
-                time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
-
-                # Reload settings
-                self.update_status_bar(action, strings.RELOADING_DATABASE + ' ...')
-                self.setup()
-                time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
-                self.update_status_bar(action, strings.DONE)
-                self.configuration.copy_database_to_cache(True)
-                time.sleep(defines.SLEEP_GUI_DB_UPDATE_DONE)
-            except IOError:
-                self.update_status_bar(action, strings.UNABLE_TO_WRITE_DB_INI)
-                time.sleep(defines.SLEEP_GUI_DB_UPDATE_DONE)
-        else:
-            # No change found
+        if returned == update.SUCCESS:
+            self.update_status_bar(action, strings.RELOADING_APPSNAP + ' ...')
+            time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
+            self.do_restart()
+        elif returned == update.UNCHANGED:
             self.update_status_bar(action, strings.NO_CHANGES_FOUND)
-            time.sleep(defines.SLEEP_GUI_DB_UPDATE_DONE)
+            time.sleep(defines.SLEEP_GUI_DB_UPDATE_STEP)
+        elif returned == update.NEW_BUILD:
+            return self.error_out(action, strings.NEW_BUILD_REQUIRED)
+        elif returned == update.READ_ERROR:
+            return self.error_out(action, strings.UNABLE_TO_READ_APPSNAP)
+        elif returned == update.WRITE_ERROR:
+            return self.error_out(action, strings.UNABLE_TO_WRITE_APPSNAP)
+        elif returned == update.DOWNLOAD_FAILURE:
+            return self.error_out(action, strings.DOWNLOAD_FAILED)
 
         # Reset the GUI
         self.update_status_bar('', '')
@@ -1034,3 +1019,18 @@ class Events:
         if os.path.exists('appsnap.html'):
             try: os.startfile('appsnap.html')
             except WindowsError: pass
+            
+    # Restart AppSnap
+    def do_restart(self):
+        self.resources['gui'].objects['frame'].Destroy()
+        args = sys.argv[:]
+        if args[0][-4:] == '.exe':
+            binary = args.pop(0)
+        else:
+            args.insert(0, sys.executable)
+            binary = sys.executable
+            
+        if sys.platform == 'win32':
+            args = ['"%s"' % arg for arg in args]
+        
+        os.execv(binary, args)
