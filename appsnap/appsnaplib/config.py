@@ -34,6 +34,7 @@ CACHE_LOCATION = 'cache_location'
 CACHE_TIMEOUT  = 'cache_timeout'
 DATABASE       = 'database'
 LOCATION       = 'location'
+UPDATE         = 'update'
 NETWORK        = 'network'
 DOWNLOAD       = 'download'
 
@@ -59,13 +60,21 @@ class config:
         self.lock = threading.Lock()
         
         # Load the database information
-        self.db = ConfigParser.SafeConfigParser()
-        self.db.readfp(open(DB_INI))
+        try:
+            self.db = ConfigParser.SafeConfigParser()
+            self.db.read(DB_INI)
+        except ConfigParser.MissingSectionHeaderError:
+            print strings.APPSNAP_DATABASE_CORRUPT + '\n'
+            pass
 
         # Load the user database information
-        self.userdb = ConfigParser.SafeConfigParser()
-        self.userdb.read(USERDB_INI)
-        self.merge_user_db()
+        try:
+            self.userdb = ConfigParser.SafeConfigParser()
+            self.userdb.read(USERDB_INI)
+            self.merge_user_db()
+        except ConfigParser.MissingSectionHeaderError:
+            print strings.USER_DATABASE_CORRUPT + '\n'
+            pass
 
         # Load the user configuration
         self.config = ConfigParser.SafeConfigParser()
@@ -74,6 +83,7 @@ class config:
         self.user = self.convert_to_hash(self.config.items(USER))
         self.cache = self.convert_to_hash(self.config.items(CACHE))
         self.database = self.convert_to_hash(self.config.items(DATABASE))
+        self.update = self.convert_to_hash(self.config.items(UPDATE))
         self.network = self.convert_to_hash(self.config.items(NETWORK))
         
         # Remove file: from cache location if specified
@@ -204,6 +214,7 @@ class config:
             if string == '' or (string != '' and section.lower().find(string.lower()) != -1):
                 items = self.get_section_items(section)
                 if items == None: items = self.get_arp_section_items(section)
+                if items == None: continue
                 if category == '' or (category == items[process.APP_CATEGORY]):
                     print strings.APPLICATION + ' : ' + re.sub(ARP_ID, '', section)
                     if items[process.APP_DESCRIBE] != '':
@@ -306,10 +317,11 @@ class config:
                 
     # Copy database to cache directory
     def copy_database_to_cache(self, overwrite=False):
-        cached_db = os.path.join(self.cache[CACHE_LOCATION], DB_INI)
-        self.create_cache_directory()
-        if not os.path.exists(cached_db) or overwrite == True or filecmp.cmp(DB_INI, cached_db) == False:
-            shutil.copy(DB_INI, cached_db)
+        if os.path.exists(DB_INI):
+            cached_db = os.path.join(self.cache[CACHE_LOCATION], DB_INI)
+            self.create_cache_directory()
+            if not os.path.exists(cached_db) or overwrite == True or filecmp.cmp(DB_INI, cached_db) == False:
+                shutil.copy(DB_INI, cached_db)
 
     # Check if a section has all the expected fields
     def check_section_items(self, section, items):

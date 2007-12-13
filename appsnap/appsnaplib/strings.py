@@ -17,6 +17,7 @@ ALL = _('All')
 APPLICATION = _('Application')
 APPLICATION_NAME_DESCRIPTION = _('Application names, comma separated or * to filter')
 APPLICATION_SPECIFIC_FUNCTIONS = _('Application specific functions')
+APPSNAP_DATABASE_CORRUPT = _('AppSnap database corrupt. Update AppSnap to restore the database.')
 AVAILABLE_CATEGORIES = _('Available Categories')
 
 ##
@@ -97,6 +98,7 @@ MISSING_VERSION_WHEN_SCRAPE = _("Missing key 'version' when 'scrape' specified")
 ##
 
 NAME = _('Name')
+NEW_BUILD_REQUIRED = _('New AppSnap build required. Please update using installer.')
 NO_CHANGES_FOUND = _('No changes found')
 NO_SUCH_APPLICATION = _('No such application')
 NOT_AVAILABLE = _('Not available')
@@ -111,6 +113,7 @@ PROXY_AUTHENTICATION_FAILED = _('Proxy authentication failed. Check config.ini')
 ##
 
 RELOAD = _('Reload')
+RELOADING_APPSNAP = _('Reloading AppSnap')
 RELOADING_DATABASE = _('Reloading database')
 RELOAD_DESCRIPTION = _('Reload configuration')
 REMOVABLE = _('Removable')
@@ -133,26 +136,27 @@ THIS_HELP_SCREEN = _('This help screen')
 
 ##
 
-UNABLE_TO_WRITE_DB_INI = _('Unable to write to db.ini')
+UNABLE_TO_READ_APPSNAP = _('Unable to read AppSnap files')
+UNABLE_TO_WRITE_APPSNAP = _('Unable to write to AppSnap files')
 UNCAUGHT_EXCEPTION = _('A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience.')
 UNINSTALL = _('Uninstall')
 UNINSTALLING = _('Uninstalling')
 UNINSTALL_DESCRIPTION = _('Uninstall selected applications')
 UNINSTALL_FAILED = _('Uninstall failed')
 UNINSTALL_SUCCEEDED = _('Uninstall succeeded')
-UPDATE_DATABASE_FAILED = _('Update database failed')
-UPDATE_DATABASE_SUCCEEDED = _('Update database succeeded')
-UPDATE_DB = _('Update DB')
-UPDATE_DB_DESCRIPTION = _('Update application database')
-UPDATE_IMPLICATION = _('implies -i, -x if not upgradeable')
-UPDATING_DATABASE = _('Updating database')
-UPDATING_LOCAL_DATABASE = _('Updating local database')
+UPDATE_APPSNAP_FAILED = _('AppSnap update failed')
+UPDATE_APPSNAP_SUCCEEDED = _('AppSnap update succeeded')
+UPDATE_APPSNAP = _('Update')
+UPDATE_APPSNAP_DESCRIPTION = _('Update AppSnap and database')
+UPGRADE_IMPLICATION = _('implies -i, -x if not upgradeable')
+UPDATING_APPSNAP = _('Updating AppSnap')
 UPGRADE = _('Upgrade')
 UPGRADEABLE = _('Upgradeable')
 UPGRADE_DESCRIPTION = _('Upgrade selected applications')
 UPGRADE_FAILED = _('Upgrade failed')
 UPGRADE_SUCCEEDED = _('Upgrade succeeded')
 UPGRADING = _('Upgrading')
+USER_DATABASE_CORRUPT = _('User database corrupt. Check userdb.ini syntax.')
 
 ##
 

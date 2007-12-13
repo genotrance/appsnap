@@ -7,15 +7,27 @@ BLDVERSION = '1.3.3'
 
 # Files in the AppSnap Library
 FILES = [
-        'cli'
-        'config',
-        'curl',
-        'defines',
-        'gui',
-        'guisetup',
-        'makegui',
-        'process',
-        'strings',
-        'version',
-        'widgets'
+        '__init__.py',
+        'cli.py',
+        'config.py',
+        'curl.py',
+        'defines.py',
+        'gui.py',
+        'guisetup.py',
+        'makegui.py',
+        'process.py',
+        'strings.py',
+        'update.py',
+        'version.py',
+        'widgets.py'
         ]
+
+# Locales supported by AppSnap
+LOCALES = [
+           'bg',
+           'da',
+           'de',
+           'en',
+           'fr',
+           'ru'
+           ]
