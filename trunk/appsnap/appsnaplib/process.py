@@ -20,6 +20,8 @@ ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
 DELIMITERS                 = '[._-]'
 VERSION                    = '#VERSION#'
 MAJOR_VERSION              = '#MAJOR_VERSION#'
+MINOR_VERSION              = '#MINOR_VERSION#'
+SUB_VERSION                = '#SUB_VERSION#'
 MAJORMINOR_VERSION         = '#MAJORMINOR_VERSION#'
 MAJORMINORSUB_VERSION      = '#MAJORMINORSUB_VERSION#'
 DOTLESS_VERSION            = '#DOTLESS_VERSION#'
@@ -125,7 +127,7 @@ class process:
             if self.app_config[APP_INSTVERSION] == USE_UNINSTALL:
                 uninstall_key, matchobj = self.parse_uninstall_entry()
                 if uninstall_key != '' and matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
-                    self.installedversion = matchobj.groups()[0]
+                    self.installedversion = self.handle_multipart_versions([matchobj.groups()], APP_UNINSTALL)[0]
             else:
                 command = self.app_config[APP_INSTVERSION].split(':')
                 if len(command) == 2 and command[0] == REGISTRY_SEARCH:
@@ -133,9 +135,13 @@ class process:
                     if uninstall_key != '':
                         value = command[1].split('=')
                         if len(value) == 2:
-                            self.installedversion = self.global_config.registry_search_installed_version(uninstall_key, value[0], value[1])
+                            matchobj = self.global_config.registry_search_installed_version(uninstall_key, value[0], value[1])
                         else:
-                            self.installedversion = self.global_config.registry_search_installed_version(uninstall_key, value[0], '')
+                            matchobj = self.global_config.registry_search_installed_version(uninstall_key, value[0], '')
+                        if matchobj != '':
+                            self.installedversion = self.handle_multipart_versions([matchobj.groups()], APP_INSTVERSION)[0]
+                        else:
+                            self.installedversion = ''
         else:
             # Get installed version from file
             installed_version = self.global_config.get_installed_version(self.app)
@@ -448,13 +454,17 @@ class process:
             if self.latestversion == None or self.latestversion == strings.NOT_AVAILABLE: return string
             version = self.latestversion
         elif version == '': return string
-
+        
         # Create the versions
         try: major_version = re.findall('^([0-9]+)', version)[0]
         except IndexError: major_version = version
-        try: majorminor_version = re.findall('^([0-9]+[._-][0-9]+).*', version)[0]
+        try: minor_version = re.findall('^([0-9]+)' + DELIMITERS + '([0-9]+).*', version)[0][1]
+        except IndexError: minor_version = ''
+        try: sub_version = re.findall('^([0-9]+)' + DELIMITERS + '([0-9]+)' + DELIMITERS + '([0-9]+).*', version)[0][2]
+        except IndexError: sub_version = ''
+        try: majorminor_version = re.findall('^([0-9]+' + DELIMITERS + '[0-9]+).*', version)[0]
         except IndexError: majorminor_version = version
-        try: majorminorsub_version = re.findall('^([0-9]+[._-][0-9]+[._-][0-9]+).*', version)[0]
+        try: majorminorsub_version = re.findall('^([0-9]+' + DELIMITERS + '[0-9]+' + DELIMITERS + '[0-9]+).*', version)[0]
         except IndexError: majorminorsub_version = version
         dotless_version = re.sub(DELIMITERS, '', version)
         dashtodot_version = re.sub('-', '.', version)
@@ -464,6 +474,8 @@ class process:
         # Replace in the specified string
         string = re.sub(VERSION, version, string)
         string = re.sub(MAJOR_VERSION, major_version, string)
+        string = re.sub(MINOR_VERSION, minor_version, string)
+        string = re.sub(SUB_VERSION, sub_version, string)
         string = re.sub(MAJORMINOR_VERSION, majorminor_version, string)
         string = re.sub(MAJORMINORSUB_VERSION, majorminorsub_version, string)
         string = re.sub(DOTLESS_VERSION, dotless_version, string)
@@ -477,6 +489,8 @@ class process:
     def replace_version_with_mask(self, string):
         string = re.sub(VERSION, '*', string)
         string = re.sub(MAJOR_VERSION, '*', string)
+        string = re.sub(MINOR_VERSION, '*', string)
+        string = re.sub(SUB_VERSION, '*', string)
         string = re.sub(MAJORMINOR_VERSION, '*', string)
         string = re.sub(MAJORMINORSUB_VERSION, '*', string)
         string = re.sub(DOTLESS_VERSION, '*', string)
@@ -501,21 +515,21 @@ class process:
         web_data = self.curl_instance.get_web_data(self.app_config[APP_SCRAPE])
         if web_data == None: return None
 
-        versions = re.findall(self.app_config[APP_VERSION], web_data)
-        if len(versions) and type(versions[0]) == types.TupleType:
-            # Multipart versions, get delimiters if any
-            delimiters = self.get_multipart_version_delimiters(self.app_config[APP_VERSION])
-            
-            # Combine with delimiters
-            for i in range(len(versions)):
-                combined_version = ''
-                for j in range(len(versions[i])):
-                    combined_version += versions[i][j]
-                    if j < len(delimiters):
-                        combined_version += delimiters[j]
-                versions[i] = combined_version
+        versions = re.findall(self.app_config[APP_VERSION], web_data, re.DOTALL)
+        versions = self.handle_multipart_versions(versions, APP_VERSION)
 
         # Return a list of potential versions
+        return versions
+    
+    # Handle multipart versions
+    def handle_multipart_versions(self, versions, version_key):
+        if len(versions) and type(versions[0]) == types.TupleType:
+            # Multipart versions, get delimiters if any
+            delimiters = self.get_multipart_version_delimiters(self.app_config[version_key])
+            
+            # Combine with delimiters
+            versions = self.combine_multipart_version_with_delimiters(versions, delimiters)
+
         return versions
     
     # Get multipart version delimiters from application version regex
@@ -527,6 +541,19 @@ class process:
             for s in delimiter:
                 delimiter_array.append(s)
         return delimiter_array
+
+    # Combine version parts with delimiters
+    def combine_multipart_version_with_delimiters(self, versions, delimiters):
+        # Combine with delimiters
+        for i in range(len(versions)):
+            combined_version = ''
+            for j in range(len(versions[i])):
+                combined_version += versions[i][j]
+                if j < len(delimiters):
+                    combined_version += delimiters[j]
+            versions[i] = combined_version
+            
+        return versions
 
     # Split the versions into separate columns
     def get_split_versions(self):
@@ -563,7 +590,7 @@ class process:
         letters = re.findall('[a-z]', version)
 
         # Convert version to a number without the letters
-        nversion = string.atoi(re.sub('[a-z]', '0', version))
+        nversion = string.atoi(re.sub('[ a-z]', '0', version))
 
         # Convert the letters into a numeric value
         decimal = 0.0

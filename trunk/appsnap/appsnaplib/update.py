@@ -33,7 +33,7 @@ APPSNAPLIB_DIR = 'appsnaplib'
 LOCALE_DIR = 'locale'
 
 # Update AppSnap and database
-class update():
+class update:
     # Constructor
     def __init__(self, configuration, curl_instance):
         # Initialize

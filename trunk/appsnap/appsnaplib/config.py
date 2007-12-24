@@ -458,7 +458,7 @@ class config:
         if subvalue != '':
             matchobj = re.match(value, subvalue)
             if matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
-                return matchobj.groups()[0]
+                return matchobj
             
         return ''
     
