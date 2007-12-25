@@ -240,14 +240,18 @@ def appsnap_start():
     # Dump application database in wiki format if requested
     if wikidump == True:
         categories = configuration.get_categories()
+        num_sections = 0
         for category in categories:
-            print "!!!" + category
             sections = configuration.get_sections_by_category(category)
+            num_sections += len(sections)
+            print "!!!" + category + " (" + len(sections).__str__() + ")"
             
             for section in sections:
                 items = configuration.get_section_items(section)
                 
-                print "* [[" + section + "|" + items[process.APP_WEBSITE] + "]] - \"\"\"" + items[process.APP_DESCRIBE] + "\"\"\"" 
+                print "* [[" + section + "|" + items[process.APP_WEBSITE] + "]] - \"\"\"" + items[process.APP_DESCRIBE] + "\"\"\""
+                
+        print "!!!Total: " + num_sections.__str__() + " applications in " + len(categories).__str__() + " categories" 
         sys.exit(defines.ERROR_SUCCESS)
 
     # Figure out applications selected
