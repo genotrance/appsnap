@@ -77,7 +77,6 @@ Section "Installer" SEC01
   ; Copy install files
   SetOutPath "$INSTDIR"
   File "${INSTALLATION_FILES_LOCATION}\*.*"
-  File "appsnap-${PRODUCT_VERSION}.zip"
 
   ; Copy appsnaplib
   SetOutPath "$INSTDIR\appsnaplib"
@@ -131,7 +130,6 @@ Section Uninstall
   Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\*.log"
   Delete "$INSTDIR\*.lib"
-  Delete "$INSTDIR\*.zip"
   Delete "$INSTDIR\db.ini"
   Delete "$INSTDIR\config.ini"
   RMDir "$INSTDIR"
