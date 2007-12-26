@@ -12,8 +12,9 @@ import version
 
 # Return codes
 SUCCESS = 0
-UNCHANGED = 1
-NEW_BUILD = 2
+CHANGED = 1
+UNCHANGED = 2
+NEW_BUILD = 3
 
 READ_ERROR = -1
 WRITE_ERROR = -2
@@ -35,10 +36,11 @@ LOCALE_DIR = 'locale'
 # Update AppSnap and database
 class update:
     # Constructor
-    def __init__(self, configuration, curl_instance):
+    def __init__(self, configuration, curl_instance, check_only=False):
         # Initialize
         self.configuration = configuration
         self.curl_instance = curl_instance
+        self.check_only = check_only
         
     # Download remote DBs and concatenate
     def download_database(self):
@@ -83,6 +85,9 @@ class update:
             return DOWNLOAD_FAILURE
         
         if local_db_data != remote_db_data:
+            if self.check_only == True:
+                return CHANGED
+
             # Update the DB file
             try:
                 local_db = open(config.DB_INI, 'wb')
@@ -143,6 +148,9 @@ class update:
         
         # Update modules since something changed
         if changed == True:
+            if self.check_only == True:
+                return CHANGED
+
             for file in files:
                 # Create directory if missing
                 dir = os.path.dirname(appsnaplib[file][TARGET])
@@ -214,6 +222,9 @@ class update:
                 
         # Update locales since something has changed
         if changed == True:
+            if self.check_only == True:
+                return CHANGED
+
             for locale in locales:
                 # Create directory if missing
                 dir = os.path.dirname(locale_data[locale][POTARGET])
@@ -255,7 +266,6 @@ class update:
         # Check if any components changed or added
         changed = False
         for misc in miscs:
-            print misc
             misc_data[misc][TARGET] = misc
             if os.path.exists(misc_data[misc][TARGET]):
                 # Get local data
@@ -276,6 +286,9 @@ class update:
                 
         # Update misc components since something has changed
         if changed == True:
+            if self.check_only == True:
+                return CHANGED
+
             for misc in miscs:
                 print misc
                 # Create directory if missing

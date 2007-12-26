@@ -24,6 +24,8 @@ AVAILABLE_CATEGORIES = _('Available Categories')
 
 CANCEL = _('Cancel')
 CATEGORY = _('Category')
+CHECK_ONLY = _('Only check for updates')
+CHECKING_FOR_UPDATES = _('Checking for AppSnap updates')
 COMPARING = _('Comparing')
 
 ##
@@ -149,6 +151,7 @@ UPDATE_APPSNAP_SUCCEEDED = _('AppSnap update succeeded')
 UPDATE_APPSNAP = _('Update')
 UPDATE_APPSNAP_DESCRIPTION = _('Update AppSnap and database')
 UPGRADE_IMPLICATION = _('implies -i, -x if not upgradeable')
+UPDATES_FOUND = _('AppSnap updates found')
 UPDATING_APPSNAP = _('Updating AppSnap')
 UPGRADE = _('Upgrade')
 UPGRADEABLE = _('Upgradeable')
