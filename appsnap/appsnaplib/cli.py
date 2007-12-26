@@ -34,6 +34,7 @@ help = header + """
    -f <%s>\t%s
    -s <%s>\t\t%s
 -U\t\t\t%s
+   -t\t\t\t%s
 
 %s
 -n <%s>\t\t%s
@@ -56,6 +57,7 @@ help = header + """
        strings.STRING,
        strings.FILTER_LIST_BY_STRING,
        strings.UPDATE_APPSNAP_DESCRIPTION,
+       strings.CHECK_ONLY,
        strings.APPLICATION_SPECIFIC_FUNCTIONS,
        strings.NAME,
        strings.APPLICATION_NAME_DESCRIPTION,
@@ -218,12 +220,16 @@ def appsnap_start():
 
     # Update AppSnap if requested
     if updateall == True:
-        print '-> ' + strings.UPDATING_APPSNAP
-        update_obj = update.update(configuration, curl_instance)
+        check_only = test
+        if check_only == False: print '-> ' + strings.UPDATING_APPSNAP
+        else: print '-> ' + strings.CHECKING_FOR_UPDATES
+        update_obj = update.update(configuration, curl_instance, check_only)
         returned = update_obj.update_appsnap()
         
         if returned == update.SUCCESS:
             print '-> ' + strings.UPDATE_APPSNAP_SUCCEEDED
+        elif returned == update.CHANGED:
+            print '-> ' + strings.UPDATES_FOUND
         elif returned == update.UNCHANGED:
             print '-> ' + strings.NO_CHANGES_FOUND
         elif returned == update.NEW_BUILD:
