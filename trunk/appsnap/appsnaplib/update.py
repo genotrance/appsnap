@@ -225,7 +225,6 @@ class update:
                 
                 # Update locale contents
                 if locale_data[locale][CHANGED] == True:
-                    print "UP " + locale
                     # Put remote data
                     try:
                         fp = open(locale_data[locale][POTARGET], 'wb')
@@ -234,6 +233,65 @@ class update:
     
                         fp = open(locale_data[locale][MOTARGET], 'wb')
                         fp.write(locale_data[locale][MODATA])
+                        fp.close()
+                    except IOError:
+                        return WRITE_ERROR
+                    
+            return SUCCESS
+        
+        return UNCHANGED
+    
+    # Download, compare and update misc components
+    def update_miscs(self, version_url, miscs):
+        # Download misc
+        misc_data = {}
+        for misc in miscs:
+            misc_data[misc] = {}
+            misc_data[misc][CHANGED] = False
+            misc_data[misc][DATA] = self.curl_instance.get_web_data(version_url + '/' + misc)
+            if misc_data[misc][DATA] == None:
+                return DOWNLOAD_FAILURE 
+            
+        # Check if any components changed or added
+        changed = False
+        for misc in miscs:
+            print misc
+            misc_data[misc][TARGET] = misc
+            if os.path.exists(misc_data[misc][TARGET]):
+                # Get local data
+                try:
+                    fp = open(misc_data[misc][TARGET], 'rb')
+                    data = fp.read()
+                    fp.close()
+                except IOError:
+                    return READ_ERROR
+            
+                # Compare with remote data
+                if misc_data[misc][DATA] != data:
+                    misc_data[misc][CHANGED] = True
+                    changed = True
+            else:
+                misc_data[misc][CHANGED] = True
+                changed = True
+                
+        # Update misc components since something has changed
+        if changed == True:
+            for misc in miscs:
+                print misc
+                # Create directory if missing
+                dir = os.path.dirname(misc_data[misc][TARGET])
+                if not os.path.exists(dir):
+                    try:
+                        os.makedirs(dir)
+                    except:
+                        pass
+                
+                # Update contents
+                if misc_data[misc][CHANGED] == True:
+                    # Put remote data
+                    try:
+                        fp = open(misc_data[misc][TARGET], 'wb')
+                        fp.write(misc_data[misc][DATA])
                         fp.close()
                     except IOError:
                         return WRITE_ERROR
@@ -257,9 +315,6 @@ class update:
         except:
             return DOWNLOAD_FAILURE
         
-        FILES = version.FILES
-        LOCALES = version.LOCALES
-        
         # Check minimum build version
         if BLDVERSION > version.BLDVERSION:
             return NEW_BUILD
@@ -274,6 +329,11 @@ class update:
 
         # Update locales        
         ret = self.update_locales(version_url, LOCALES)
+        if ret not in [SUCCESS, UNCHANGED]: return ret
+        returned.append(ret)
+        
+        # Update misc components
+        ret = self.update_miscs(version_url, MISC)
         if ret not in [SUCCESS, UNCHANGED]: return ret
         returned.append(ret)
         

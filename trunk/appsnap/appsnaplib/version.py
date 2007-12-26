@@ -31,3 +31,8 @@ LOCALES = [
            'fr',
            'ru'
            ]
+
+# Other components to update
+MISC = [
+        'appsnap.html'
+        ]
