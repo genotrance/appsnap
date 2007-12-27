@@ -390,8 +390,6 @@ class Events:
 
         # Initialize
         if self.init == False:
-            self.init = True
-            
             # Clear toolbar
             self.create_toolbar()
             
@@ -409,6 +407,38 @@ class Events:
         self.initialize_section_list()
         self.update_section_list(config.ALL)
         self.update_status_bar('', '')
+
+        # Check for updates
+        if self.init == False:
+            self.init = True
+            
+            child = threading.Thread(target=self.check_update)
+            child.setDaemon(True)
+            child.start()
+    
+    def check_update(self):
+        if self.configuration.update[config.STARTUP_CHECK] == 'True':
+            # Disable GUI
+            self.disable_gui()
+
+            # Yield for section list to load
+            self.resources['gui'].objects['application'].Yield(True)
+            
+            # Set statusbar text
+            self.update_status_bar(strings.CHECKING_FOR_UPDATES, '')
+            
+            # Check for update
+            update_obj = update.update(self.configuration, self.curl_instance, True)
+            returned = update_obj.update_appsnap()
+            
+            # Notify user of changes
+            if returned == update.CHANGED:
+                self.update_status_bar(strings.UPDATES_AVAILABLE, strings.CLICK_FOR_UPDATE)
+            else:
+                self.update_status_bar('', '')
+
+            # Disable GUI
+            self.enable_gui()
 
     # Create the toolbar
     def create_toolbar(self):

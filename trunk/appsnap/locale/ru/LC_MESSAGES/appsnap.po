@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-11-08 17:31-0600\n"
+"PO-Revision-Date: 2007-12-26 23:14-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -12,423 +12,455 @@ msgstr ""
 "X-Poedit-Basepath: ..\\..\\..\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: strings.py:16
+#: appsnaplib/strings.py:16
 msgid "All"
 msgstr "Все"
 
-#: strings.py:17
+#: appsnaplib/strings.py:17
 msgid "Application"
 msgstr "Приложение"
 
-#: strings.py:18
+#: appsnaplib/strings.py:18
 msgid "Application names, comma separated or * to filter"
 msgstr "Названия приложений, разделенные запятыми или символ * для фильтрации"
 
-#: strings.py:19
+#: appsnaplib/strings.py:19
 msgid "Application specific functions"
 msgstr "Функции, специфичные для приложения"
 
-#: strings.py:20
+#: appsnaplib/strings.py:20
+msgid "AppSnap database corrupt. Update AppSnap to restore the database."
+msgstr ""
+
+#: appsnaplib/strings.py:21
 msgid "Available Categories"
 msgstr "Доступные категории"
 
-#: strings.py:24
+#: appsnaplib/strings.py:25
 msgid "Cancel"
 msgstr "Отмена"
 
-#: strings.py:25
+#: appsnaplib/strings.py:26
 msgid "Category"
 msgstr "Категория"
 
-#: strings.py:26
+#: appsnaplib/strings.py:27
+msgid "Only check for updates"
+msgstr ""
+
+#: appsnaplib/strings.py:28
+msgid "Checking for AppSnap updates"
+msgstr ""
+
+#: appsnaplib/strings.py:29
+msgid "Click update to download and install"
+msgstr ""
+
+#: appsnaplib/strings.py:30
 msgid "Comparing"
 msgstr "Сравнение"
 
-#: strings.py:30
+#: appsnaplib/strings.py:34
 msgid "Default"
 msgstr "По умолчанию"
 
-#: strings.py:31
+#: appsnaplib/strings.py:35
 msgid "Description"
 msgstr "Описание"
 
-#: strings.py:32
+#: appsnaplib/strings.py:36
 msgid "Done"
 msgstr "Готово"
 
-#: strings.py:33
+#: appsnaplib/strings.py:37
 msgid "Download"
 msgstr "Скачать"
 
-#: strings.py:34
+#: appsnaplib/strings.py:38
 msgid "Downloaded"
 msgstr "Скачано"
 
-#: strings.py:35
+#: appsnaplib/strings.py:39
 msgid "Downloading"
 msgstr "Закачивается"
 
-#: strings.py:36
+#: appsnaplib/strings.py:40
 msgid "Download cancelled"
 msgstr "Закачка отменена"
 
-#: strings.py:37
+#: appsnaplib/strings.py:41
 msgid "Download selected applications"
 msgstr "Скачать выбранные приложения"
 
-#: strings.py:38
+#: appsnaplib/strings.py:42
 msgid "Download failed"
 msgstr "Ошибка закачки"
 
-#: strings.py:39
+#: appsnaplib/strings.py:43
 msgid "Download succeeded"
 msgstr "Закачка успешно завершена"
 
-#: strings.py:43
+#: appsnaplib/strings.py:47
 msgid "Error"
 msgstr "Ошибка"
 
-#: strings.py:47
+#: appsnaplib/strings.py:51
 msgid "Failed to create cache location"
 msgstr "Ошибка выделения места под кэш"
 
-#: strings.py:48
+#: appsnaplib/strings.py:52
 msgid "Failed to connect"
 msgstr "Не могу соединиться"
 
-#: strings.py:49
+#: appsnaplib/strings.py:53
 msgid "Filter"
 msgstr "Фильтр"
 
-#: strings.py:50
+#: appsnaplib/strings.py:54
 msgid "Filter applications by category"
 msgstr "Фильтровать приложения по категориям"
 
-#: strings.py:51
+#: appsnaplib/strings.py:55
 msgid "Filter applications by string"
 msgstr "Фильтровать приложения по строке"
 
-#: strings.py:52
+#: appsnaplib/strings.py:56
 msgid "Filter list by category"
 msgstr "Список фильтров по категориям"
 
-#: strings.py:53
+#: appsnaplib/strings.py:57
 msgid "Filter list by string"
 msgstr "Список фильтров по строкам"
 
-#: strings.py:57
+#: appsnaplib/strings.py:61
 msgid "Get latest version"
 msgstr "Скачать свежую версию"
 
-#: strings.py:58
+#: appsnaplib/strings.py:62
 msgid "Global functions"
 msgstr "Глобальные функции"
 
-#: strings.py:62
+#: appsnaplib/strings.py:66
 msgid "Help"
 msgstr "Справка"
 
-#: strings.py:63
+#: appsnaplib/strings.py:67
 msgid "Open documentation"
 msgstr "Открыть документацию"
 
-#: strings.py:67
+#: appsnaplib/strings.py:71
 msgid "Install"
 msgstr "Установить"
 
-#: strings.py:68
+#: appsnaplib/strings.py:72
 msgid "Installed"
 msgstr "Установленные"
 
-#: strings.py:69
+#: appsnaplib/strings.py:73
 msgid "Installed Applications"
 msgstr "Установленные приложения"
 
-#: strings.py:70
+#: appsnaplib/strings.py:74
 msgid "Failed to update installed.ini. Is it writable?"
 msgstr "Не могу записать в installed.ini. Доступен ли он для записи?"
 
-#: strings.py:71
+#: appsnaplib/strings.py:75
 msgid "Installed Version"
 msgstr "Установленная версия"
 
-#: strings.py:72
+#: appsnaplib/strings.py:76
 msgid "Installing"
 msgstr "Устанаваливаю"
 
-#: strings.py:73
+#: appsnaplib/strings.py:77
 msgid "Download and install selected applications"
 msgstr "Скачать и установить выбранные приложения"
 
-#: strings.py:74
+#: appsnaplib/strings.py:78
 msgid "Install failed"
 msgstr "Ошибка установки"
 
-#: strings.py:75
+#: appsnaplib/strings.py:79
 msgid "implies -d"
 msgstr "предполагает ключ -d"
 
-#: strings.py:76
+#: appsnaplib/strings.py:80
 msgid "Install succeeded"
 msgstr "Установка успешно завершена"
 
-#: strings.py:80
+#: appsnaplib/strings.py:84
 msgid "Key"
 msgstr "Ключ"
 
-#: strings.py:84
+#: appsnaplib/strings.py:88
 msgid "Failed to update latest.ini. Is it writable?"
 msgstr "Не могу записать в latest.ini. Доступен ли он для записи?"
 
-#: strings.py:85
+#: appsnaplib/strings.py:89
 msgid "Latest Version"
 msgstr "Свежая версия"
 
-#: strings.py:86
+#: appsnaplib/strings.py:90
 msgid "List all application categories"
 msgstr "Список всех категорий приложений"
 
-#: strings.py:87
+#: appsnaplib/strings.py:91
 msgid "List supported applications"
 msgstr "Список поддерживаемых приложений"
 
-#: strings.py:88
+#: appsnaplib/strings.py:92
 msgid "Loading"
 msgstr "Загрузка"
 
-#: strings.py:89
+#: appsnaplib/strings.py:93
 msgid "Loading database"
 msgstr "Перезагружаю базу данных"
 
-#: strings.py:93
+#: appsnaplib/strings.py:97
 msgid "Neither 'scrape' nor 'download' specified"
 msgstr "Не указано ни 'download', ни 'scrape' (ни скачать, ни собрать)"
 
-#: strings.py:94
+#: appsnaplib/strings.py:98
 msgid "Missing section key in db.ini"
 msgstr "Ошибочное имя секции в db.ini"
 
-#: strings.py:95
+#: appsnaplib/strings.py:99
 msgid "Missing key 'version' when 'scrape' specified"
 msgstr "Отсутствует ключ 'version' при указанном 'scrape' (версия, собрать)"
 
-#: strings.py:99
+#: appsnaplib/strings.py:103
 msgid "Name"
 msgstr "Имя"
 
-#: strings.py:100
+#: appsnaplib/strings.py:104
+msgid "New AppSnap build required. Please update using installer."
+msgstr ""
+
+#: appsnaplib/strings.py:105
 msgid "No changes found"
 msgstr "Изменений не обнаружено"
 
-#: strings.py:101
+#: appsnaplib/strings.py:106
 msgid "No such application"
 msgstr "Приложение не найдено"
 
-#: strings.py:102
+#: appsnaplib/strings.py:107
 msgid "Not available"
 msgstr "Недоступно"
 
-#: strings.py:103
+#: appsnaplib/strings.py:108
 msgid "Not Installed"
 msgstr "Не установленые"
 
-#: strings.py:104
+#: appsnaplib/strings.py:109
 msgid "Not Installed Applications"
 msgstr "Неустановленные приложения"
 
-#: strings.py:108
+#: appsnaplib/strings.py:113
 msgid "Processing"
 msgstr "Обработка"
 
-#: strings.py:109
+#: appsnaplib/strings.py:114
 msgid "Proxy authentication failed. Check config.ini"
 msgstr "Неверный логин и/или пароль для прокси. Проверьте config.ini"
 
-#: strings.py:113
+#: appsnaplib/strings.py:118
 msgid "Reload"
 msgstr "Перезагрузка"
 
-#: strings.py:114
+#: appsnaplib/strings.py:119
+msgid "Reloading AppSnap"
+msgstr ""
+
+#: appsnaplib/strings.py:120
 msgid "Reloading database"
 msgstr "Перезагружаю базу данных"
 
-#: strings.py:115
+#: appsnaplib/strings.py:121
 msgid "Reload configuration"
 msgstr "Перезагружаю конфигурацию"
 
-#: strings.py:116
+#: appsnaplib/strings.py:122
 msgid "Removable"
 msgstr "Доступные для удаления"
 
-#: strings.py:117
+#: appsnaplib/strings.py:123
 msgid "Report Bug"
 msgstr "Я нашел ошибку!"
 
-#: strings.py:118
+#: appsnaplib/strings.py:124
 msgid "Report a bug"
 msgstr "Я нашел ошибку!"
 
-#: strings.py:122
+#: appsnaplib/strings.py:128
 msgid "Section"
 msgstr "Секция"
 
-#: strings.py:123
+#: appsnaplib/strings.py:129
 msgid "Starting"
 msgstr "Запуск"
 
-#: strings.py:124
+#: appsnaplib/strings.py:130
 msgid "Status"
 msgstr "Статус"
 
-#: strings.py:125
+#: appsnaplib/strings.py:131
 msgid "String"
 msgstr "Строка"
 
-#: strings.py:126
+#: appsnaplib/strings.py:132
 msgid "Supported Applications"
 msgstr "Поддерживаемые приложения"
 
-#: strings.py:130
+#: appsnaplib/strings.py:136
 msgid "Test download only"
 msgstr "Только проверить возможность скачивания"
 
-#: strings.py:131
+#: appsnaplib/strings.py:137
 msgid "Testing"
 msgstr "Тестирование"
 
-#: strings.py:132
+#: appsnaplib/strings.py:138
 msgid "This help screen"
 msgstr "Этот справочный экран"
 
-#: strings.py:136
-msgid "Unable to write to db.ini"
-msgstr "Не могу записать в db.ini"
+#: appsnaplib/strings.py:142
+msgid "Unable to read AppSnap files"
+msgstr ""
 
-#: strings.py:137
+#: appsnaplib/strings.py:143
+msgid "Unable to write to AppSnap files"
+msgstr ""
+
+#: appsnaplib/strings.py:144
 msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
 msgstr "Произошло фатальная ошибка. Пожалуйста, сообщите о ней сюда: http://code.google.com/p/appsnap/issues/entry . Извините за неудобства, спасибо."
 
-#: strings.py:138
+#: appsnaplib/strings.py:145
 msgid "Uninstall"
 msgstr "Удаление"
 
-#: strings.py:139
+#: appsnaplib/strings.py:146
 msgid "Uninstalling"
 msgstr "Удаляю"
 
-#: strings.py:140
+#: appsnaplib/strings.py:147
 msgid "Uninstall selected applications"
 msgstr "Удалить выбранные приложения"
 
-#: strings.py:141
+#: appsnaplib/strings.py:148
 msgid "Uninstall failed"
 msgstr "Удалить не удалось"
 
-#: strings.py:142
+#: appsnaplib/strings.py:149
 msgid "Uninstall succeeded"
 msgstr "Успешно удален(ы)"
 
-#: strings.py:143
-msgid "Update database failed"
-msgstr "Ошибка обновления базы данных"
+#: appsnaplib/strings.py:150
+msgid "AppSnap update failed"
+msgstr ""
 
-#: strings.py:144
-msgid "Update database succeeded"
-msgstr "База данных успешно обновлена"
+#: appsnaplib/strings.py:151
+msgid "AppSnap update succeeded"
+msgstr ""
 
-#: strings.py:145
-msgid "Update DB"
-msgstr "Обновление базы"
+#: appsnaplib/strings.py:152
+msgid "Update"
+msgstr ""
 
-#: strings.py:146
-msgid "Update application database"
-msgstr "Обновить информацию о приложениях"
+#: appsnaplib/strings.py:153
+msgid "Update AppSnap and database"
+msgstr ""
 
-#: strings.py:147
+#: appsnaplib/strings.py:154
 msgid "implies -i, -x if not upgradeable"
 msgstr "если обновление невозможно, предполагаются ключи -i, -x"
 
-#: strings.py:148
-msgid "Updating database"
-msgstr "Обновление информации о приложениях"
+#: appsnaplib/strings.py:155
+msgid "AppSnap updates available"
+msgstr ""
 
-#: strings.py:149
-msgid "Updating local database"
-msgstr "Обновление локальной базы данных"
+#: appsnaplib/strings.py:156
+msgid "Updating AppSnap"
+msgstr ""
 
-#: strings.py:150
+#: appsnaplib/strings.py:157
 msgid "Upgrade"
 msgstr "Обновить"
 
-#: strings.py:151
+#: appsnaplib/strings.py:158
 msgid "Upgradeable"
 msgstr "Есть обновления"
 
-#: strings.py:152
+#: appsnaplib/strings.py:159
 msgid "Upgrade selected applications"
 msgstr "Обновить выбранные приложения"
 
-#: strings.py:153
+#: appsnaplib/strings.py:160
 msgid "Upgrade failed"
 msgstr "Ошибка обновления"
 
-#: strings.py:154
+#: appsnaplib/strings.py:161
 msgid "Upgrade succeeded"
 msgstr "Успешно обновлено(обновлены)"
 
-#: strings.py:155
+#: appsnaplib/strings.py:162
 msgid "Upgrading"
 msgstr "Обновление"
 
-#: strings.py:159
+#: appsnaplib/strings.py:163
+msgid "User database corrupt. Check userdb.ini syntax."
+msgstr ""
+
+#: appsnaplib/strings.py:167
 msgid "Waiting"
 msgstr "Ожидаю"
 
-#: strings.py:160
+#: appsnaplib/strings.py:168
 msgid "Website"
 msgstr "Веб-страница"
 
-#: strings.py:166
+#: appsnaplib/strings.py:174
 msgid "Build executable using Py2Exe"
 msgstr "Создать исполняемый файл с помощью Py2Exe"
 
-#: strings.py:167
+#: appsnaplib/strings.py:175
 msgid "Build failed."
 msgstr "Ошибка сборки"
 
-#: strings.py:171
+#: appsnaplib/strings.py:179
 msgid "Compress executables using UPX"
 msgstr "Сжимаю программу с помощью UPX"
 
-#: strings.py:172
+#: appsnaplib/strings.py:180
 msgid "Create NSIS package"
 msgstr "Создать NSIS-сборку"
 
-#: strings.py:173
+#: appsnaplib/strings.py:181
 msgid "Create ZIP package"
 msgstr "Создать ZIP-архив"
 
-#: strings.py:177
+#: appsnaplib/strings.py:185
 msgid "NSIS not available"
 msgstr "NSIS недоступен"
 
-#: strings.py:181
+#: appsnaplib/strings.py:189
 msgid "OPTIONS"
 msgstr "НАСТРОЙКИ"
 
-#: strings.py:185
+#: appsnaplib/strings.py:193
 msgid "Rezip shared library using 7-Zip"
 msgstr "Повторно сжать общие библиотеки 7-ZIP'ом."
 
-#: strings.py:189
+#: appsnaplib/strings.py:197
 msgid "7-Zip not available"
 msgstr "7-Zip недоступен"
 
-#: strings.py:193
+#: appsnaplib/strings.py:201
 msgid "UPX not available"
 msgstr "UPX недоступен"
 
-#: strings.py:194
+#: appsnaplib/strings.py:202
 msgid "Usage"
 msgstr "Использование"
 
