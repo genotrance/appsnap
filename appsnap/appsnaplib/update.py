@@ -335,26 +335,26 @@ class update:
         # Save return values
         returned = []
         
-        # Update appsnaplib
-        ret = self.update_appsnaplib(version_url, FILES)
-        if ret not in [SUCCESS, UNCHANGED]: return ret
-        returned.append(ret)
-
-        # Update locales        
-        ret = self.update_locales(version_url, LOCALES)
-        if ret not in [SUCCESS, UNCHANGED]: return ret
-        returned.append(ret)
-        
-        # Update misc components
-        ret = self.update_miscs(version_url, MISC)
-        if ret not in [SUCCESS, UNCHANGED]: return ret
-        returned.append(ret)
-        
         # Update database
         ret = self.update_database()
         if ret not in [SUCCESS, UNCHANGED]: return ret
         returned.append(ret)
 
+        # Update appsnaplib
+        ret = self.update_appsnaplib(version_url, FILES)
+        if ret not in [SUCCESS, UNCHANGED]: return ret
+        returned.append(ret)
+
+        # Update misc components
+        ret = self.update_miscs(version_url, MISC)
+        if ret not in [SUCCESS, UNCHANGED]: return ret
+        returned.append(ret)
+        
+        # Update locales        
+        ret = self.update_locales(version_url, LOCALES)
+        if ret not in [SUCCESS, UNCHANGED]: return ret
+        returned.append(ret)
+        
         # Return SUCCESS if anything changed
         if SUCCESS in returned:
             return SUCCESS

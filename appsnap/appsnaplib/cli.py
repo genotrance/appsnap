@@ -229,7 +229,7 @@ def appsnap_start():
         if returned == update.SUCCESS:
             print '-> ' + strings.UPDATE_APPSNAP_SUCCEEDED
         elif returned == update.CHANGED:
-            print '-> ' + strings.UPDATES_FOUND
+            print '-> ' + strings.UPDATES_AVAILABLE
         elif returned == update.UNCHANGED:
             print '-> ' + strings.NO_CHANGES_FOUND
         elif returned == update.NEW_BUILD:
