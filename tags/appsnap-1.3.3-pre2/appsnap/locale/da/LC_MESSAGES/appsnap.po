@@ -1,0 +1,466 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: AppSnap\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2007-12-26 23:10-0600\n"
+"Last-Translator: \n"
+"Language-Team: Søren Pedersen\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Danish\n"
+"X-Poedit-Basepath: ..\\..\\..\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: appsnaplib/strings.py:16
+msgid "All"
+msgstr "Alle"
+
+#: appsnaplib/strings.py:17
+msgid "Application"
+msgstr "Program"
+
+#: appsnaplib/strings.py:18
+msgid "Application names, comma separated or * to filter"
+msgstr "Program navne, komma separeret eller * for at sortere"
+
+#: appsnaplib/strings.py:19
+msgid "Application specific functions"
+msgstr "Program specifikke funktioner"
+
+#: appsnaplib/strings.py:20
+msgid "AppSnap database corrupt. Update AppSnap to restore the database."
+msgstr ""
+
+#: appsnaplib/strings.py:21
+msgid "Available Categories"
+msgstr "Mulige kategorier"
+
+#: appsnaplib/strings.py:25
+msgid "Cancel"
+msgstr "Annullér"
+
+#: appsnaplib/strings.py:26
+msgid "Category"
+msgstr "Ketegori"
+
+#: appsnaplib/strings.py:27
+msgid "Only check for updates"
+msgstr ""
+
+#: appsnaplib/strings.py:28
+msgid "Checking for AppSnap updates"
+msgstr ""
+
+#: appsnaplib/strings.py:29
+msgid "Click update to download and install"
+msgstr ""
+
+#: appsnaplib/strings.py:30
+msgid "Comparing"
+msgstr "Sammenligner"
+
+#: appsnaplib/strings.py:34
+msgid "Default"
+msgstr "Standard"
+
+#: appsnaplib/strings.py:35
+msgid "Description"
+msgstr "Beskrivelse"
+
+#: appsnaplib/strings.py:36
+msgid "Done"
+msgstr "Færdig"
+
+#: appsnaplib/strings.py:37
+msgid "Download"
+msgstr "Download"
+
+#: appsnaplib/strings.py:38
+msgid "Downloaded"
+msgstr "Downloaded"
+
+#: appsnaplib/strings.py:39
+msgid "Downloading"
+msgstr "Downloader"
+
+#: appsnaplib/strings.py:40
+msgid "Download cancelled"
+msgstr "Download afbrudt"
+
+#: appsnaplib/strings.py:41
+msgid "Download selected applications"
+msgstr "Download valgte programmer"
+
+#: appsnaplib/strings.py:42
+msgid "Download failed"
+msgstr "Kunne ikke downloade"
+
+#: appsnaplib/strings.py:43
+msgid "Download succeeded"
+msgstr "Download gennemført"
+
+#: appsnaplib/strings.py:47
+msgid "Error"
+msgstr "Fejl"
+
+#: appsnaplib/strings.py:51
+msgid "Failed to create cache location"
+msgstr "Kunne ikke oprette cache lokalitet"
+
+#: appsnaplib/strings.py:52
+msgid "Failed to connect"
+msgstr "Kunne ikke få forbindelse"
+
+#: appsnaplib/strings.py:53
+msgid "Filter"
+msgstr "Sorter"
+
+#: appsnaplib/strings.py:54
+msgid "Filter applications by category"
+msgstr "Sorter programmer efter kategori"
+
+#: appsnaplib/strings.py:55
+msgid "Filter applications by string"
+msgstr "Sorter programmer efter søgning"
+
+#: appsnaplib/strings.py:56
+msgid "Filter list by category"
+msgstr "Sorter listen efter kategori"
+
+#: appsnaplib/strings.py:57
+msgid "Filter list by string"
+msgstr "Sorter listen efter søgning"
+
+#: appsnaplib/strings.py:61
+msgid "Get latest version"
+msgstr "Hent nyeste version"
+
+#: appsnaplib/strings.py:62
+msgid "Global functions"
+msgstr "Globale funktioner"
+
+#: appsnaplib/strings.py:66
+msgid "Help"
+msgstr "Hjælp"
+
+#: appsnaplib/strings.py:67
+msgid "Open documentation"
+msgstr "Åbn dokumentation"
+
+#: appsnaplib/strings.py:71
+msgid "Install"
+msgstr "Installér"
+
+#: appsnaplib/strings.py:72
+msgid "Installed"
+msgstr "Installeret"
+
+#: appsnaplib/strings.py:73
+msgid "Installed Applications"
+msgstr "Installerede programmer"
+
+#: appsnaplib/strings.py:74
+msgid "Failed to update installed.ini. Is it writable?"
+msgstr "Kunne ikke opdatere installed.ini. Er den skrivebeskyttet?"
+
+#: appsnaplib/strings.py:75
+msgid "Installed Version"
+msgstr "Installeret version"
+
+#: appsnaplib/strings.py:76
+msgid "Installing"
+msgstr "Installerer"
+
+#: appsnaplib/strings.py:77
+msgid "Download and install selected applications"
+msgstr "Download og installér valgte programmer"
+
+#: appsnaplib/strings.py:78
+msgid "Install failed"
+msgstr "Kunne ikke installere"
+
+#: appsnaplib/strings.py:79
+msgid "implies -d"
+msgstr "antyder -d"
+
+#: appsnaplib/strings.py:80
+msgid "Install succeeded"
+msgstr "Installetion gennemført"
+
+#: appsnaplib/strings.py:84
+msgid "Key"
+msgstr "Nøgle"
+
+#: appsnaplib/strings.py:88
+msgid "Failed to update latest.ini. Is it writable?"
+msgstr "Kunne ikke opdatere  latest.ini.  Er den skrivebeskyttet?"
+
+#: appsnaplib/strings.py:89
+msgid "Latest Version"
+msgstr "Nyeste version"
+
+#: appsnaplib/strings.py:90
+msgid "List all application categories"
+msgstr "Vis alle program kategorier"
+
+#: appsnaplib/strings.py:91
+msgid "List supported applications"
+msgstr "Vis understøttede programmer"
+
+#: appsnaplib/strings.py:92
+msgid "Loading"
+msgstr "Henter"
+
+#: appsnaplib/strings.py:93
+msgid "Loading database"
+msgstr "Henter database"
+
+#: appsnaplib/strings.py:97
+msgid "Neither 'scrape' nor 'download' specified"
+msgstr "Hverken 'scrape' eller 'download' angivet"
+
+#: appsnaplib/strings.py:98
+msgid "Missing section key in db.ini"
+msgstr "Manglende sektionsangivelse i db.ini"
+
+#: appsnaplib/strings.py:99
+msgid "Missing key 'version' when 'scrape' specified"
+msgstr "Manglende 'version' når 'scrape' er specificeret"
+
+#: appsnaplib/strings.py:103
+msgid "Name"
+msgstr "Navn"
+
+#: appsnaplib/strings.py:104
+msgid "New AppSnap build required. Please update using installer."
+msgstr ""
+
+#: appsnaplib/strings.py:105
+msgid "No changes found"
+msgstr "Ingen ændringer fundet"
+
+#: appsnaplib/strings.py:106
+msgid "No such application"
+msgstr "Ingen programmer"
+
+#: appsnaplib/strings.py:107
+msgid "Not available"
+msgstr "Ikke tilgængelig"
+
+#: appsnaplib/strings.py:108
+msgid "Not Installed"
+msgstr "Ikke installeret"
+
+#: appsnaplib/strings.py:109
+msgid "Not Installed Applications"
+msgstr "Ikke installerede programmer"
+
+#: appsnaplib/strings.py:113
+msgid "Processing"
+msgstr "Arbejder"
+
+#: appsnaplib/strings.py:114
+msgid "Proxy authentication failed. Check config.ini"
+msgstr "Proxy authentication mislykkedes. Tjeck config.ini"
+
+#: appsnaplib/strings.py:118
+msgid "Reload"
+msgstr "Indlæs igen"
+
+#: appsnaplib/strings.py:119
+msgid "Reloading AppSnap"
+msgstr ""
+
+#: appsnaplib/strings.py:120
+msgid "Reloading database"
+msgstr "Indlæser database"
+
+#: appsnaplib/strings.py:121
+msgid "Reload configuration"
+msgstr "Indlæser konfiguration"
+
+#: appsnaplib/strings.py:122
+msgid "Removable"
+msgstr "Kan fjernes"
+
+#: appsnaplib/strings.py:123
+msgid "Report Bug"
+msgstr "Rapportér Bug"
+
+#: appsnaplib/strings.py:124
+msgid "Report a bug"
+msgstr "Rapportér en Bug (programfejl)"
+
+#: appsnaplib/strings.py:128
+msgid "Section"
+msgstr "Sektion"
+
+#: appsnaplib/strings.py:129
+msgid "Starting"
+msgstr "Starter"
+
+#: appsnaplib/strings.py:130
+msgid "Status"
+msgstr "Status"
+
+#: appsnaplib/strings.py:131
+msgid "String"
+msgstr "Tekst streng"
+
+#: appsnaplib/strings.py:132
+msgid "Supported Applications"
+msgstr "Understøttede programmer"
+
+#: appsnaplib/strings.py:136
+msgid "Test download only"
+msgstr "Test download"
+
+#: appsnaplib/strings.py:137
+msgid "Testing"
+msgstr "Tester"
+
+#: appsnaplib/strings.py:138
+msgid "This help screen"
+msgstr "Denne \"Hjælp\" skærm"
+
+#: appsnaplib/strings.py:142
+msgid "Unable to read AppSnap files"
+msgstr ""
+
+#: appsnaplib/strings.py:143
+msgid "Unable to write to AppSnap files"
+msgstr ""
+
+#: appsnaplib/strings.py:144
+msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
+msgstr ""
+
+#: appsnaplib/strings.py:145
+msgid "Uninstall"
+msgstr "Afinstallér"
+
+#: appsnaplib/strings.py:146
+msgid "Uninstalling"
+msgstr "Afinstallerer"
+
+#: appsnaplib/strings.py:147
+msgid "Uninstall selected applications"
+msgstr "Afinstallérvalgte programmer"
+
+#: appsnaplib/strings.py:148
+msgid "Uninstall failed"
+msgstr "Afinstallation mislykkedes"
+
+#: appsnaplib/strings.py:149
+msgid "Uninstall succeeded"
+msgstr "Afinstallation gennemført"
+
+#: appsnaplib/strings.py:150
+msgid "AppSnap update failed"
+msgstr ""
+
+#: appsnaplib/strings.py:151
+msgid "AppSnap update succeeded"
+msgstr ""
+
+#: appsnaplib/strings.py:152
+msgid "Update"
+msgstr ""
+
+#: appsnaplib/strings.py:153
+msgid "Update AppSnap and database"
+msgstr ""
+
+#: appsnaplib/strings.py:154
+msgid "implies -i, -x if not upgradeable"
+msgstr "medfører -i, -x hvis det ikke kan opgraderes"
+
+#: appsnaplib/strings.py:155
+msgid "AppSnap updates available"
+msgstr ""
+
+#: appsnaplib/strings.py:156
+msgid "Updating AppSnap"
+msgstr ""
+
+#: appsnaplib/strings.py:157
+msgid "Upgrade"
+msgstr "Opgradér"
+
+#: appsnaplib/strings.py:158
+msgid "Upgradeable"
+msgstr "Kan opgraderes"
+
+#: appsnaplib/strings.py:159
+msgid "Upgrade selected applications"
+msgstr "Opgradér valgte programmer"
+
+#: appsnaplib/strings.py:160
+msgid "Upgrade failed"
+msgstr "Opgradering mislykkedes"
+
+#: appsnaplib/strings.py:161
+msgid "Upgrade succeeded"
+msgstr "Opgradering gennemført"
+
+#: appsnaplib/strings.py:162
+msgid "Upgrading"
+msgstr "Opgraderer"
+
+#: appsnaplib/strings.py:163
+msgid "User database corrupt. Check userdb.ini syntax."
+msgstr ""
+
+#: appsnaplib/strings.py:167
+msgid "Waiting"
+msgstr "Venter"
+
+#: appsnaplib/strings.py:168
+msgid "Website"
+msgstr "Hjemmeside"
+
+#: appsnaplib/strings.py:174
+msgid "Build executable using Py2Exe"
+msgstr "Opret program med Py2Exe"
+
+#: appsnaplib/strings.py:175
+msgid "Build failed."
+msgstr "Kunne ikke oprette Program"
+
+#: appsnaplib/strings.py:179
+msgid "Compress executables using UPX"
+msgstr "Pak programmer med UPX"
+
+#: appsnaplib/strings.py:180
+msgid "Create NSIS package"
+msgstr "Opret NSIS pakke"
+
+#: appsnaplib/strings.py:181
+msgid "Create ZIP package"
+msgstr "Opret ZIP pakke"
+
+#: appsnaplib/strings.py:185
+msgid "NSIS not available"
+msgstr "NSIS er ikke tilgængelig"
+
+#: appsnaplib/strings.py:189
+msgid "OPTIONS"
+msgstr "Indstillinger"
+
+#: appsnaplib/strings.py:193
+msgid "Rezip shared library using 7-Zip"
+msgstr "Zip delt bibliotek igen med 7-Zip"
+
+#: appsnaplib/strings.py:197
+msgid "7-Zip not available"
+msgstr "7-Zip ikke tilgængelig"
+
+#: appsnaplib/strings.py:201
+msgid "UPX not available"
+msgstr "UPX ikke tilgængelig"
+
+#: appsnaplib/strings.py:202
+msgid "Usage"
+msgstr "Brug"
+
