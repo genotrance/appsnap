@@ -170,7 +170,8 @@ class curl:
         if response >= 300:
             # Close and delete download file
             self.download_data[i].close()
-            os.remove(filename)
+            try: os.remove(filename)
+            except WindowsError: pass
 
             # Print the message
             if response == 407: print '\n' + strings.PROXY_AUTHENTICATION_FAILED
@@ -187,7 +188,9 @@ class curl:
         self.free_lock(i)
         
         # Delete file if test mode
-        if test == True: os.remove(filename)
+        if test == True: 
+            try: os.remove(filename)
+            except WindowsError: pass
 
         # Success
         return True

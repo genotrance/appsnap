@@ -233,7 +233,8 @@ class process:
         # Find all older versions
         older_files = glob.glob(filename)
         for older_file in older_files:
-            os.remove(older_file)
+            try: os.remove(older_file)
+            except WindowsError: pass
             if older_file[-3:] == 'zip':
                 self.delete_tree(older_file[:-4])
 
@@ -679,7 +680,8 @@ class process:
             if os.path.isdir(file):
                 self.delete_tree(file)
             else:
-                os.remove(file)
+                try: os.remove(file)
+                except WindowsError: pass
         try: os.rmdir(directory)
         except WindowsError:
             pass
