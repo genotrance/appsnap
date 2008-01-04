@@ -237,7 +237,7 @@ class config:
     def get_installed_version(self, section):
         if self.installed.has_section(section) == True:
             try: return self.installed.get(section, process.APP_VERSION)
-            except NoOptionError: return ''
+            except ConfigParser.NoOptionError: return ''
         return ''
 
     # Save installed version to file

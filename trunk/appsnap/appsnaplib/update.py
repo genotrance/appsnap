@@ -174,7 +174,8 @@ class update:
         for file in glob.glob(APPSNAPLIB_DIR + os.path.sep + '*.py'):
             if os.path.basename(file) not in files:
                 changed = True
-                os.remove(file)
+                try: os.remove(file)
+                except WindowsError: pass
         
         # Return code     
         if changed == True:
