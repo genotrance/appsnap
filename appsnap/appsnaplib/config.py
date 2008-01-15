@@ -236,8 +236,10 @@ class config:
     # Get installed version
     def get_installed_version(self, section):
         if self.installed.has_section(section) == True:
-            try: return self.installed.get(section, process.APP_VERSION)
-            except ConfigParser.NoOptionError: return ''
+            try: version = self.installed.get(section, process.APP_VERSION)
+            except ConfigParser.NoOptionError: version = ''
+            if version == 'Not available': version = strings.NOT_AVAILABLE
+            return version
         return ''
 
     # Save installed version to file
@@ -246,6 +248,7 @@ class config:
         
         if self.installed.has_section(section) == False:
             self.installed.add_section(section)
+        if version == strings.NOT_AVAILABLE: version = 'Not available'
         self.installed.set(section, process.APP_VERSION, version)
         try:
             inifile = open(self.installed_ini, 'w')
