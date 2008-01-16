@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-12-26 23:14-0600\n"
+"PO-Revision-Date: 2008-01-07 23:18-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr "Функции, специфичные для приложения"
 
 #: appsnaplib/strings.py:20
 msgid "AppSnap database corrupt. Update AppSnap to restore the database."
-msgstr ""
+msgstr "Повреждена база данных AppSnap. Обновите AppSnap, чтобы восстановить базу данных."
 
 #: appsnaplib/strings.py:21
 msgid "Available Categories"
@@ -46,15 +46,15 @@ msgstr "Категория"
 
 #: appsnaplib/strings.py:27
 msgid "Only check for updates"
-msgstr ""
+msgstr "Только проверить обновления"
 
 #: appsnaplib/strings.py:28
 msgid "Checking for AppSnap updates"
-msgstr ""
+msgstr "Проверяю обновления AppSnap"
 
 #: appsnaplib/strings.py:29
 msgid "Click update to download and install"
-msgstr ""
+msgstr "Нажмите Обновить, чтобы скачать и установить"
 
 #: appsnaplib/strings.py:30
 msgid "Comparing"
@@ -234,7 +234,7 @@ msgstr "Имя"
 
 #: appsnaplib/strings.py:104
 msgid "New AppSnap build required. Please update using installer."
-msgstr ""
+msgstr "Необходима свежая сборка AppSnap. Пожалуйста, обновите AppSnap с помощью программы установки."
 
 #: appsnaplib/strings.py:105
 msgid "No changes found"
@@ -270,7 +270,7 @@ msgstr "Перезагрузка"
 
 #: appsnaplib/strings.py:119
 msgid "Reloading AppSnap"
-msgstr ""
+msgstr "Перезагрузка AppSnap"
 
 #: appsnaplib/strings.py:120
 msgid "Reloading database"
@@ -278,7 +278,7 @@ msgstr "Перезагружаю базу данных"
 
 #: appsnaplib/strings.py:121
 msgid "Reload configuration"
-msgstr "Перезагружаю конфигурацию"
+msgstr "Перезагрузить конфигурацию"
 
 #: appsnaplib/strings.py:122
 msgid "Removable"
@@ -326,11 +326,11 @@ msgstr "Этот справочный экран"
 
 #: appsnaplib/strings.py:142
 msgid "Unable to read AppSnap files"
-msgstr ""
+msgstr "Не могу прочитать файлы AppSnap"
 
 #: appsnaplib/strings.py:143
 msgid "Unable to write to AppSnap files"
-msgstr ""
+msgstr "Не могу записать файлы AppSnap"
 
 #: appsnaplib/strings.py:144
 msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
@@ -358,19 +358,19 @@ msgstr "Успешно удален(ы)"
 
 #: appsnaplib/strings.py:150
 msgid "AppSnap update failed"
-msgstr ""
+msgstr "Ошибка обновления AppSnap"
 
 #: appsnaplib/strings.py:151
 msgid "AppSnap update succeeded"
-msgstr ""
+msgstr "AppSnap успешно обновлен"
 
 #: appsnaplib/strings.py:152
 msgid "Update"
-msgstr ""
+msgstr "Обновить AppSnap"
 
 #: appsnaplib/strings.py:153
 msgid "Update AppSnap and database"
-msgstr ""
+msgstr "Обновляю AppSnap и базу данных"
 
 #: appsnaplib/strings.py:154
 msgid "implies -i, -x if not upgradeable"
@@ -378,11 +378,11 @@ msgstr "если обновление невозможно, предполага
 
 #: appsnaplib/strings.py:155
 msgid "AppSnap updates available"
-msgstr ""
+msgstr "Готовы обновления для AppSnap"
 
 #: appsnaplib/strings.py:156
 msgid "Updating AppSnap"
-msgstr ""
+msgstr "Обновить AppSnap"
 
 #: appsnaplib/strings.py:157
 msgid "Upgrade"
@@ -410,7 +410,7 @@ msgstr "Обновление"
 
 #: appsnaplib/strings.py:163
 msgid "User database corrupt. Check userdb.ini syntax."
-msgstr ""
+msgstr "Повреждена пользовательская БД. Проверьте синтаксис userdb.ini."
 
 #: appsnaplib/strings.py:167
 msgid "Waiting"
