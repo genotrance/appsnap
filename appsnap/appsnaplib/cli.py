@@ -146,30 +146,32 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
 def appsnap_start():
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:tuUvwx')
+        opts, args = getopt.getopt(sys.argv[1:], 'cdDf:ghiln:s:tuUvwx')
     except getopt.GetoptError:
         print help
         sys.exit(defines.ERROR_GETOPT)
 
     # Set defaults
-    names = None
-    categoryfilter = ''
-    stringfilter = ''
     categories = False
     download = False
+    database_only = False
+    categoryfilter = ''
     getversion = True
     install = False
     list = False
-    upgrade = False
-    uninstall = False
-    updateall = False
-    wikidump = False
-    csvdump = False
+    names = None
+    stringfilter = ''
     test = False
+    upgrade = False
+    updateall = False
+    csvdump = False
+    wikidump = False
+    uninstall = False
 
     for o, a in opts:
         if o == '-c': categories = True
         if o == '-d': download = True
+        if o == '-D': database_only = True
         if o == '-f': categoryfilter = a
         if o == '-g': getversion = True
         if o == '-h':
@@ -226,7 +228,7 @@ def appsnap_start():
         check_only = test
         if check_only == False: print '-> ' + strings.UPDATING_APPSNAP
         else: print '-> ' + strings.CHECKING_FOR_UPDATES
-        update_obj = update.update(configuration, curl_instance, check_only)
+        update_obj = update.update(configuration, curl_instance, check_only, database_only)
         returned = update_obj.update_appsnap()
         
         if returned == update.SUCCESS:
