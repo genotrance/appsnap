@@ -36,11 +36,12 @@ LOCALE_DIR = 'locale'
 # Update AppSnap and database
 class update:
     # Constructor
-    def __init__(self, configuration, curl_instance, check_only=False):
+    def __init__(self, configuration, curl_instance, check_only=False, database_only=False):
         # Initialize
         self.configuration = configuration
         self.curl_instance = curl_instance
         self.check_only = check_only
+        self.database_only = database_only
         
     # Download remote DBs and concatenate
     def download_database(self):
@@ -291,7 +292,6 @@ class update:
                 return CHANGED
 
             for misc in miscs:
-                print misc
                 # Create directory if missing
                 dir = os.path.dirname(misc_data[misc][TARGET])
                 if not os.path.exists(dir):
@@ -341,20 +341,21 @@ class update:
         if ret not in [SUCCESS, UNCHANGED]: return ret
         returned.append(ret)
 
-        # Update appsnaplib
-        ret = self.update_appsnaplib(version_url, FILES)
-        if ret not in [SUCCESS, UNCHANGED]: return ret
-        returned.append(ret)
+        if not self.database_only:
+            # Update appsnaplib
+            ret = self.update_appsnaplib(version_url, FILES)
+            if ret not in [SUCCESS, UNCHANGED]: return ret
+            returned.append(ret)
 
-        # Update misc components
-        ret = self.update_miscs(version_url, MISC)
-        if ret not in [SUCCESS, UNCHANGED]: return ret
-        returned.append(ret)
-        
-        # Update locales        
-        ret = self.update_locales(version_url, LOCALES)
-        if ret not in [SUCCESS, UNCHANGED]: return ret
-        returned.append(ret)
+            # Update misc components
+            ret = self.update_miscs(version_url, MISC)
+            if ret not in [SUCCESS, UNCHANGED]: return ret
+            returned.append(ret)
+            
+            # Update locales        
+            ret = self.update_locales(version_url, LOCALES)
+            if ret not in [SUCCESS, UNCHANGED]: return ret
+            returned.append(ret)
         
         # Return SUCCESS if anything changed
         if SUCCESS in returned:
