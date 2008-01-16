@@ -5,6 +5,7 @@ import curl
 import defines
 import getopt
 import process
+import re
 import strings
 import sys
 import threading
@@ -145,7 +146,7 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
 def appsnap_start():
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:tuUwx')
+        opts, args = getopt.getopt(sys.argv[1:], 'cdf:ghiln:s:tuUvwx')
     except getopt.GetoptError:
         print help
         sys.exit(defines.ERROR_GETOPT)
@@ -163,6 +164,7 @@ def appsnap_start():
     uninstall = False
     updateall = False
     wikidump = False
+    csvdump = False
     test = False
 
     for o, a in opts:
@@ -180,11 +182,12 @@ def appsnap_start():
         if o == '-t': test = True
         if o == '-u': upgrade = True
         if o == '-U': updateall = True
+        if o == '-v': csvdump = True
         if o == '-w': wikidump = True
         if o == '-x': uninstall = True
 
     # If no application specified, exit
-    if names == None and list == False and categories == False and updateall == False and wikidump == False:
+    if names == None and list == False and categories == False and updateall == False and wikidump == False and csvdump == False:
         print help
         sys.exit(defines.ERROR_NO_OPTIONS_SPECIFIED)
 
@@ -258,6 +261,53 @@ def appsnap_start():
                 print "* [[" + section + "|" + items[process.APP_WEBSITE] + "]] - \"\"\"" + items[process.APP_DESCRIBE] + "\"\"\""
                 
         print "!!!Total: " + num_sections.__str__() + " applications in " + len(categories).__str__() + " categories" 
+        sys.exit(defines.ERROR_SUCCESS)
+
+    # Dump database in CSV format if requested
+    if csvdump == True:
+        def quote(str):
+            if str == 'true': str = 'Yes'
+            elif str == 'false': str = 'No'
+            
+            if str.find(',') != -1: return '"' + str + '"'
+            else: return str
+        
+        field_names = [
+                       'Category', 'Description', 'Website',
+                       'Scrape URL', 'Version Regex', 'Download URL',
+                       'Download Filename', 'Rename Filename', 'Referer URL',
+                       'Installer Filename', 'Install Parameters', 'Installed Version Detection',
+                       'Auto Upgrades', 'Change Installdir Parameters', 'Uninstall Entry',
+                       'Uninstall Parameters', 'Pre Install Command', 'Post Install Command',
+                       'Pre Uninstall Command', 'Post Uninstall Command'
+                       ]
+        fields = [
+                  process.APP_CATEGORY, process.APP_DESCRIBE, process.APP_WEBSITE,
+                  process.APP_SCRAPE, process.APP_VERSION, process.APP_DOWNLOAD,
+                  process.APP_FILENAME, process.APP_RENAME, process.APP_REFERER,
+                  process.APP_INSTALLER, process.APP_INSTPARAM, process.APP_INSTVERSION,
+                  process.APP_UPGRADES, process.APP_CHINSTDIR, process.APP_UNINSTALL,
+                  process.APP_UNINSTPARAM, process.APP_PREINSTALL, process.APP_POSTINSTALL,
+                  process.APP_PREUNINSTALL, process.APP_POSTUNINSTALL          
+        ]
+
+        # Add field names header
+        output = 'Name'
+        for field_name in field_names:
+            output += ',' + field_name
+        output += ',State\n'
+        
+        # Add sections
+        sections = configuration.get_sections()
+        for section in sections:
+            output += quote(section)
+            items = configuration.get_section_items(section)
+            for field in fields:
+                try: output += ',' + quote(items[field])
+                except KeyError: output += ','
+            output += ',Published\n'
+        
+        print output
         sys.exit(defines.ERROR_SUCCESS)
 
     # Figure out applications selected

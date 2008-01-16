@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-12-26 23:10-0600\n"
+"PO-Revision-Date: 2008-01-07 23:20-0600\n"
 "Last-Translator: \n"
 "Language-Team: Søren Pedersen\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr "Program specifikke funktioner"
 
 #: appsnaplib/strings.py:20
 msgid "AppSnap database corrupt. Update AppSnap to restore the database."
-msgstr ""
+msgstr "Fejl i AppSnap databasen, Opgrader venlist AppSnap for at rette fejlen."
 
 #: appsnaplib/strings.py:21
 msgid "Available Categories"
@@ -46,15 +46,15 @@ msgstr "Ketegori"
 
 #: appsnaplib/strings.py:27
 msgid "Only check for updates"
-msgstr ""
+msgstr "Tjek kun for opgraderinger"
 
 #: appsnaplib/strings.py:28
 msgid "Checking for AppSnap updates"
-msgstr ""
+msgstr "Tjekker for opgraderinger til AppSnap"
 
 #: appsnaplib/strings.py:29
 msgid "Click update to download and install"
-msgstr ""
+msgstr "Click opgradér for at downloade og installere"
 
 #: appsnaplib/strings.py:30
 msgid "Comparing"
@@ -182,7 +182,7 @@ msgstr "Kunne ikke installere"
 
 #: appsnaplib/strings.py:79
 msgid "implies -d"
-msgstr "antyder -d"
+msgstr "medfører -d"
 
 #: appsnaplib/strings.py:80
 msgid "Install succeeded"
@@ -234,7 +234,7 @@ msgstr "Navn"
 
 #: appsnaplib/strings.py:104
 msgid "New AppSnap build required. Please update using installer."
-msgstr ""
+msgstr "Ny AppSnap version krævet. Opdater venlist med installeren."
 
 #: appsnaplib/strings.py:105
 msgid "No changes found"
@@ -270,7 +270,7 @@ msgstr "Indlæs igen"
 
 #: appsnaplib/strings.py:119
 msgid "Reloading AppSnap"
-msgstr ""
+msgstr "Genindlæser AppSnap"
 
 #: appsnaplib/strings.py:120
 msgid "Reloading database"
@@ -326,15 +326,15 @@ msgstr "Denne \"Hjælp\" skærm"
 
 #: appsnaplib/strings.py:142
 msgid "Unable to read AppSnap files"
-msgstr ""
+msgstr "Kan ikke læse AppSnap filer"
 
 #: appsnaplib/strings.py:143
 msgid "Unable to write to AppSnap files"
-msgstr ""
+msgstr "Kan ikke skrive til AppSnap filer"
 
 #: appsnaplib/strings.py:144
 msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
-msgstr ""
+msgstr "Der forekom en fatal fejl. Meld venligtst følgende til AppSnap issue tracker:"
 
 #: appsnaplib/strings.py:145
 msgid "Uninstall"
@@ -358,19 +358,19 @@ msgstr "Afinstallation gennemført"
 
 #: appsnaplib/strings.py:150
 msgid "AppSnap update failed"
-msgstr ""
+msgstr "AppSnap opgradering mislykkedes"
 
 #: appsnaplib/strings.py:151
 msgid "AppSnap update succeeded"
-msgstr ""
+msgstr "AppSnap opgradering gennemført"
 
 #: appsnaplib/strings.py:152
 msgid "Update"
-msgstr ""
+msgstr "Opgrader"
 
 #: appsnaplib/strings.py:153
 msgid "Update AppSnap and database"
-msgstr ""
+msgstr "Opgrader AppSnap og databasen"
 
 #: appsnaplib/strings.py:154
 msgid "implies -i, -x if not upgradeable"
@@ -378,11 +378,11 @@ msgstr "medfører -i, -x hvis det ikke kan opgraderes"
 
 #: appsnaplib/strings.py:155
 msgid "AppSnap updates available"
-msgstr ""
+msgstr "Der er opgraderinger til AppSnap "
 
 #: appsnaplib/strings.py:156
 msgid "Updating AppSnap"
-msgstr ""
+msgstr "Opgraderer AppSnap"
 
 #: appsnaplib/strings.py:157
 msgid "Upgrade"
@@ -410,7 +410,7 @@ msgstr "Opgraderer"
 
 #: appsnaplib/strings.py:163
 msgid "User database corrupt. Check userdb.ini syntax."
-msgstr ""
+msgstr "Fejl i personlige database, tjek userdb.ini "
 
 #: appsnaplib/strings.py:167
 msgid "Waiting"
