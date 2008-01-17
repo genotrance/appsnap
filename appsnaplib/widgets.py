@@ -340,23 +340,23 @@ class ApplicationPanel(wx.Panel):
     def update_download_status(self, dl_total, dl_current, ul_total, ul_current):
         # Create current string
         if dl_current < 1024 * 1024:
-            dl_current_string = round((dl_current / 1024), 2).__str__() + ' KB'
+            dl_current_string = '%.2f KB' % (dl_current / 1024)
         else:
-            dl_current_string = round((dl_current / 1024 / 1024), 2).__str__() + ' MB'
+            dl_current_string = '%.2f MB' % (dl_current / 1024 / 1024)
 
         # Create total string
         if dl_total < 1024 * 1024:
-            dl_total_string = round((dl_total / 1024), 2).__str__() + ' KB'
+            dl_total_string = '%.2f KB' % (dl_total / 1024)
         else:
-            dl_total_string = round((dl_total / 1024 / 1024), 2).__str__() + ' MB'
+            dl_total_string = '%.2f MB' % (dl_total / 1024 / 1024)
             
         # Percentage string
         if dl_total != 0:
-            percentage_string = ' [' + int(dl_current / dl_total * 100).__str__() + '%]'
+            percentage_string = ' [%d%%]' % (dl_current / dl_total * 100)
         else:
             percentage_string = ''
 
-        self.set_status_text(strings.DOWNLOADED + ' ' + dl_current_string + ' / ' + dl_total_string + percentage_string)
+        self.set_status_text('%s %s / %s %s' % (strings.DOWNLOADED, dl_current_string, dl_total_string, percentage_string))
         self.cancel.SetPosition((40 + self.status.GetSize().GetWidth() + 10, -1))
             
         if self.cancelled == True:

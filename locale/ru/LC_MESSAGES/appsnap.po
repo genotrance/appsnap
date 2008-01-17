@@ -1,12 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2008-01-07 23:18-0600\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-01-16 23:50-0600\n"
+"PO-Revision-Date: 2008-01-16 23:50-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Russian\n"
 "X-Poedit-Basepath: ..\\..\\..\n"
@@ -413,54 +414,58 @@ msgid "User database corrupt. Check userdb.ini syntax."
 msgstr "Повреждена пользовательская БД. Проверьте синтаксис userdb.ini."
 
 #: appsnaplib/strings.py:167
+msgid "Display download status"
+msgstr ""
+
+#: appsnaplib/strings.py:171
 msgid "Waiting"
 msgstr "Ожидаю"
 
-#: appsnaplib/strings.py:168
+#: appsnaplib/strings.py:172
 msgid "Website"
 msgstr "Веб-страница"
 
-#: appsnaplib/strings.py:174
+#: appsnaplib/strings.py:178
 msgid "Build executable using Py2Exe"
 msgstr "Создать исполняемый файл с помощью Py2Exe"
 
-#: appsnaplib/strings.py:175
+#: appsnaplib/strings.py:179
 msgid "Build failed."
 msgstr "Ошибка сборки"
 
-#: appsnaplib/strings.py:179
+#: appsnaplib/strings.py:183
 msgid "Compress executables using UPX"
 msgstr "Сжимаю программу с помощью UPX"
 
-#: appsnaplib/strings.py:180
+#: appsnaplib/strings.py:184
 msgid "Create NSIS package"
 msgstr "Создать NSIS-сборку"
 
-#: appsnaplib/strings.py:181
+#: appsnaplib/strings.py:185
 msgid "Create ZIP package"
 msgstr "Создать ZIP-архив"
 
-#: appsnaplib/strings.py:185
+#: appsnaplib/strings.py:189
 msgid "NSIS not available"
 msgstr "NSIS недоступен"
 
-#: appsnaplib/strings.py:189
+#: appsnaplib/strings.py:193
 msgid "OPTIONS"
 msgstr "НАСТРОЙКИ"
 
-#: appsnaplib/strings.py:193
+#: appsnaplib/strings.py:197
 msgid "Rezip shared library using 7-Zip"
 msgstr "Повторно сжать общие библиотеки 7-ZIP'ом."
 
-#: appsnaplib/strings.py:197
+#: appsnaplib/strings.py:201
 msgid "7-Zip not available"
 msgstr "7-Zip недоступен"
 
-#: appsnaplib/strings.py:201
+#: appsnaplib/strings.py:205
 msgid "UPX not available"
 msgstr "UPX недоступен"
 
-#: appsnaplib/strings.py:202
+#: appsnaplib/strings.py:206
 msgid "Usage"
 msgstr "Использование"
 

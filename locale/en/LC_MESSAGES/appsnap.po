@@ -1,12 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-12-26 23:12-0600\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-01-16 23:49-0600\n"
+"PO-Revision-Date: 2008-01-16 23:49-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: English\n"
 "X-Poedit-Basepath: ..\\..\\..\n"
@@ -413,54 +414,58 @@ msgid "User database corrupt. Check userdb.ini syntax."
 msgstr ""
 
 #: .\/appsnaplib/strings.py:167
+msgid "Display download status"
+msgstr ""
+
+#: .\/appsnaplib/strings.py:171
 msgid "Waiting"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:168
+#: .\/appsnaplib/strings.py:172
 msgid "Website"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:174
+#: .\/appsnaplib/strings.py:178
 msgid "Build executable using Py2Exe"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:175
+#: .\/appsnaplib/strings.py:179
 msgid "Build failed."
 msgstr ""
 
-#: .\/appsnaplib/strings.py:179
+#: .\/appsnaplib/strings.py:183
 msgid "Compress executables using UPX"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:180
+#: .\/appsnaplib/strings.py:184
 msgid "Create NSIS package"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:181
+#: .\/appsnaplib/strings.py:185
 msgid "Create ZIP package"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:185
+#: .\/appsnaplib/strings.py:189
 msgid "NSIS not available"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:189
+#: .\/appsnaplib/strings.py:193
 msgid "OPTIONS"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:193
+#: .\/appsnaplib/strings.py:197
 msgid "Rezip shared library using 7-Zip"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:197
+#: .\/appsnaplib/strings.py:201
 msgid "7-Zip not available"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:201
+#: .\/appsnaplib/strings.py:205
 msgid "UPX not available"
 msgstr ""
 
-#: .\/appsnaplib/strings.py:202
+#: .\/appsnaplib/strings.py:206
 msgid "Usage"
 msgstr ""
 

@@ -6,6 +6,7 @@ import defines
 import getopt
 import process
 import re
+import string
 import strings
 import sys
 import threading
@@ -43,6 +44,7 @@ help = header + """
    -s <%s>\t\t%s
 
    -d\t\t\t%s
+      -v\t\t%s
       -t\t\t%s
    -g\t\t\t%s (%s)
    -i\t\t\t%s (%s)
@@ -67,6 +69,7 @@ help = header + """
        strings.STRING,
        strings.FILTER_APP_BY_STRING,
        strings.DOWNLOAD_DESCRIPTION,
+       strings.VERBOSE_DOWNLOAD,
        strings.TEST_DOWNLOAD_ONLY,
        strings.GET_LATEST_VERSION,
        strings.DEFAULT,
@@ -77,76 +80,116 @@ help = header + """
        strings.UNINSTALL_DESCRIPTION
        )
 
+# Blank line
+BL = '\r%40s\r' % (' ')
+
+# Display download status
+def display_download_status(dl_total, dl_current, ul_total, ul_current, status={}):
+    name = threading.currentThread().getName()
+    status[name] = [dl_total, dl_current]
+
+    total = 0
+    current = 0
+    for app_name in status:
+        total += status[app_name][0]
+        current += status[app_name][1]
+
+    # Create current string
+    if current < 1024 * 1024:
+        current_string = '%.2f KB' % (current / 1024)
+    else:
+        current_string = '%.2f MB' % (current / 1024 / 1024)
+
+    # Create total string
+    if total < 1024 * 1024:
+        total_string = '%.2f KB' % (total / 1024)
+    else:
+        total_string = '%.2f MB' % (total / 1024 / 1024)
+        
+    # Percentage string
+    if total != 0:
+        percentage_string = '[%d%%]' % (current / total * 100)
+    else:
+        percentage_string = ''
+
+    print '%s%s %s / %s %s\r' % (BL, strings.DOWNLOADED, current_string, total_string, percentage_string),
+    sys.stdout.flush()
+
 # Perform an action on the specified application
-def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall, test):
+def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall, test, verbose):
+    # Set the thread name
+    thread = threading.currentThread()
+    thread.setName(name)
+
     items = configuration.get_section_items(name)
     if items == None: items = configuration.get_arp_section_items(name + config.ARP_ID)
     if items != None:
         p = process.process(configuration, curl_instance, name, items)
         
         if getversion == True:
-            output = '\n'
-            output += strings.APPLICATION + ' : ' + name + '\n'
+            output = '%s\n%s : %s\n' % (BL, strings.APPLICATION, name)
             if items[process.APP_DESCRIBE] != '':
-                output += strings.DESCRIPTION + ' : ' + items[process.APP_DESCRIBE] + '\n'
+                output += '%s : %s\n' % (strings.DESCRIPTION, items[process.APP_DESCRIBE])
             if items[process.APP_WEBSITE] != '':
-                output += strings.WEBSITE + ' : ' + items[process.APP_WEBSITE] + '\n'
+                output += '%s : %s\n' % (strings.WEBSITE, items[process.APP_WEBSITE])
             if items[process.APP_CATEGORY] != config.REMOVABLE:
                 latest_version = p.get_latest_version()
                 if latest_version == None:
                     latest_version = strings.FAILED_TO_CONNECT
-                output += strings.LATEST_VERSION + ' : ' + latest_version + '\n'
+                output += '%s : %s\n' % (strings.LATEST_VERSION, latest_version)
             installed = p.get_installed_version()
             if installed != '':
-                output += strings.INSTALLED_VERSION + ' : ' + installed + '\n'
+                output += '%s : %s\n' % (strings.INSTALLED_VERSION, installed)
             print output
         if download == True:
-            print '-> ' + strings.DOWNLOADING + ' ' + name,
-            if test: print ' (' + strings.TESTING + ')'
-            else: print
-            if p.download_latest_version(None, test) == False:
-                print '-> ' + strings.DOWNLOAD_FAILED + ' : ' + name
+            output = '%s-> %s %s' % (BL, strings.DOWNLOADING, name)
+            if test: output += ' (%s)' % strings.TESTING
+            print output
+            if verbose: callback = display_download_status
+            else: callback = None
+            if p.download_latest_version(callback, test) == False:
+                print '%s-> %s : %s' % (BL, strings.DOWNLOAD_FAILED, name)
                 return
             else:
-                print '-> ' + strings.DOWNLOAD_SUCCEEDED + ' : ' + name
+                print '%s-> %s : %s' % (BL, strings.DOWNLOAD_SUCCEEDED, name)
         if install == True:
-            print '-> ' + strings.INSTALLING + ' ' + name
+            print '%s-> %s %s' % (BL, strings.INSTALLING, name)
             lock.acquire()
             if p.install_latest_version() == False: 
-                print '-> ' + strings.INSTALL_FAILED + ' : ' + name
+                print '%s-> %s : %s' % (BL, strings.INSTALL_FAILED, name)
                 lock.release()
                 return
             else:
-                print '-> ' + strings.INSTALL_SUCCEEDED + ' : ' + name
+                print '%s-> %s : %s' % (BL, strings.INSTALL_SUCCEEDED, name)
             lock.release()
         if upgrade == True:
-            print '-> ' + strings.UPGRADING + ' : ' + name
+            print '%s-> %s %s' % (BL, strings.UPGRADING, name)
             lock.acquire()
             if p.upgrade_version() == False: 
-                print '-> ' + strings.UPGRADE_FAILED + ' : ' + name
+                print '%s-> %s : %s' % (BL, strings.UPGRADE_FAILED, name)
                 lock.release()
                 return
             else:
-                print '-> ' + strings.UPGRADE_SUCCEEDED + ' : ' + name
+                print '%s-> %s : %s' % (BL, strings.UPGRADE_SUCCEEDED, name)
             lock.release()
         if uninstall == True:
-            print '-> ' + strings.UNINSTALLING + ' : ' + name
+            print '%s-> %s %s' % (BL, strings.UNINSTALLING, name)
             lock.acquire()
             if p.uninstall_version() == False: 
-                print '-> ' + strings.UNINSTALL_FAILED + ' : ' + name
+                print '%s-> %s : %s' % (BL, strings.UNINSTALL_FAILED, name)
                 lock.release()
                 return
             else:
-                print '-> ' + strings.UNINSTALL_SUCCEEDED + ' : ' + name
+                print '%s-> %s : %s' % (BL, strings.UNINSTALL_SUCCEEDED, name)
             lock.release()
     else:
-        print strings.NO_SUCH_APPLICATION + ' : ' + name
+        print '%s%s : %s' % (BL, strings.NO_SUCH_APPLICATION, name)
 
 # Run the CLI
 def appsnap_start():
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'cdDf:ghiln:s:tuUvwx')
+        opts, args = getopt.getopt(sys.argv[1:], 'cdDf:ghiln:s:tuUvVwx')
     except getopt.GetoptError:
         print help
         sys.exit(defines.ERROR_GETOPT)
@@ -164,6 +207,7 @@ def appsnap_start():
     test = False
     upgrade = False
     updateall = False
+    verbose = False
     csvdump = False
     wikidump = False
     uninstall = False
@@ -184,7 +228,8 @@ def appsnap_start():
         if o == '-t': test = True
         if o == '-u': upgrade = True
         if o == '-U': updateall = True
-        if o == '-v': csvdump = True
+        if o == '-v': verbose = True
+        if o == '-V': csvdump = True
         if o == '-w': wikidump = True
         if o == '-x': uninstall = True
 
@@ -226,25 +271,25 @@ def appsnap_start():
     # Update AppSnap if requested
     if updateall == True:
         check_only = test
-        if check_only == False: print '-> ' + strings.UPDATING_APPSNAP
-        else: print '-> ' + strings.CHECKING_FOR_UPDATES
+        if check_only == False: print '-> %s' % strings.UPDATING_APPSNAP
+        else: print '-> %s' % strings.CHECKING_FOR_UPDATES
         update_obj = update.update(configuration, curl_instance, check_only, database_only)
         returned = update_obj.update_appsnap()
         
         if returned == update.SUCCESS:
-            print '-> ' + strings.UPDATE_APPSNAP_SUCCEEDED
+            print '-> %s' % strings.UPDATE_APPSNAP_SUCCEEDED
         elif returned == update.CHANGED:
-            print '-> ' + strings.UPDATES_AVAILABLE
+            print '-> %s' % strings.UPDATES_AVAILABLE
         elif returned == update.UNCHANGED:
-            print '-> ' + strings.NO_CHANGES_FOUND
+            print '-> %s' % strings.NO_CHANGES_FOUND
         elif returned == update.NEW_BUILD:
-            print '-> ' + strings.NEW_BUILD_REQUIRED
+            print '-> %s' % strings.NEW_BUILD_REQUIRED
         elif returned == update.READ_ERROR:
-            print '-> ' + strings.UPDATE_APPSNAP_FAILED + ' - ' + strings.UNABLE_TO_READ_APPSNAP
+            print '-> %s - %s' % (strings.UPDATE_APPSNAP_FAILED, strings.UNABLE_TO_READ_APPSNAP)
         elif returned == update.WRITE_ERROR:
-            print '-> ' + strings.UPDATE_APPSNAP_FAILED + ' - ' + strings.UNABLE_TO_WRITE_APPSNAP
+            print '-> %s - %s' % (strings.UPDATE_APPSNAP_FAILED, strings.UNABLE_TO_WRITE_APPSNAP)
         elif returned == update.DOWNLOAD_FAILURE:
-            print '-> ' + strings.UPDATE_APPSNAP_FAILED + ' - ' + strings.DOWNLOAD_FAILED
+            print '-> %s - %s' % (strings.UPDATE_APPSNAP_FAILED, strings.DOWNLOAD_FAILED)
             
         sys.exit(defines.ERROR_SUCCESS)
         
@@ -255,14 +300,14 @@ def appsnap_start():
         for category in categories:
             sections = configuration.get_sections_by_category(category)
             num_sections += len(sections)
-            print "!!!" + category + " (" + len(sections).__str__() + ")"
+            print '!!!%s (%d)' % (category, len(sections))
             
             for section in sections:
                 items = configuration.get_section_items(section)
                 
-                print "* [[" + section + "|" + items[process.APP_WEBSITE] + "]] - \"\"\"" + items[process.APP_DESCRIBE] + "\"\"\""
+                print '* [[%s|%s]] - """%s"""' % (section, items[process.APP_WEBSITE], items[process.APP_DESCRIBE])
                 
-        print "!!!Total: " + num_sections.__str__() + " applications in " + len(categories).__str__() + " categories" 
+        print '!!!Total: %d applications in %d categories' % (num_sections, len(categories))
         sys.exit(defines.ERROR_SUCCESS)
 
     # Dump database in CSV format if requested
@@ -294,22 +339,23 @@ def appsnap_start():
         ]
 
         # Add field names header
-        output = 'Name'
-        for field_name in field_names:
-            output += ',' + field_name
-        output += ',State\n'
+        data = ['Name']
+        data.extend(field_names)
+        data.append('State\n')
+        output = [string.join(data, ',')]
         
         # Add sections
         sections = configuration.get_sections()
         for section in sections:
-            output += quote(section)
+            data = [quote(section)]
             items = configuration.get_section_items(section)
             for field in fields:
-                try: output += ',' + quote(items[field])
-                except KeyError: output += ','
-            output += ',Published\n'
+                try: data.append(quote(items[field]))
+                except KeyError: data.append('')
+            data.append('Published\n')
+            output.append(string.join(data, ','))
         
-        print output
+        print string.join(output, '')
         sys.exit(defines.ERROR_SUCCESS)
 
     # Figure out applications selected
@@ -317,11 +363,11 @@ def appsnap_start():
         if categoryfilter == '':
             names = configuration.get_sections()
         else:
-            print strings.CATEGORY + ' : ' + categoryfilter
+            print '%s : %s' % (strings.CATEGORY, categoryfilter)
             names = configuration.get_sections_by_category(categoryfilter)
 
         if stringfilter != '':
-            print strings.FILTER + ' : ' + stringfilter + '\n'
+            print '%s : %s\n' % (strings.FILTER, stringfilter)
             names = configuration.filter_sections_by_string(names, stringfilter)
         else:
             print
@@ -341,7 +387,8 @@ def appsnap_start():
                                                          install, 
                                                          upgrade, 
                                                          uninstall,
-                                                         test])
+                                                         test,
+                                                         verbose])
         children.append(child)
         child.start()
         
