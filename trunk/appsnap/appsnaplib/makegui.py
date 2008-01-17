@@ -1,4 +1,5 @@
 import re
+import string
 import widgets
 import wx
 import yaml
@@ -16,7 +17,7 @@ class MakeGui:
         self.objects['locale'] = wx.Locale(wx.LANGUAGE_DEFAULT)
         self.objects['locale'].AddCatalogLookupPathPrefix("locale")
         self.objects['locale'].AddCatalog("appsnap")
-        print 'Locale = ' + self.objects['locale'].GetName()
+        print 'Locale = %s' % self.objects['locale'].GetName()
         print
     
         # Create a frame object
@@ -86,7 +87,7 @@ class MakeGui:
             del object['name']
 
             # Create the code to execute
-            code = type + "( "
+            code = [type, "( "]
             for key, value in object.iteritems():
                 # Remove escapers
                 if key[0] == '^': key = key[1:]
@@ -94,27 +95,28 @@ class MakeGui:
                 try:
                     if (key == 'parent'):
                         if (value.__str__() != 'None'):
-                            code += key + "=self.objects['" + value.__str__() + "'],"
+                            code.append("%s=self.objects['%s']," % (key, value.__str__()))
                         else:
-                            code += key + "=None,"
+                            code.append("%s=None," % key)
                     elif (value.__str__() != "" and value.__str__()[0] == '~'):
-                        code += key + "=self.objects['" + value.__str__()[1:] + "'],"
+                        code.append("%s=self.objects['%s']," % (key, value.__str_()[1:]))
                     else:
                         try:
                             if (eval(value.__str__())):
-                                code += key + "=" + value.__str__() + ","
+                                code.append("%s=%s," % (key, value.__str__()))
                         except (NameError, SyntaxError):
-                            code += key + "='" + value.__str__() + "',"
+                            code.append("%s='%s'," % (key, value.__str__()))
                 except UnicodeEncodeError:
-                    code += key + "=u\"" + value + "\","
-            code = code[:len(code)-1] + " )"
+                    code.append("%s=u\"%s\"," % (key, value))
+            code[-1] = code[-1][:len(code[-1])-1] + " )"
+            code = string.join(code, '')
 
             # Save in object list
             self.objects[name] = eval(code)
             try:
-                print '>>> ' + name + ' = ' + code + '\n... ' + self.objects[name].__str__()
+                print '>>> %s = %s\n... %s' % (name, code, self.objects[name].__str__())
             except UnicodeEncodeError:
-                print '>>> ' + name.encode("utf-8") + ' = ' + code.encode("utf-8") + '\n... ' + self.objects[name].__str__()
+                print '>>> %s = %s\n... %s' % (name.encode("utf-8"), code.encode("utf-8"), self.objects[name].__str__())
 
     # Run gui object methods
     def execute(self, methods):
@@ -130,36 +132,37 @@ class MakeGui:
             del m['method']
 
             # Create the code to execute
-            code = "self.objects['" + name + "']." + method + "( "
+            code = ["self.objects['%s'].%s( " % (name, method)]
             for key, value in m.iteritems():
                 # Remove escapers
                 if key[0] == '^': key = key[1:]
 
                 try:
                     if (key == 'parent'):
-                        code += key + "=self.objects['" + value.__str__() + "'],"
+                        code.append("%s=self.objects['%s']," % (key, value.__str__()))
                     elif (value.__str__() != "" and value.__str__()[0] == '~'):
-                        code += key + "=self.objects['" + value.__str__()[1:] + "'],"
+                        code.append("%s=self.objects['%s']," % (key, value.__str__()[1:]))
                     else:
                         try:
                             if (type(eval(value.__str__()))):
-                                code += key + "=" + value.__str__() + ","
+                                code.append("%s=%s," % (key, value.__str__()))
                         except (NameError, SyntaxError):
-                            code += key + "=u\"" + value.__str__() + "\","
+                            code.append("%s=u\"%s\"," % (key, value.__str__()))
                 except UnicodeEncodeError:
                     if value[0] == '~':
-                        code += key + "=self.objects[u\"" + value[1:] + "\"],"
+                        code.append("%s=self.objects[u\"%s\"]," % (key, value[1:]))
                     else:
-                        code += key + "=u\"" + value + "\","
-            code = code[:len(code)-1] + " )"
+                        code.append("%s=u\"%s\"," % (key, value))
+            code[-1] = code[-1][:len(code[-1])-1] + " )"
+            code = string.join(code, '')
 
             # Execute and capture return value
             ret = eval(code)
             retval.append(ret)
             try:
-                print '>>> ' + code + '\n... ' + ret.__str__()
+                print '>>> %s\n... %s' % (code, ret.__str__())
             except UnicodeEncodeError:
-                print '>>> ' + code.encode("utf-8") + '\n... ' + ret.__str__()
+                print '>>> %s\n... %s' % (code.encode("utf-8"), ret.__str__())
 
         # Return captured returned values
         return retval
@@ -170,18 +173,18 @@ class MakeGui:
             e = events[i]
 
             # Create the code to execute
-            code = e['type'] + "("
+            code = [e['type'], "( "]
 
             if (e['type'] in ['wx.EVT_SIZE', 'wx.EVT_MOVE', 'wx.EVT_LEFT_DOWN', 'wx.EVT_LEFT_UP', 'wx.EVT_LEFT_DCLICK', 'wx.EVT_SET_FOCUS', 'wx.EVT_KILL_FOCUS']):
-                code += "self.objects['" + e['name'] + "'],"
+                code.append("self.objects['%s']," % e['name'])
             else:
-                code += "self.objects['frame']," + "self.objects['" + e['name'] + "'].GetId(),"
+                code.append("self.objects['frame'], self.objects['%s'].GetId()," % e['name'])
 
-            code += "event_object." + e['method'] + ")"
+            code.append("event_object.%s )" % e['method'])
 
             # Bind the event
-            eval(code)
-            print '>>> ' + code
+            eval(string.join(code, ''))
+            print '>>> %s' % code
 
      # Parse and run a schema
     def parse_and_run(self, schema, event_object=None):
