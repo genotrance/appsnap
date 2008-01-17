@@ -164,6 +164,10 @@ USER_DATABASE_CORRUPT = _('User database corrupt. Check userdb.ini syntax.')
 
 ##
 
+VERBOSE_DOWNLOAD = _('Display download status')
+
+##
+
 WAITING = _('Waiting')
 WEBSITE = _('Website')
 

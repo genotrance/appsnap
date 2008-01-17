@@ -47,7 +47,7 @@ def handle_exceptions(type, value, tb):
     
     # Create dialog message
     message = strings.UNCAUGHT_EXCEPTION
-    message += '\n\n' + sys.stdout.getvalue()
+    message += '\n\n%s' % sys.stdout.getvalue()
     
     # Shutdown GUI
     global gui
@@ -80,13 +80,13 @@ def appsnap_start():
     start_debug()
     
     # Print version information
-    print 'AppSnap = ' + version.APPVERSION
-    print 'wxPython = ' + wx.VERSION_STRING
-    print 'PyCurl = ' + pycurl.version
+    print 'AppSnap = %s' % version.APPVERSION
+    print 'wxPython = %s' % wx.VERSION_STRING
+    print 'PyCurl = %s' % pycurl.version
 
     # Create a gui object
     global gui
-    gui = makegui.MakeGui(version.APPNAME + ' ' + version.APPVERSION, None, (defines.GUI_WIDTH, defines.GUI_HEIGHT))
+    gui = makegui.MakeGui('%s %s' % (version.APPNAME, version.APPVERSION), None, (defines.GUI_WIDTH, defines.GUI_HEIGHT))
 
     # Parse and run the GUI schema
     gui.parse_and_run(guisetup.schema, guisetup.Events({'gui' : gui}))
