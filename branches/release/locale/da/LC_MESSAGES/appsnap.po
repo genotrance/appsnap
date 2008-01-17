@@ -1,12 +1,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: AppSnap\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2008-01-07 23:20-0600\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-01-16 23:48-0600\n"
+"PO-Revision-Date: 2008-01-16 23:48-0600\n"
 "Last-Translator: \n"
 "Language-Team: Søren Pedersen\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: Danish\n"
 "X-Poedit-Basepath: ..\\..\\..\n"
@@ -413,54 +414,58 @@ msgid "User database corrupt. Check userdb.ini syntax."
 msgstr "Fejl i personlige database, tjek userdb.ini "
 
 #: appsnaplib/strings.py:167
+msgid "Display download status"
+msgstr ""
+
+#: appsnaplib/strings.py:171
 msgid "Waiting"
 msgstr "Venter"
 
-#: appsnaplib/strings.py:168
+#: appsnaplib/strings.py:172
 msgid "Website"
 msgstr "Hjemmeside"
 
-#: appsnaplib/strings.py:174
+#: appsnaplib/strings.py:178
 msgid "Build executable using Py2Exe"
 msgstr "Opret program med Py2Exe"
 
-#: appsnaplib/strings.py:175
+#: appsnaplib/strings.py:179
 msgid "Build failed."
 msgstr "Kunne ikke oprette Program"
 
-#: appsnaplib/strings.py:179
+#: appsnaplib/strings.py:183
 msgid "Compress executables using UPX"
 msgstr "Pak programmer med UPX"
 
-#: appsnaplib/strings.py:180
+#: appsnaplib/strings.py:184
 msgid "Create NSIS package"
 msgstr "Opret NSIS pakke"
 
-#: appsnaplib/strings.py:181
+#: appsnaplib/strings.py:185
 msgid "Create ZIP package"
 msgstr "Opret ZIP pakke"
 
-#: appsnaplib/strings.py:185
+#: appsnaplib/strings.py:189
 msgid "NSIS not available"
 msgstr "NSIS er ikke tilgængelig"
 
-#: appsnaplib/strings.py:189
+#: appsnaplib/strings.py:193
 msgid "OPTIONS"
 msgstr "Indstillinger"
 
-#: appsnaplib/strings.py:193
+#: appsnaplib/strings.py:197
 msgid "Rezip shared library using 7-Zip"
 msgstr "Zip delt bibliotek igen med 7-Zip"
 
-#: appsnaplib/strings.py:197
+#: appsnaplib/strings.py:201
 msgid "7-Zip not available"
 msgstr "7-Zip ikke tilgængelig"
 
-#: appsnaplib/strings.py:201
+#: appsnaplib/strings.py:205
 msgid "UPX not available"
 msgstr "UPX ikke tilgængelig"
 
-#: appsnaplib/strings.py:202
+#: appsnaplib/strings.py:206
 msgid "Usage"
 msgstr "Brug"
 

@@ -66,8 +66,7 @@ class curl:
                     if proxy_port != None:
                         self.curl[i].setopt(pycurl.PROXYPORT, string.atoi(proxy_port))
     
-                    self.curl[i].setopt(pycurl.PROXYUSERPWD, self.global_config.user[config.PROXY_USER] +
-                        ':' + self.global_config.user[config.PROXY_PASSWORD])
+                    self.curl[i].setopt(pycurl.PROXYUSERPWD, '%s:%s' % (self.global_config.user[config.PROXY_USER], self.global_config.user[config.PROXY_PASSWORD]))
                     self.curl[i].setopt(pycurl.PROXYAUTH, defines.CURLOPT_PROXY_ANY)
             except WindowsError: pass
     
@@ -119,20 +118,20 @@ class curl:
         i = self.get_lock()
         
         # Reset output buffer
-        self.web_data[i] = ''
+        self.web_data[i] = []
 
         # Download the page
         response = self.get_url(url, i, self.call_back_buffer)
         if response >= 300:
-            if response == 407: print '\n' + strings.PROXY_AUTHENTICATION_FAILED
-            else: print '\n' + strings.ERROR + ' '  + response.__str__() + '. URL = ' + url
+            if response == 407: print '\n%s' % strings.PROXY_AUTHENTICATION_FAILED
+            else: print '\n%s %s. URL = %s' % (strings.ERROR, response.__str__(), url)
 
             # Failure occurred so return false
             self.free_lock(i)
             return None
 
         # Free lock
-        web_data = self.web_data[i]
+        web_data = string.join(self.web_data[i], '')
         self.free_lock(i)
 
         # Return the collected data
@@ -141,7 +140,7 @@ class curl:
     # Callback function used by pycurl to append data to buffer
     def call_back_buffer(self, buf):
         i = self.acquired[threading.currentThread().getName()]
-        self.web_data[i] += buf
+        self.web_data[i].append(buf)
 
     # Download data from the web
     def download_web_data(self, url, filename, referer, progress_callback=None, test=False):
@@ -174,8 +173,8 @@ class curl:
             except WindowsError: pass
 
             # Print the message
-            if response == 407: print '\n' + strings.PROXY_AUTHENTICATION_FAILED
-            else: print '\n' + strings.ERROR + ' ' + response.__str__() + '. URL = ' + url
+            if response == 407: print '\n%s' % strings.PROXY_AUTHENTICATION_FAILED
+            else: print '\n%s %s. URL = %s' % (strings.ERROR, response.__str__(), url)
 
             # Failure occurred so return false
             self.free_lock(i)
