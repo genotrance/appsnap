@@ -126,6 +126,10 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
     if items != None:
         p = process.process(configuration, curl_instance, name, items)
         
+        # Display download status if verbose
+        if verbose: progress_callback = display_download_status
+        else: progress_callback = None
+
         if getversion == True:
             output = '%s\n%s : %s\n' % (BL, strings.APPLICATION, name)
             if items[process.APP_DESCRIBE] != '':
@@ -145,9 +149,7 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
             output = '%s-> %s %s' % (BL, strings.DOWNLOADING, name)
             if test: output += ' (%s)' % strings.TESTING
             print output
-            if verbose: callback = display_download_status
-            else: callback = None
-            if p.download_latest_version(callback, test) == False:
+            if p.download_latest_version(progress_callback, test) == False:
                 print '%s-> %s : %s' % (BL, strings.DOWNLOAD_FAILED, name)
                 return
             else:
@@ -155,7 +157,7 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
         if install == True:
             print '%s-> %s %s' % (BL, strings.INSTALLING, name)
             lock.acquire()
-            if p.install_latest_version() == False: 
+            if p.install_latest_version(progress_callback) == False: 
                 print '%s-> %s : %s' % (BL, strings.INSTALL_FAILED, name)
                 lock.release()
                 return
@@ -165,7 +167,7 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
         if upgrade == True:
             print '%s-> %s %s' % (BL, strings.UPGRADING, name)
             lock.acquire()
-            if p.upgrade_version() == False: 
+            if p.upgrade_version(progress_callback) == False: 
                 print '%s-> %s : %s' % (BL, strings.UPGRADE_FAILED, name)
                 lock.release()
                 return
@@ -324,6 +326,7 @@ def appsnap_start():
                        'Scrape URL', 'Version Regex', 'Download URL',
                        'Download Filename', 'Rename Filename', 'Referer URL',
                        'Installer Filename', 'Install Parameters', 'Installed Version Detection',
+                       'Install Directory Detection', 
                        'Auto Upgrades', 'Change Installdir Parameters', 'Uninstall Entry',
                        'Uninstall Parameters', 'Pre Install Command', 'Post Install Command',
                        'Pre Uninstall Command', 'Post Uninstall Command'
@@ -333,6 +336,7 @@ def appsnap_start():
                   process.APP_SCRAPE, process.APP_VERSION, process.APP_DOWNLOAD,
                   process.APP_FILENAME, process.APP_RENAME, process.APP_REFERER,
                   process.APP_INSTALLER, process.APP_INSTPARAM, process.APP_INSTVERSION,
+                  process.APP_INSTDIR,
                   process.APP_UPGRADES, process.APP_CHINSTDIR, process.APP_UNINSTALL,
                   process.APP_UNINSTPARAM, process.APP_PREINSTALL, process.APP_POSTINSTALL,
                   process.APP_PREUNINSTALL, process.APP_POSTUNINSTALL          

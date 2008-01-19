@@ -51,6 +51,7 @@ APP_POSTINSTALL   = 'postinstall'
 APP_PREUNINSTALL  = 'preuninstall'
 APP_POSTUNINSTALL = 'postuninstall'
 APP_INSTVERSION   = 'instversion'
+APP_INSTDIR       = 'instdir'
 
 # Actions
 ACT_DOWNLOAD      = 'download'
@@ -77,6 +78,9 @@ class process:
         self.init = False
         self.latestversion = None
         self.installedversion = ''
+        self.installdir = ''
+        self.uninstall_key = ''
+        self.uninstall_matchobj = None
         self.versions = None
         self.splitversions = None
         self.width = 0
@@ -122,7 +126,7 @@ class process:
     # Get the installed version of the application
     def get_installed_version(self):
         if self.installedversion != '': return self.installedversion
-        
+
         if self.app_config.has_key(APP_INSTVERSION):
             if self.app_config[APP_INSTVERSION] == USE_UNINSTALL:
                 uninstall_key, matchobj = self.parse_uninstall_entry()
@@ -135,9 +139,9 @@ class process:
                     if uninstall_key != '':
                         value = command[1].split('=')
                         if len(value) == 2:
-                            matchobj = self.global_config.registry_search_installed_version(uninstall_key, value[0], value[1])
+                            matchobj = self.global_config.registry_search_uninstall_location(uninstall_key, value[0], value[1])
                         else:
-                            matchobj = self.global_config.registry_search_installed_version(uninstall_key, value[0], '')
+                            matchobj = self.global_config.registry_search_uninstall_location(uninstall_key, value[0], '')
                         if matchobj != '':
                             self.installedversion = self.handle_multipart_versions([matchobj.groups()], APP_INSTVERSION)[0]
                         else:
@@ -162,6 +166,27 @@ class process:
             else: self.global_config.delete_installed_version(self.app)
         
         return self.installedversion
+
+    # Get the install directory of the application
+    def get_install_dir(self):
+        if self.installdir != '': return self.installdir
+
+        if self.app_config.has_key(APP_INSTDIR):
+            command = self.app_config[APP_INSTDIR].split(':')
+            if len(command) == 2 and command[0] == REGISTRY_SEARCH:
+                uninstall_key, matchobj = self.parse_uninstall_entry()
+                if uninstall_key != '':
+                    value = command[1].split('=')
+                    if len(value) == 2:
+                        matchobj = self.global_config.registry_search_uninstall_location(uninstall_key, value[0], value[1])
+                    else:
+                        matchobj = self.global_config.registry_search_uninstall_location(uninstall_key, value[0], '')
+                    if matchobj != '':
+                        self.installdir = matchobj.groups()[0]
+                    else:
+                        self.installdir = ''
+
+        return self.installdir
 
     # Download the latest version of the application's installer
     def download_latest_version(self, progress_callback=None, test=False):
@@ -239,9 +264,9 @@ class process:
                 self.delete_tree(older_file[:-4])
 
     # Install the latest version of the application
-    def install_latest_version(self):
+    def install_latest_version(self, progress_callback=None):
         # Download the latest version if required
-        cached_filename = self.download_latest_version()
+        cached_filename = self.download_latest_version(progress_callback)
         if cached_filename == False: return False
         
         # Execute pre-install command if any
@@ -258,6 +283,26 @@ class process:
             except KeyError:
                 # ZIP file with no embedded installer
                 installer = False
+        elif cached_filename[-3:] == 'xpi':
+            # Identify the app
+            if self.app_config[APP_CATEGORY][:len(strings.FIREFOX)] == strings.FIREFOX:
+                name = 'Firefox'
+            elif self.app_config[APP_CATEGORY][:len(strings.THUNDERBIRD)] == strings.THUNDERBIRD:
+                name = 'Thunderbird'
+            else:
+                return False
+
+            # Create a process for that app
+            items = self.global_config.get_section_items(name)
+            app = process(self.global_config, self.curl_instance, name, items)
+
+            # Check if app is installed
+            version = app.get_installed_version()
+            app_dir = app.get_install_dir()
+            if version == '' or app_dir == '':
+                return False
+
+            command = string.join(['"' + os.path.join(app_dir, name + '.exe') + '"', '-install-global-extension', '"' + cached_filename + '"'])
         else:
             command = '"' + cached_filename + '"'
 
@@ -282,6 +327,8 @@ class process:
             if  retval != None:
                 # MSI returns non-zero as success too
                 if cached_filename[-3:] == 'msi' and (retval == 1641 or retval == 3010): pass
+                # Firefox returns 1
+                elif cached_filename[-3:] == 'xpi' and retval == 1: pass
                 else: return False
         else:
             directory = self.replace_install_dir(INSTALL_DIR)
@@ -372,22 +419,25 @@ class process:
 
     # Locate the uninstall entry for the application in the registry
     def parse_uninstall_entry(self):
+        if self.uninstall_key != '':
+            return self.uninstall_key, self.uninstall_matchobj
+
         if not self.app_config.has_key(APP_UNINSTALL):
-            uninstall_key = ''
-            matchobj = ''
+            self.uninstall_key = ''
+            self.uninstall_matchobj = None
         else:
             command = self.app_config[APP_UNINSTALL].split(':')
             if len(command) == 2 and command[0] == REGISTRY_SEARCH:
                 value = command[1].split('=')
                 if len(value) == 2:
-                    uninstall_key, matchobj = self.global_config.registry_search_uninstall_entry(value[0], value[1])
+                    self.uninstall_key, self.uninstall_matchobj = self.global_config.registry_search_uninstall_entry(value[0], value[1])
                 else:
-                    uninstall_key, matchobj = self.global_config.registry_search_uninstall_entry(value[0], '')
+                    self.uninstall_key, self.uninstall_matchobj = self.global_config.registry_search_uninstall_entry(value[0], '')
             else:
-                uninstall_key = self.app_config[APP_UNINSTALL]
-                matchobj = None
+                self.uninstall_key = self.app_config[APP_UNINSTALL]
+                self.uninstall_matchobj = None
 
-        return uninstall_key, matchobj
+        return self.uninstall_key, self.uninstall_matchobj
 
     def get_uninstall_string(self, app_uninstall, installed_version):
         try:
@@ -409,13 +459,13 @@ class process:
         return uninstall_string
     
     # Upgrade to latest version
-    def upgrade_version(self):
+    def upgrade_version(self, progress_callback=None):
         cont = True
         try:
             if self.app_config[APP_UPGRADES] == 'false':
                 cont = self.uninstall_version()
             if cont == True:
-                cont = self.install_latest_version()
+                cont = self.install_latest_version(progress_callback)
         except KeyError:
             return False
 
@@ -502,8 +552,12 @@ class process:
 
     # Replace install dir string with appropriate value
     def replace_install_dir(self, string):
-        # Create install directory string
-        install_dir = os.path.join(self.global_config.user['install_dir'], self.app)
+        # Search for install directory
+        install_dir = self.get_install_dir()
+
+        # Create install directory string if no install directory found
+        if install_dir == '':
+            install_dir = os.path.join(self.global_config.user['install_dir'], self.app)
 
         # Replace install directory
         string = re.sub(INSTALL_DIR, install_dir, string)
