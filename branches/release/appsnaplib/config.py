@@ -442,8 +442,8 @@ class config:
 
         return uninstall_key, matchobj
         
-    # Search for installed version based on key, name and value provided
-    def registry_search_installed_version(self, uninstall_key, name, value):
+    # Search for name value provided under uninstall location in registry with specified key
+    def registry_search_uninstall_location(self, uninstall_key, name, value):
         try:
             key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
             subvalue, temp = _winreg.QueryValueEx(key, name)

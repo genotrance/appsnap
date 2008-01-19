@@ -55,6 +55,7 @@ FILTER_APP_BY_CATEGORY = _('Filter applications by category')
 FILTER_APP_BY_STRING = _('Filter applications by string')
 FILTER_LIST_BY_CATEGORY = _('Filter list by category')
 FILTER_LIST_BY_STRING = _('Filter list by string')
+FIREFOX = 'Firefox'
 
 ##
 
@@ -136,6 +137,7 @@ SUPPORTED_APPLICATIONS = _('Supported Applications')
 TEST_DOWNLOAD_ONLY = _('Test download only')
 TESTING = _('Testing')
 THIS_HELP_SCREEN = _('This help screen')
+THUNDERBIRD = 'Thunderbird'
 
 ##
 
