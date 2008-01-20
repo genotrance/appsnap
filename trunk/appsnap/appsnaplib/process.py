@@ -19,6 +19,9 @@ ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
 # Regular expressions
 DELIMITERS                 = '[._-]'
 VERSION                    = '#VERSION#'
+VERSION_SEARCH             = '#VERSION\[([0-9]*[:]?[0-9]*)\]#'
+VERSION_REPLACE            = '#VERSION\[%s\]#'
+VERSION_REPLACE_DEPRECATED = '#VERSION[%s]#'
 MAJOR_VERSION              = '#MAJOR_VERSION#'
 MINOR_VERSION              = '#MINOR_VERSION#'
 SUB_VERSION                = '#SUB_VERSION#'
@@ -507,16 +510,6 @@ class process:
         elif version == '': return string
         
         # Create the versions
-        try: major_version = re.findall('^([0-9]+)', version)[0]
-        except IndexError: major_version = version
-        try: minor_version = re.findall('^([0-9]+)' + DELIMITERS + '([0-9]+).*', version)[0][1]
-        except IndexError: minor_version = ''
-        try: sub_version = re.findall('^([0-9]+)' + DELIMITERS + '([0-9]+)' + DELIMITERS + '([0-9]+).*', version)[0][2]
-        except IndexError: sub_version = ''
-        try: majorminor_version = re.findall('^([0-9]+' + DELIMITERS + '[0-9]+).*', version)[0]
-        except IndexError: majorminor_version = version
-        try: majorminorsub_version = re.findall('^([0-9]+' + DELIMITERS + '[0-9]+' + DELIMITERS + '[0-9]+).*', version)[0]
-        except IndexError: majorminorsub_version = version
         dotless_version = re.sub(DELIMITERS, '', version)
         dashtodot_version = re.sub('-', '.', version)
         dottounderscore_version = re.sub('\.', '_', version)
@@ -524,21 +517,44 @@ class process:
 
         # Replace in the specified string
         string = re.sub(VERSION, version, string)
-        string = re.sub(MAJOR_VERSION, major_version, string)
-        string = re.sub(MINOR_VERSION, minor_version, string)
-        string = re.sub(SUB_VERSION, sub_version, string)
-        string = re.sub(MAJORMINOR_VERSION, majorminor_version, string)
-        string = re.sub(MAJORMINORSUB_VERSION, majorminorsub_version, string)
         string = re.sub(DOTLESS_VERSION, dotless_version, string)
         string = re.sub(DASHTODOT_VERSION, dashtodot_version, string)
         string = re.sub(DOTTOUNDERSCORE_VERSION, dottounderscore_version, string)
         string = re.sub(DOTTODASH_VERSION, dottodash_version, string)
+
+        # Deprecated version replacements to use VERSION[x] replacement
+        string = re.sub(MAJOR_VERSION, VERSION_REPLACE_DEPRECATED % '0', string)
+        string = re.sub(MINOR_VERSION, VERSION_REPLACE_DEPRECATED % '1', string)
+        string = re.sub(SUB_VERSION, VERSION_REPLACE_DEPRECATED % '2', string)
+        string = re.sub(MAJORMINOR_VERSION, VERSION_REPLACE_DEPRECATED % ':2', string)
+        string = re.sub(MAJORMINORSUB_VERSION, VERSION_REPLACE_DEPRECATED % ':3', string)
+
+        # VERSION[x] replacement
+        matches = re.findall(VERSION_SEARCH, string)
+        splitversion = re.split(DELIMITERS, version)
+        delimiters = re.sub('[0-9]', '', version)
+        for match in matches:
+            if match != '':
+                try: 
+                    replace = eval('splitversion[%s]' % match)
+                    delimiters = eval('delimiters[%s]' % match)
+                except IndexError: replace = ''
+
+                if type(replace) != types.StringType:
+                    replace = self.combine_multipart_version_with_delimiters([replace], delimiters)[0]
+                    if replace[-1] in DELIMITERS:
+                        replace = replace[:-1]
+            else:
+                replace = ''
+
+            string = re.sub(VERSION_REPLACE % match, replace, string)
 
         return string
 
     # Replace version strings with *
     def replace_version_with_mask(self, string):
         string = re.sub(VERSION, '*', string)
+        string = re.sub(VERSION_SEARCH, '*', string)
         string = re.sub(MAJOR_VERSION, '*', string)
         string = re.sub(MINOR_VERSION, '*', string)
         string = re.sub(SUB_VERSION, '*', string)
