@@ -150,9 +150,6 @@ class curl:
         # Get lock
         i = self.get_lock()
         
-        # Create cache directory
-        self.global_config.create_cache_directory()
-
         # If test mode, download to different file and set timeout
         if test == True:
             self.curl[i].setopt(pycurl.TIMEOUT, defines.NUM_SECONDS_TO_TEST_DOWNLOAD)
