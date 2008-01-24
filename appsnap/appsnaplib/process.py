@@ -20,8 +20,9 @@ ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
 DELIMITERS                 = '[._-]'
 VERSION                    = '#VERSION#'
 VERSION_SEARCH             = '#VERSION\[([0-9]*[:]?[0-9]*)\]#'
-VERSION_REPLACE            = '#VERSION\[%s\]#'
-VERSION_REPLACE_DEPRECATED = '#VERSION[%s]#'
+VERSION_REPLACE            = '#VERSION[%s]#'
+REPLACE_SEARCH             = '#REPLACE\((.+?),(.*?),(.+?)\)#'
+REPLACE_REPLACE            = '#REPLACE(%s,%s,%s)#'
 MAJOR_VERSION              = '#MAJOR_VERSION#'
 MINOR_VERSION              = '#MINOR_VERSION#'
 SUB_VERSION                = '#SUB_VERSION#'
@@ -94,14 +95,18 @@ class process:
     # External functions
 
     # Get the latest version
-    def get_latest_version(self):
-        if self.init == False:
+    def get_latest_version(self, force=False):
+        if self.init == False or force==True:
             self.init = True
             # Get version only if scrape specified
             if APP_SCRAPE in self.app_config and APP_VERSION in self.app_config:
                 self.latestversion = self.global_config.get_cached_latest_version(self.app)
-                if self.latestversion == None:
-                    self.versions = self.get_versions()
+                if self.latestversion == None or force==True:
+                    for i in range(defines.NUM_MAX_DOWNLOAD_RETRIES):
+                        self.versions = self.get_versions()
+                        if self.versions != None: break
+                        time.sleep(defines.SLEEP_BACKEND_DOWNLOAD_RETRY)
+
                     self.splitversions = self.get_split_versions()
                     self.width = self.get_width()
             else:
@@ -224,8 +229,8 @@ class process:
         # Download file depending on conditions below
         cache_timeout = int(self.global_config.cache['cache_timeout']) * defines.NUM_SECONDS_IN_DAY
         perform_download = False
-        if not os.path.exists(cached_filename):
-            # File not downloaded yet
+        if not os.path.exists(cached_filename) or test == True:
+            # File not downloaded yet or test mode
             perform_download = True
         else:
             # File already exists
@@ -244,10 +249,13 @@ class process:
                     
         if perform_download == True:
             # Delete any older cached versions
-            self.delete_older_versions()
+            if test == False: self.delete_older_versions()
 
             # Return false if download fails
-            if self.curl_instance.download_web_data(download + filename, cached_filename, referer, progress_callback, test) != True: return False
+            for i in range(defines.NUM_MAX_DOWNLOAD_RETRIES):
+                if self.curl_instance.download_web_data(download + filename, cached_filename, referer, progress_callback, test) == True: break
+                if i == defines.NUM_MAX_DOWNLOAD_RETRIES-1: return False
+                time.sleep(defines.SLEEP_BACKEND_DOWNLOAD_RETRY)
 
         return cached_filename
 
@@ -509,25 +517,21 @@ class process:
             version = self.latestversion
         elif version == '': return string
         
-        # Create the versions
-        dotless_version = re.sub(DELIMITERS, '', version)
-        dashtodot_version = re.sub('-', '.', version)
-        dottounderscore_version = re.sub('\.', '_', version)
-        dottodash_version = re.sub('\.', '-', version)
-
-        # Replace in the specified string
-        string = re.sub(VERSION, version, string)
-        string = re.sub(DOTLESS_VERSION, dotless_version, string)
-        string = re.sub(DASHTODOT_VERSION, dashtodot_version, string)
-        string = re.sub(DOTTOUNDERSCORE_VERSION, dottounderscore_version, string)
-        string = re.sub(DOTTODASH_VERSION, dottodash_version, string)
-
         # Deprecated version replacements to use VERSION[x] replacement
-        string = re.sub(MAJOR_VERSION, VERSION_REPLACE_DEPRECATED % '0', string)
-        string = re.sub(MINOR_VERSION, VERSION_REPLACE_DEPRECATED % '1', string)
-        string = re.sub(SUB_VERSION, VERSION_REPLACE_DEPRECATED % '2', string)
-        string = re.sub(MAJORMINOR_VERSION, VERSION_REPLACE_DEPRECATED % ':2', string)
-        string = re.sub(MAJORMINORSUB_VERSION, VERSION_REPLACE_DEPRECATED % ':3', string)
+        string = re.sub(MAJOR_VERSION, VERSION_REPLACE % '0', string)
+        string = re.sub(MINOR_VERSION, VERSION_REPLACE % '1', string)
+        string = re.sub(SUB_VERSION, VERSION_REPLACE % '2', string)
+        string = re.sub(MAJORMINOR_VERSION, VERSION_REPLACE % ':2', string)
+        string = re.sub(MAJORMINORSUB_VERSION, VERSION_REPLACE % ':3', string)
+
+        # Deprecated version replacements to use REPLACE(x,y,z) replacement
+        string = re.sub(DOTLESS_VERSION, REPLACE_REPLACE % (DELIMITERS, '', VERSION), string)
+        string = re.sub(DASHTODOT_VERSION, REPLACE_REPLACE % ('-', '.', VERSION), string)
+        string = re.sub(DOTTOUNDERSCORE_VERSION, REPLACE_REPLACE % ('[.]', '_', VERSION), string)
+        string = re.sub(DOTTODASH_VERSION, REPLACE_REPLACE % ('[.]', '-', VERSION), string)
+
+        # Replace version in the specified string
+        string = re.sub(VERSION, version, string)
 
         # VERSION[x] replacement
         matches = re.findall(VERSION_SEARCH, string)
@@ -535,19 +539,28 @@ class process:
         delimiters = re.sub('[0-9]', '', version)
         for match in matches:
             if match != '':
-                try: 
-                    replace = eval('splitversion[%s]' % match)
-                    delimiters = eval('delimiters[%s]' % match)
+                try: replace = eval('splitversion[%s]' % match)
                 except IndexError: replace = ''
 
                 if type(replace) != types.StringType:
+                    try: delimiters = eval('delimiters[%s]' % match)
+                    except IndexError: delimiters = ''
                     replace = self.combine_multipart_version_with_delimiters([replace], delimiters)[0]
                     if replace[-1] in DELIMITERS:
                         replace = replace[:-1]
             else:
                 replace = ''
 
-            string = re.sub(VERSION_REPLACE % match, replace, string)
+            string = string.replace(VERSION_REPLACE % match, replace)
+
+        # REPLACE(x,y,z) replacement
+        matches = re.findall(REPLACE_SEARCH, string)
+        for match in matches:
+            if len(match):
+                [srch, repl, str] = match
+                if srch != '' and str != '':
+                    replace = re.sub(srch, repl, str)
+                    string = string.replace(REPLACE_REPLACE % (srch, repl, str), replace)
 
         return string
 
@@ -555,6 +568,7 @@ class process:
     def replace_version_with_mask(self, string):
         string = re.sub(VERSION, '*', string)
         string = re.sub(VERSION_SEARCH, '*', string)
+        string = re.sub(REPLACE_SEARCH, '*', string)
         string = re.sub(MAJOR_VERSION, '*', string)
         string = re.sub(MINOR_VERSION, '*', string)
         string = re.sub(SUB_VERSION, '*', string)

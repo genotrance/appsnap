@@ -83,6 +83,9 @@ help = header + """
 # Blank line
 BL = '\r%40s\r' % (' ')
 
+# Apps that failed get latest version or download
+failed_apps = []
+
 # Display download status
 def display_download_status(dl_total, dl_current, ul_total, ul_current, status={}):
     name = threading.currentThread().getName()
@@ -117,6 +120,9 @@ def display_download_status(dl_total, dl_current, ul_total, ul_current, status={
 
 # Perform an action on the specified application
 def do_action(configuration, curl_instance, lock, name, getversion, download, install, upgrade, uninstall, test, verbose):
+    # Keep track of failed apps
+    global failed_apps
+
     # Set the thread name
     thread = threading.currentThread()
     thread.setName(name)
@@ -137,7 +143,7 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
             if items[process.APP_WEBSITE] != '':
                 output += '%s : %s\n' % (strings.WEBSITE, items[process.APP_WEBSITE])
             if items[process.APP_CATEGORY] != config.REMOVABLE:
-                latest_version = p.get_latest_version()
+                latest_version = p.get_latest_version(test)
                 if latest_version == None:
                     latest_version = strings.FAILED_TO_CONNECT
                 output += '%s : %s\n' % (strings.LATEST_VERSION, latest_version)
@@ -151,6 +157,7 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
             print output
             if p.download_latest_version(progress_callback, test) == False:
                 print '%s-> %s : %s' % (BL, strings.DOWNLOAD_FAILED, name)
+                failed_apps.append(name)
                 return
             else:
                 print '%s-> %s : %s' % (BL, strings.DOWNLOAD_SUCCEEDED, name)
@@ -398,3 +405,9 @@ def appsnap_start():
         
     # Clear out threads
     curl_instance.clear_threads(children)
+
+    # Print out all failed apps on test
+    if test == True and len(failed_apps):
+        print '\nFailed Apps'
+        for app in failed_apps:
+            print '  %s' % app
