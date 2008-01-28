@@ -73,6 +73,7 @@ class curl:
             self.curl[i].setopt(pycurl.FOLLOWLOCATION, True)
             self.curl[i].setopt(pycurl.MAXREDIRS, defines.NUM_MAX_REDIRECTIONS)
             self.curl[i].setopt(pycurl.SSL_VERIFYPEER, False)
+            self.curl[i].setopt(pycurl.ENCODING, '')
             #self.curl[i].setopt(pycurl.CAINFO, 'cacert.pem')
             #self.curl[i].setopt(pycurl.VERBOSE, True)
 
@@ -146,7 +147,7 @@ class curl:
         web_data = self.web_data[i]
         self.free_lock(i)
 
-        timestamp = 0
+        timestamp = None
         for header in web_data:
             if header[:15] == 'Last-Modified: ':
                 ts = header[15:].strip()
