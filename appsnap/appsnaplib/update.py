@@ -5,6 +5,7 @@ import os
 import os.path
 import process
 import re
+import string
 import StringIO
 import strings
 import sys
@@ -23,15 +24,17 @@ DOWNLOAD_FAILURE = -3
 # Keys
 CHANGED = 'changed'
 DATA = 'data'
-PODATA = 'podata'
-MODATA = 'modata'
-TARGET = 'target'
-POTARGET = 'potarget'
-MOTARGET = 'motarget'
+ETAG = 'etag'
+LOCAL = 'local'
+REMOTE = 'remote'
+URL = 'url'
 
 # Directories
 APPSNAPLIB_DIR = 'appsnaplib'
 LOCALE_DIR = 'locale'
+
+# Files
+VERSION_DAT = 'version.dat'
 
 # Update AppSnap and database
 class update:
@@ -42,7 +45,10 @@ class update:
         self.curl_instance = curl_instance
         self.check_only = check_only
         self.database_only = database_only
-        
+
+        self.versions = self.load_versions()
+        self.newversions = []
+
     # Download remote DBs and concatenate
     def download_database(self):
         db_ini = ''
@@ -114,206 +120,102 @@ class update:
             return DOWNLOAD_FAILURE
         
         return SUCCESS
-        
-    # Download, compare and update appsnaplib
-    def update_appsnaplib(self, version_url, files):
-        # Download appsnaplib
-        appsnaplib = {}
+
+    # Update specified files
+    def update_files(self, version_url, path, files):
+        list = {}
         for file in files:
-            appsnaplib[file] = {}
-            appsnaplib[file][CHANGED] = False
-            appsnaplib[file][DATA] = self.curl_instance.get_web_data(version_url + '/' + APPSNAPLIB_DIR + '/' + file)
-            if appsnaplib[file][DATA] == None or self.check_module(appsnaplib[file][DATA]) != SUCCESS:
-                return DOWNLOAD_FAILURE
-            
-        # Check if any modules changed
+            list[file] = {}
+            list[file][CHANGED] = False
+
+            # URLs
+            list[file][LOCAL+URL] = os.path.join(path, file)
+            list[file][REMOTE+URL] = string.join([version_url, path, file], '/')
+
+            # Check ETag
+            list[file][ETAG] = self.curl_instance.get_web_etag(list[file][REMOTE+URL])
+            if list[file][ETAG] != None: self.newversions.append(list[file][ETAG] + '\r\n')
+            if self.search_version(list[file][ETAG]) == False:
+                # ETag missing or changed, download content
+                list[file][REMOTE+DATA] = self.curl_instance.get_web_data(list[file][REMOTE+URL])
+                if list[file][REMOTE+DATA] == None or (file[-3] == '.py' and self.check_module(list[file][REMOTE+DATA]) != SUCCESS):
+                    # Unable to download or not Python module
+                    return DOWNLOAD_FAILURE
+
+                if list[file][ETAG] != None and self.search_version(file) == True:
+                    # ETag changed so file has changed
+                    list[file][CHANGED] = True
+                else:
+                    # Check if data has changed, no cached ETag
+                    if os.path.exists(list[file][LOCAL+URL]):
+                        # Get local data
+                        try:
+                            fp = open(list[file][LOCAL+URL], 'rb')
+                            data = fp.read()
+                            fp.close()
+                        except IOError:
+                            return READ_ERROR
+                        
+                        if list[file][REMOTE+DATA] != data:
+                            # Different from remote data
+                            list[file][CHANGED] = True
+                    else:
+                        # File does not exist yet
+                        list[file][CHANGED] = True
+
+                if list[file][CHANGED] == True and self.check_only == True:
+                    # Return CHANGED since check_only
+                    return CHANGED
+
+        # Check if anything has changed
         changed = False
         for file in files:
-            appsnaplib[file][TARGET] = os.path.join(APPSNAPLIB_DIR, file)
-            if os.path.exists(appsnaplib[file][TARGET]):
-                # Get local data
-                try:
-                    fp = open(appsnaplib[file][TARGET], 'rb')
-                    data = fp.read()
-                    fp.close()
-                except IOError:
-                    return READ_ERROR
-                
-                # Compare with remote data
-                if appsnaplib[file][DATA] != data:
-                    appsnaplib[file][CHANGED] = True
-                    changed = True
-            else:
-                appsnaplib[file][CHANGED] = True
+            if list[file][CHANGED] == True:
                 changed = True
+                break
         
-        # Update modules since something changed
+        # Update files since something changed
         if changed == True:
-            if self.check_only == True:
-                return CHANGED
-
             for file in files:
-                # Create directory if missing
-                dir = os.path.dirname(appsnaplib[file][TARGET])
-                if not os.path.exists(dir):
-                    try:
-                        os.makedirs(dir)
-                    except:
-                        pass
+                # Update contents if changed
+                if list[file][CHANGED] == True:
+                    # Create directory if missing
+                    dir = os.path.dirname(list[file][LOCAL+URL])
+                    if not os.path.exists(dir):
+                        try:
+                            os.makedirs(dir)
+                        except:
+                            pass
 
-                # Update module contents
-                if appsnaplib[file][CHANGED] == True:
                     # Put remote data
                     try:
-                        fp = open(appsnaplib[file][TARGET], 'wb')
-                        fp.write(appsnaplib[file][DATA])
+                        fp = open(list[file][LOCAL+URL], 'wb')
+                        fp.write(list[file][REMOTE+DATA])
                         fp.close()
                     except IOError:
                         return WRITE_ERROR
-                    
+
         # Delete any obsolete modules
-        for file in glob.glob(APPSNAPLIB_DIR + os.path.sep + '*.py'):
-            if os.path.basename(file) not in files:
-                changed = True
-                try: os.remove(file)
-                except WindowsError: pass
-        
+#        for file in glob.glob(APPSNAPLIB_DIR + os.path.sep + '*.py'):
+#            if os.path.basename(file) not in files:
+#                changed = True
+#                try: os.remove(file)
+#                except WindowsError: pass
+
         # Return code     
         if changed == True:
             return SUCCESS
         else:
             return UNCHANGED
 
-    # Download, compare and update locales
-    def update_locales(self, version_url, locales):
-        # Download locales
-        locale_data = {}
+    # Build locale file list
+    def build_locale_file_list(self, locales):
+        files = []
         for locale in locales:
-            locale_data[locale] = {}
-            locale_data[locale][CHANGED] = False
-            locale_data[locale][PODATA] = self.curl_instance.get_web_data(version_url + '/' + LOCALE_DIR + '/' + locale + '/LC_MESSAGES/appsnap.po')
-            locale_data[locale][MODATA] = self.curl_instance.get_web_data(version_url + '/' + LOCALE_DIR + '/' + locale + '/LC_MESSAGES/appsnap.mo')
-            if locale_data[locale][PODATA] == None or locale_data[locale][MODATA] == None:
-                return DOWNLOAD_FAILURE 
-            
-        # Check if any locales changed or added
-        changed = False
-        for locale in locales:
-            locale_data[locale][POTARGET] = os.path.join(LOCALE_DIR, locale, 'LC_MESSAGES', 'appsnap.po')
-            locale_data[locale][MOTARGET] = os.path.join(LOCALE_DIR, locale, 'LC_MESSAGES', 'appsnap.mo')
-            if os.path.exists(locale_data[locale][POTARGET]) and os.path.exists(locale_data[locale][MOTARGET]):
-                # Get local data
-                try:
-                    fp = open(locale_data[locale][POTARGET], 'rb')
-                    podata = fp.read()
-                    fp.close()
-        
-                    fp = open(locale_data[locale][MOTARGET], 'rb')
-                    modata = fp.read()
-                    fp.close()
-                except IOError:
-                    return READ_ERROR
-            
-                # Compare with remote data
-                if locale_data[locale][PODATA] != podata or locale_data[locale][MODATA] != modata:
-                    locale_data[locale][CHANGED] = True
-                    changed = True
-            else:
-                locale_data[locale][CHANGED] = True
-                changed = True
-                
-        # Update locales since something has changed
-        if changed == True:
-            if self.check_only == True:
-                return CHANGED
+            files.append(string.join([locale, 'LC_MESSAGES', 'appsnap.po'], '/'))
+            files.append(string.join([locale, 'LC_MESSAGES', 'appsnap.mo'], '/'))
+        return files
 
-            for locale in locales:
-                # Create directory if missing
-                dir = os.path.dirname(locale_data[locale][POTARGET])
-                if not os.path.exists(dir):
-                    try:
-                        os.makedirs(dir)
-                    except:
-                        pass
-                
-                # Update locale contents
-                if locale_data[locale][CHANGED] == True:
-                    # Put remote data
-                    try:
-                        fp = open(locale_data[locale][POTARGET], 'wb')
-                        fp.write(locale_data[locale][PODATA])
-                        fp.close()
-    
-                        fp = open(locale_data[locale][MOTARGET], 'wb')
-                        fp.write(locale_data[locale][MODATA])
-                        fp.close()
-                    except IOError:
-                        return WRITE_ERROR
-                    
-            return SUCCESS
-        
-        return UNCHANGED
-    
-    # Download, compare and update misc components
-    def update_miscs(self, version_url, miscs):
-        # Download misc
-        misc_data = {}
-        for misc in miscs:
-            misc_data[misc] = {}
-            misc_data[misc][CHANGED] = False
-            misc_data[misc][DATA] = self.curl_instance.get_web_data(version_url + '/' + misc)
-            if misc_data[misc][DATA] == None:
-                return DOWNLOAD_FAILURE 
-            
-        # Check if any components changed or added
-        changed = False
-        for misc in miscs:
-            misc_data[misc][TARGET] = misc
-            if os.path.exists(misc_data[misc][TARGET]):
-                # Get local data
-                try:
-                    fp = open(misc_data[misc][TARGET], 'rb')
-                    data = fp.read()
-                    fp.close()
-                except IOError:
-                    return READ_ERROR
-            
-                # Compare with remote data
-                if misc_data[misc][DATA] != data:
-                    misc_data[misc][CHANGED] = True
-                    changed = True
-            else:
-                misc_data[misc][CHANGED] = True
-                changed = True
-                
-        # Update misc components since something has changed
-        if changed == True:
-            if self.check_only == True:
-                return CHANGED
-
-            for misc in miscs:
-                # Create directory if missing
-                dir = os.path.dirname(misc_data[misc][TARGET])
-                if not os.path.exists(dir):
-                    try:
-                        os.makedirs(dir)
-                    except:
-                        pass
-                
-                # Update contents
-                if misc_data[misc][CHANGED] == True:
-                    # Put remote data
-                    try:
-                        fp = open(misc_data[misc][TARGET], 'wb')
-                        fp.write(misc_data[misc][DATA])
-                        fp.close()
-                    except IOError:
-                        return WRITE_ERROR
-                    
-            return SUCCESS
-        
-        return UNCHANGED
-        
     # Download, compare and update AppSnap as needed
     def update_appsnap(self):
         # Download version.py for new version information
@@ -343,22 +245,57 @@ class update:
 
         if not self.database_only:
             # Update appsnaplib
-            ret = self.update_appsnaplib(version_url, FILES)
+            ret = self.update_files(version_url, APPSNAPLIB_DIR, FILES)
             if ret not in [SUCCESS, UNCHANGED]: return ret
             returned.append(ret)
 
             # Update misc components
-            ret = self.update_miscs(version_url, MISC)
+            ret = self.update_files(version_url, '', MISC)
             if ret not in [SUCCESS, UNCHANGED]: return ret
             returned.append(ret)
             
             # Update locales        
-            ret = self.update_locales(version_url, LOCALES)
+            ret = self.update_files(version_url, LOCALE_DIR, self.build_locale_file_list(LOCALES))
             if ret not in [SUCCESS, UNCHANGED]: return ret
             returned.append(ret)
         
+        # Save versions for SUCCESS and UNCHANGED
+        if self.versions != self.newversions: self.save_versions(self.newversions)
+
         # Return SUCCESS if anything changed
         if SUCCESS in returned:
             return SUCCESS
         else:
             return UNCHANGED
+
+    # Load version.dat
+    def load_versions(self):
+        try:
+            f = open(VERSION_DAT, 'rb')
+            versions = f.readlines()
+            versions.sort()
+            f.close()
+        except IOError:
+            versions = []
+
+        return versions
+
+    # Save version.dat
+    def save_versions(self, versions):
+        try:
+            f = open(VERSION_DAT, 'wb')
+            versions.sort()
+            f.writelines(versions)
+            f.close()
+
+            self.versions = versions
+            self.newversions = []
+        except IOError:
+            pass
+
+    # Look for string in version.dat
+    def search_version(self, str):
+        for version in self.versions:
+            if version.find(str) != -1:
+                return True
+        return False

@@ -33,6 +33,7 @@ class curl:
         self.curl = []
         self.web_data = []
         self.download_data = []
+        self.headers = {}
         
         for i in range(self.download):
             # Initialize objects
@@ -105,8 +106,10 @@ class curl:
         self.curl[i].setopt(pycurl.WRITEFUNCTION, write_callback)
         if header_callback != None:
             self.curl[i].setopt(pycurl.HEADERFUNCTION, header_callback)
+            self.curl[i].setopt(pycurl.NOBODY, 1)
         else:
-            self.curl[i].setopt(pycurl.HEADERFUNCTION, self.call_back_header)
+            self.curl[i].setopt(pycurl.HEADERFUNCTION, lambda x: len(x))
+            self.curl[i].setopt(pycurl.HTTPGET, 1)
 
         # Perform the get
         try: self.curl[i].perform()
@@ -115,26 +118,24 @@ class curl:
             # Timeout test then succeeded
             if  errno == defines.ERROR_CURL_OPERATION_TIMEOUT and test == True:
                 return 200
-            elif errno == defines.ERROR_CURL_WRITE_ERROR and header_callback != None:
-                return 200
             return 404
 
         # Return the response code
         return self.curl[i].getinfo(pycurl.RESPONSE_CODE)
 
-    def call_back_header(self, buf):
-        return len(buf)
+    # Get header
+    def get_web_header(self, url):
+        # Return cached headers if available
+        if self.headers.has_key(url): return self.headers[url]
 
-    # Get timestamp from the web
-    def get_web_timestamp(self, url):
-         # Get lock
+        # Get lock
         i = self.get_lock()
         
         # Reset output buffer
         self.web_data[i] = []
 
         # Download the header
-        response = self.get_url(url, i, lambda x: 1, self.call_back_buffer)
+        response = self.get_url(url, i, lambda x: len(x), self.call_back_buffer)
         if response >= 300:
             if response == 407: print '\n%s' % strings.PROXY_AUTHENTICATION_FAILED
             else: print '\n%s %s. URL = %s' % (strings.ERROR, response.__str__(), url)
@@ -147,16 +148,37 @@ class curl:
         web_data = self.web_data[i]
         self.free_lock(i)
 
-        timestamp = None
-        for header in web_data:
-            if header[:15] == 'Last-Modified: ':
-                ts = header[15:].strip()
-                try: timestamp = time.mktime(time.strptime(ts, "%a, %d %b %Y %H:%M:%S %Z"))
-                except: pass
-                break
+        # Cache headers for url
+        self.headers[url] = web_data
 
-        # Return the collected data
+        return web_data
+
+    # Get a specific header
+    def get_header_entry(self, header, entry):
+        for line in header:
+            if line.find(':') != -1:
+                [key, value] = line.split(':', 1)
+                key = key.strip()
+                value = value.strip()
+                if key.lower() == entry.lower():
+                    return value
+        return None
+
+    # Get timestamp from the web
+    def get_web_timestamp(self, url):
+        web_data = self.get_web_header(url)
+        if web_data == None: return None
+
+        timestamp = self.get_header_entry(web_data, 'Last-Modified')
+        if timestamp != None: timestamp = time.mktime(time.strptime(timestamp, "%a, %d %b %Y %H:%M:%S %Z"))
         return timestamp
+
+    # Get etag from the web
+    def get_web_etag(self, url):
+        web_data = self.get_web_header(url)
+        if web_data == None: return None
+
+        return self.get_header_entry(web_data, 'ETag')
 
     # Download data from the web
     def get_web_data(self, url):
