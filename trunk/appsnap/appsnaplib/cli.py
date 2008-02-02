@@ -242,10 +242,18 @@ def appsnap_start():
         if o == '-w': wikidump = True
         if o == '-x': uninstall = True
 
-    # If no application specified, exit
+    # If no action specified, exit
     if names == None and list == False and categories == False and updateall == False and wikidump == False and csvdump == False:
-        print help
-        sys.exit(defines.ERROR_NO_OPTIONS_SPECIFIED)
+        if test == False:
+            print help
+            sys.exit(defines.ERROR_NO_OPTIONS_SPECIFIED)
+        else:
+            try:
+                import tester
+                tester.do_test()
+            except ImportError:
+                print help
+            sys.exit(defines.ERROR_SUCCESS)
 
     # Print application header
     print header
