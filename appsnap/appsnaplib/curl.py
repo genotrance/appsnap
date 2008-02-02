@@ -73,9 +73,8 @@ class curl:
     
             self.curl[i].setopt(pycurl.FOLLOWLOCATION, True)
             self.curl[i].setopt(pycurl.MAXREDIRS, defines.NUM_MAX_REDIRECTIONS)
-            self.curl[i].setopt(pycurl.SSL_VERIFYPEER, False)
             self.curl[i].setopt(pycurl.ENCODING, '')
-            #self.curl[i].setopt(pycurl.CAINFO, 'cacert.pem')
+            self.curl[i].setopt(pycurl.CAINFO, 'cacert.pem')
             #self.curl[i].setopt(pycurl.VERBOSE, True)
 
     # Acquire a lock
