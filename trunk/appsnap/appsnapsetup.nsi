@@ -132,6 +132,7 @@ Section Uninstall
   Delete "$INSTDIR\*.lib"
   Delete "$INSTDIR\db.ini"
   Delete "$INSTDIR\config.ini"
+  Delete "$INSTDIR\version.dat"
   RMDir "$INSTDIR"
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
