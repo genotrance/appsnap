@@ -17,6 +17,7 @@ FILES = [
         'makegui.py',
         'process.py',
         'strings.py',
+        'tester.py',
         'update.py',
         'version.py',
         'widgets.py'
@@ -34,5 +35,6 @@ LOCALES = [
 
 # Other components to update
 MISC = [
-        'appsnap.html'
+        'appsnap.html',
+        'cacert.pem'
         ]

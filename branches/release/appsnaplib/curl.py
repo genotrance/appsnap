@@ -33,6 +33,7 @@ class curl:
         self.curl = []
         self.web_data = []
         self.download_data = []
+        self.headers = {}
         
         for i in range(self.download):
             # Initialize objects
@@ -72,8 +73,8 @@ class curl:
     
             self.curl[i].setopt(pycurl.FOLLOWLOCATION, True)
             self.curl[i].setopt(pycurl.MAXREDIRS, defines.NUM_MAX_REDIRECTIONS)
-            self.curl[i].setopt(pycurl.SSL_VERIFYPEER, False)
-            #self.curl[i].setopt(pycurl.CAINFO, 'cacert.pem')
+            self.curl[i].setopt(pycurl.ENCODING, '')
+            self.curl[i].setopt(pycurl.CAINFO, 'cacert.pem')
             #self.curl[i].setopt(pycurl.VERBOSE, True)
 
     # Acquire a lock
@@ -92,7 +93,7 @@ class curl:
         self.lock[i].release()
 
     # Get the specified URL
-    def get_url(self, url, i, callback, test=False):
+    def get_url(self, url, i, write_callback, header_callback=None, test=False):
         # Save thread name
         self.acquired[threading.currentThread().getName()] = i
 
@@ -101,7 +102,13 @@ class curl:
 
         # Set the URL and callback function
         self.curl[i].setopt(pycurl.URL, url)
-        self.curl[i].setopt(pycurl.WRITEFUNCTION, callback)
+        self.curl[i].setopt(pycurl.WRITEFUNCTION, write_callback)
+        if header_callback != None:
+            self.curl[i].setopt(pycurl.HEADERFUNCTION, header_callback)
+            self.curl[i].setopt(pycurl.NOBODY, 1)
+        else:
+            self.curl[i].setopt(pycurl.HEADERFUNCTION, lambda x: len(x))
+            self.curl[i].setopt(pycurl.HTTPGET, 1)
 
         # Perform the get
         try: self.curl[i].perform()
@@ -114,6 +121,63 @@ class curl:
 
         # Return the response code
         return self.curl[i].getinfo(pycurl.RESPONSE_CODE)
+
+    # Get header
+    def get_web_header(self, url):
+        # Return cached headers if available
+        if self.headers.has_key(url): return self.headers[url]
+
+        # Get lock
+        i = self.get_lock()
+        
+        # Reset output buffer
+        self.web_data[i] = []
+
+        # Download the header
+        response = self.get_url(url, i, lambda x: len(x), self.call_back_buffer)
+        if response >= 300:
+            if response == 407: print '\n%s' % strings.PROXY_AUTHENTICATION_FAILED
+            else: print '\n%s %s. URL = %s' % (strings.ERROR, response.__str__(), url)
+
+            # Failure occurred so return false
+            self.free_lock(i)
+            return None
+
+        # Free lock
+        web_data = self.web_data[i]
+        self.free_lock(i)
+
+        # Cache headers for url
+        self.headers[url] = web_data
+
+        return web_data
+
+    # Get a specific header
+    def get_header_entry(self, header, entry):
+        for line in header:
+            if line.find(':') != -1:
+                [key, value] = line.split(':', 1)
+                key = key.strip()
+                value = value.strip()
+                if key.lower() == entry.lower():
+                    return value
+        return None
+
+    # Get timestamp from the web
+    def get_web_timestamp(self, url):
+        web_data = self.get_web_header(url)
+        if web_data == None: return None
+
+        timestamp = self.get_header_entry(web_data, 'Last-Modified')
+        if timestamp != None: timestamp = time.mktime(time.strptime(timestamp, "%a, %d %b %Y %H:%M:%S %Z"))
+        return timestamp
+
+    # Get etag from the web
+    def get_web_etag(self, url):
+        web_data = self.get_web_header(url)
+        if web_data == None: return None
+
+        return self.get_header_entry(web_data, 'ETag')
 
     # Download data from the web
     def get_web_data(self, url):
@@ -165,7 +229,7 @@ class curl:
             
         # Download data
         self.curl[i].setopt(pycurl.REFERER, referer)
-        response = self.get_url(url, i, self.call_back_download, True)
+        response = self.get_url(url, i, self.call_back_download, test=True)
         if response >= 300:
             # Close and delete download file
             self.download_data[i].close()
