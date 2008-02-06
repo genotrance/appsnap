@@ -1,6 +1,6 @@
 # Name and version of application
 APPNAME    = 'AppSnap'
-APPVERSION = '1.3.3-pre2'
+APPVERSION = '1.3.3'
 
 # Minimum required build version
 BLDVERSION = '1.3.3'
