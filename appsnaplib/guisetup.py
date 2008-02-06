@@ -62,7 +62,7 @@ schema = """
       family : wx.FONTFAMILY_DECORATIVE
       style : wx.FONTSTYLE_NORMAL
       weight : wx.FONTWEIGHT_BOLD
-      face : Comic Sans MS
+      face : Verdana
 
     - name : dropdownfont
       type : wx.Font
@@ -310,7 +310,6 @@ schema = """
       method : SetSizeHints
       minW : %s
       minH : %s
-      maxW : %s
 
     - name : frame
       method : SetIcon
@@ -333,7 +332,7 @@ schema = """
        defines.FILTER_BOX_WIDTH, defines.FILTER_BOX_HEIGHT,
        strings.FILTER,
        'appsnap.ico', 
-       defines.GUI_WIDTH, defines.GUI_HEIGHT, defines.GUI_WIDTH
+       defines.GUI_WIDTH, defines.GUI_HEIGHT
        )
 
 # Event processing methods
@@ -594,10 +593,15 @@ class Events:
             - name : bsizer
               method : SetMinSize
               size : (%s, %s)
+
+            - name : filterbox
+              method : Move
+              pt : (%s, 3)
         """ % (defines.TOOLBAR_WIDTH, frame.y,
-               defines.GUI_WIDTH - defines.TOOLBAR_WIDTH, frame.y, 
-               defines.GUI_WIDTH - defines.TOOLBAR_WIDTH - 15, frame.y - defines.TOP_MARGIN, 
-               defines.GUI_WIDTH - defines.TOOLBAR_WIDTH - 15, frame.y - defines.TOP_MARGIN
+               frame.x - defines.TOOLBAR_WIDTH, frame.y, 
+               frame.x - defines.TOOLBAR_WIDTH - 15, frame.y - defines.TOP_MARGIN, 
+               frame.x - defines.TOOLBAR_WIDTH - 15, frame.y - defines.TOP_MARGIN,
+               frame.x - defines.FILTER_BOX_WIDTH - defines.TOOLBAR_WIDTH - 15
                )
         self.resources['gui'].parse_and_run(schema)
     

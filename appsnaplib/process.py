@@ -104,7 +104,7 @@ class process:
                 if self.latestversion == None or force==True:
                     for i in range(defines.NUM_MAX_DOWNLOAD_RETRIES):
                         self.versions = self.get_versions()
-                        if self.versions != None: break
+                        if self.versions != None or i == defines.NUM_MAX_DOWNLOAD_RETRIES-1: break
                         time.sleep(defines.SLEEP_BACKEND_DOWNLOAD_RETRY)
 
                     self.splitversions = self.get_split_versions()

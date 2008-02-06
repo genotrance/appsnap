@@ -7,6 +7,7 @@ import imp
 import os
 import os.path
 import pycurl
+import random
 import re
 import shutil
 import socket
@@ -17,6 +18,7 @@ import threading
 import time
 import traceback
 import types
+import unittest
 import urllib
 import _winreg
 import wx
