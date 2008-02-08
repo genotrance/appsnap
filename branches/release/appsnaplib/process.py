@@ -376,9 +376,6 @@ class process:
             uninstall_string = self.get_uninstall_string(app_uninstall, installed_version)
             if uninstall_string == None: raise WindowsError
 
-            # Fix uninstall string quotes
-            if uninstall_string[0] != '"': uninstall_string = '"' + re.sub(re.compile('\.exe', re.IGNORECASE), '.exe"', uninstall_string)
-
             # Add uninstparam flags if available and if silent install requested
             uninstparam = ''
             if self.global_config.user[config.SILENT_INSTALL] == 'True':
@@ -390,6 +387,9 @@ class process:
                 except KeyError:
                     pass
             
+            # Fix uninstall string quotes
+            if uninstall_string[0] != '"': uninstall_string = '"' + re.sub(re.compile('\.exe', re.IGNORECASE), '.exe"', uninstall_string)
+
             # Run uninstaller, check return value    
             retval = os.popen('"' + uninstall_string + uninstparam + '"').close()
             if  retval != None:

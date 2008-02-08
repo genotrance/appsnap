@@ -28,8 +28,7 @@ if encoding:
 
 header = version.APPNAME + ' ' + version.APPVERSION + '\n'
 
-help = header + """
-%s
+help = """%s
 -h\t\t\t%s
 -c\t\t\t%s
 -l\t\t\t%s
@@ -196,6 +195,9 @@ def do_action(configuration, curl_instance, lock, name, getversion, download, in
 
 # Run the CLI
 def appsnap_start():
+    # Print application header
+    print header
+
     # Parse command line arguments
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'cdDf:ghiln:s:tuUvVwx')
@@ -242,32 +244,34 @@ def appsnap_start():
         if o == '-w': wikidump = True
         if o == '-x': uninstall = True
 
-    # If no action specified, exit
-    if names == None and list == False and categories == False and updateall == False and wikidump == False and csvdump == False:
-        if test == False:
-            print help
-            sys.exit(defines.ERROR_NO_OPTIONS_SPECIFIED)
-        else:
-            try:
-                import tester
-                tester.do_test()
-            except ImportError:
-                print help
-            sys.exit(defines.ERROR_SUCCESS)
-
-    # Print application header
-    print header
-
     # Load the configuration
     configuration = config.config()
 
     # Create a pycurl instance
     curl_instance = curl.curl(configuration)
 
-    # List applications if requested
+    # Figure out applications selected
+    if names != None and len(names) == 1 and names[0] == '*':
+        if categoryfilter == '':
+            names = configuration.get_sections()
+        else:
+            print '%s : %s' % (strings.CATEGORY, categoryfilter)
+            names = configuration.get_sections_by_category(categoryfilter)
+
+        if stringfilter != '':
+            print '%s : %s\n' % (strings.FILTER, stringfilter)
+            names = configuration.filter_sections_by_string(names, stringfilter)
+        else:
+            print
+
+    ###
+    # Perform requested action
+            
+    # List categories
     if categories == True:
         configuration.display_categories()
-        sys.exit(defines.ERROR_SUCCESS)
+
+    # List applications
     elif list == True:
         if categoryfilter == config.INSTALLED or categoryfilter == config.NOT_INSTALLED:
             names = configuration.get_sections()
@@ -283,10 +287,9 @@ def appsnap_start():
             curl_instance.clear_threads(children)                
 
         configuration.display_available_sections(categoryfilter, stringfilter)
-        sys.exit(defines.ERROR_SUCCESS)
 
     # Update AppSnap if requested
-    if updateall == True:
+    elif updateall == True:
         check_only = test
         if check_only == False: print '-> %s' % strings.UPDATING_APPSNAP
         else: print '-> %s' % strings.CHECKING_FOR_UPDATES
@@ -307,28 +310,9 @@ def appsnap_start():
             print '-> %s - %s' % (strings.UPDATE_APPSNAP_FAILED, strings.UNABLE_TO_WRITE_APPSNAP)
         elif returned == update.DOWNLOAD_FAILURE:
             print '-> %s - %s' % (strings.UPDATE_APPSNAP_FAILED, strings.DOWNLOAD_FAILED)
-            
-        sys.exit(defines.ERROR_SUCCESS)
         
-    # Dump application database in wiki format if requested
-    if wikidump == True:
-        categories = configuration.get_categories()
-        num_sections = 0
-        for category in categories:
-            sections = configuration.get_sections_by_category(category)
-            num_sections += len(sections)
-            print '!!!%s (%d)' % (category, len(sections))
-            
-            for section in sections:
-                items = configuration.get_section_items(section)
-                
-                print '* [[%s|%s]] - """%s"""' % (section, items[process.APP_WEBSITE], items[process.APP_DESCRIBE])
-                
-        print '!!!Total: %d applications in %d categories' % (num_sections, len(categories))
-        sys.exit(defines.ERROR_SUCCESS)
-
     # Dump database in CSV format if requested
-    if csvdump == True:
+    elif csvdump == True:
         def quote(str):
             if str == 'true': str = 'Yes'
             elif str == 'false': str = 'No'
@@ -364,58 +348,76 @@ def appsnap_start():
         output = [string.join(data, ',')]
         
         # Add sections
-        sections = configuration.get_sections()
-        for section in sections:
-            data = [quote(section)]
-            items = configuration.get_section_items(section)
-            for field in fields:
-                try: data.append(quote(items[field]))
-                except KeyError: data.append('')
-            data.append('Published\n')
-            output.append(string.join(data, ','))
+        if names == None: names = configuration.get_sections()
+
+        for name in names:
+            data = [quote(name)]
+            items = configuration.get_section_items(name)
+            if items != None:
+                for field in fields:
+                    try: data.append(quote(items[field]))
+                    except KeyError: data.append('')
+                data.append('Published\n')
+                output.append(string.join(data, ','))
         
         print string.join(output, '')
         sys.exit(defines.ERROR_SUCCESS)
 
-    # Figure out applications selected
-    if len(names) == 1 and names[0] == '*':
-        if categoryfilter == '':
-            names = configuration.get_sections()
-        else:
-            print '%s : %s' % (strings.CATEGORY, categoryfilter)
-            names = configuration.get_sections_by_category(categoryfilter)
-
-        if stringfilter != '':
-            print '%s : %s\n' % (strings.FILTER, stringfilter)
-            names = configuration.filter_sections_by_string(names, stringfilter)
-        else:
-            print
+    # Dump application database in wiki format if requested
+    elif wikidump == True:
+        categories = configuration.get_categories()
+        num_sections = 0
+        for category in categories:
+            sections = configuration.get_sections_by_category(category)
+            num_sections += len(sections)
+            print '!!!%s (%d)' % (category, len(sections))
             
-    # Perform actions for each application specified
-    children = []
-    lock = threading.Lock()
-    for name in names:
-        curl_instance.limit_threads(children)
-        
-        child = threading.Thread(target=do_action, args=[configuration, 
-                                                         curl_instance, 
-                                                         lock, 
-                                                         name, 
-                                                         getversion, 
-                                                         download, 
-                                                         install, 
-                                                         upgrade, 
-                                                         uninstall,
-                                                         test,
-                                                         verbose])
-        children.append(child)
-        child.start()
-        
-    # Clear out threads
-    curl_instance.clear_threads(children)
+            for section in sections:
+                items = configuration.get_section_items(section)
+                
+                print '* [[%s|%s]] - """%s"""' % (section, items[process.APP_WEBSITE], items[process.APP_DESCRIBE])
+                
+        print '!!!Total: %d applications in %d categories' % (num_sections, len(categories))
 
-    # Print out all failed apps on test
-    if test == True and len(failed_apps):
-        print '\nFailed Apps'
-        for app in failed_apps:
-            print '  %s' % app
+    # Perform actions for each application specified
+    elif names != None:
+        children = []
+        lock = threading.Lock()
+        for name in names:
+            curl_instance.limit_threads(children)
+            
+            child = threading.Thread(target=do_action, args=[configuration, 
+                                                             curl_instance, 
+                                                             lock, 
+                                                             name, 
+                                                             getversion, 
+                                                             download, 
+                                                             install, 
+                                                             upgrade, 
+                                                             uninstall,
+                                                             test,
+                                                             verbose])
+            children.append(child)
+            child.start()
+            
+        # Clear out threads
+        curl_instance.clear_threads(children)
+
+        # Print out all failed apps on test
+        if test == True and len(failed_apps):
+            print '\nFailed Apps'
+            for app in failed_apps:
+                print '  %s' % app
+
+    # Test AppSnap
+    elif test == True and names == None:
+        try:
+            import tester
+            tester.do_test()
+        except ImportError:
+            print help
+
+    # No options specified
+    else:
+        print help
+        sys.exit(defines.ERROR_NO_OPTIONS_SPECIFIED)
