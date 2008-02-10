@@ -460,7 +460,8 @@ class config:
                 subvalue = ''
                 
         if subvalue != '':
-            matchobj = re.match(value, subvalue)
+            try: matchobj = re.match(value, subvalue)
+            except TypeError: matchobj = None
             if matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
                 return matchobj
             
