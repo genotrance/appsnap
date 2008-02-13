@@ -8,6 +8,7 @@ BLDVERSION = '1.3.3'
 # Files in the AppSnap Library
 FILES = [
         '__init__.py',
+        'adder.py',
         'cli.py',
         'config.py',
         'curl.py',
