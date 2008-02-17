@@ -338,6 +338,6 @@ upgrades        = true
             return 'NSIS'
         elif data.find('MSI') != -1:
             return 'MSIEXE'
-        elif data.find('BitRock') == -1:
+        elif data.find('BitRock') != -1:
             return 'BITROCK'
         return ''

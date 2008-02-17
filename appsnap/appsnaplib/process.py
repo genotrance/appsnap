@@ -334,7 +334,8 @@ class process:
                 pass
     
             # Run the installer, check return value
-            retval = os.popen('"' + command + '"').close()
+            try: retval = os.popen('"' + command + '"').close()
+            except IOError: retval = 2
             if  retval != None:
                 # MSI returns non-zero as success too
                 if cached_filename[-3:] == 'msi' and (retval == 1641 or retval == 3010): pass

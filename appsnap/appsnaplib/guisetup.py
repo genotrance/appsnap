@@ -682,7 +682,10 @@ class Events:
         # Construct section list
         filtered_sections = []
         for section in sections:
-            if (len(filter) == 0) or (len(filter) and section.lower().find(filter.lower()) != -1):
+            item = self.configuration.get_section_items(section)
+            if item != None: description = item[process.APP_DESCRIBE].lower()
+            else: description = ''
+            if (len(filter) == 0) or (len(filter) and (section.lower().find(filter) != -1 or description.find(filter) != -1)):
                 filtered_sections.append(section)
 
         # Hide scrollwindow
