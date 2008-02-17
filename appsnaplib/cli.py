@@ -1,4 +1,5 @@
 # Import required libraries
+import adder
 import codecs
 import config
 import curl
@@ -200,12 +201,13 @@ def appsnap_start():
 
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'cdDf:ghiln:s:tuUvVwx')
+        opts, args = getopt.getopt(sys.argv[1:], 'a:cdDf:ghiln:s:tuUvVwx')
     except getopt.GetoptError:
         print help
         sys.exit(defines.ERROR_GETOPT)
 
     # Set defaults
+    add = None
     categories = False
     download = False
     database_only = False
@@ -224,6 +226,7 @@ def appsnap_start():
     uninstall = False
 
     for o, a in opts:
+        if o == '-a': add = [item.strip() for item in a.split(',')]
         if o == '-c': categories = True
         if o == '-d': download = True
         if o == '-D': database_only = True
@@ -266,9 +269,15 @@ def appsnap_start():
 
     ###
     # Perform requested action
+
+    # Add application wizard
+    if add != None and len(add) > 0:
+        add_apps = adder.adder(configuration, curl_instance)
+        for app in add:
+            add_apps.add_application(app, uninstall)
             
     # List categories
-    if categories == True:
+    elif categories == True:
         configuration.display_categories()
 
     # List applications
