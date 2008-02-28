@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: AppSnap\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-01-16 23:49-0600\n"
-"PO-Revision-Date: 2008-01-16 23:49-0600\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2008-02-28 00:45-0600\n"
+"Last-Translator: Gonzague Dambricourt <gonzaguedambricourt@gmail.com>\n"
 "Language-Team: Gonzague Dambricourt <gonzaguedambricourt@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,7 +32,7 @@ msgstr "Fonctions spécifiques à l'application"
 
 #: appsnaplib/strings.py:20
 msgid "AppSnap database corrupt. Update AppSnap to restore the database."
-msgstr ""
+msgstr "Base de données AppSnap corrompue. Merci de mettre à jour AppSnap pour restaurer la base de données."
 
 #: appsnaplib/strings.py:21
 msgid "Available Categories"
@@ -48,15 +48,15 @@ msgstr "Catégorie"
 
 #: appsnaplib/strings.py:27
 msgid "Only check for updates"
-msgstr ""
+msgstr "Chercher uniquement les mises à jour"
 
 #: appsnaplib/strings.py:28
 msgid "Checking for AppSnap updates"
-msgstr ""
+msgstr "Rechercher les mises à jour AppSnap"
 
 #: appsnaplib/strings.py:29
 msgid "Click update to download and install"
-msgstr ""
+msgstr "Cliquez sur \"Mise à jour\" pour télécharger et installer"
 
 #: appsnaplib/strings.py:30
 msgid "Comparing"
@@ -236,7 +236,7 @@ msgstr "Nom"
 
 #: appsnaplib/strings.py:104
 msgid "New AppSnap build required. Please update using installer."
-msgstr ""
+msgstr "Une nouvelle version d'AppSnap doit être installée. Merci de mettre à jour via l'installeur"
 
 #: appsnaplib/strings.py:105
 msgid "No changes found"
@@ -272,7 +272,7 @@ msgstr "Recharger"
 
 #: appsnaplib/strings.py:119
 msgid "Reloading AppSnap"
-msgstr ""
+msgstr "Rechargement d'AppSnapp"
 
 #: appsnaplib/strings.py:120
 msgid "Reloading database"
@@ -328,15 +328,15 @@ msgstr "Cet écran d'aide"
 
 #: appsnaplib/strings.py:142
 msgid "Unable to read AppSnap files"
-msgstr ""
+msgstr "Impossible de lire les fichiers AppSnap"
 
 #: appsnaplib/strings.py:143
 msgid "Unable to write to AppSnap files"
-msgstr ""
+msgstr "Impossible de modifier les fichiers AppSnap"
 
 #: appsnaplib/strings.py:144
 msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
-msgstr ""
+msgstr "Une erreur fatale s'est produite. Merci de reporter ceci sur le tracker de bugs AppSnap http://code.google.com/p/appsnap/issues/entry. Toutes nos excuses pour la gêne occasionnée"
 
 #: appsnaplib/strings.py:145
 msgid "Uninstall"
@@ -360,19 +360,19 @@ msgstr "Désinstallation réussie"
 
 #: appsnaplib/strings.py:150
 msgid "AppSnap update failed"
-msgstr ""
+msgstr "La mise à jour AppSnap a échoué"
 
 #: appsnaplib/strings.py:151
 msgid "AppSnap update succeeded"
-msgstr ""
+msgstr "La mise à jour AppSnap a réussi"
 
 #: appsnaplib/strings.py:152
 msgid "Update"
-msgstr ""
+msgstr "Mise à jour"
 
 #: appsnaplib/strings.py:153
 msgid "Update AppSnap and database"
-msgstr ""
+msgstr "Mettre à jour AppSnap et la base de données"
 
 #: appsnaplib/strings.py:154
 msgid "implies -i, -x if not upgradeable"
@@ -380,11 +380,11 @@ msgstr "Implique la commande -i, -x si ne peut être mis à jour"
 
 #: appsnaplib/strings.py:155
 msgid "AppSnap updates available"
-msgstr ""
+msgstr "Des mises à jour pour AppSnap sont disponibles"
 
 #: appsnaplib/strings.py:156
 msgid "Updating AppSnap"
-msgstr ""
+msgstr "Mise à jour en cours..."
 
 #: appsnaplib/strings.py:157
 msgid "Upgrade"
@@ -412,11 +412,11 @@ msgstr "Mse à jour en cours"
 
 #: appsnaplib/strings.py:163
 msgid "User database corrupt. Check userdb.ini syntax."
-msgstr ""
+msgstr "La base de données utilisateur est corrompue . Vérifiez la syntaxe du fichier userdb.ini"
 
 #: appsnaplib/strings.py:167
 msgid "Display download status"
-msgstr ""
+msgstr "Montrer le statut du téléchargement"
 
 #: appsnaplib/strings.py:171
 msgid "Waiting"
