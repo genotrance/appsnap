@@ -537,7 +537,7 @@ class process:
         # VERSION[x] replacement
         matches = re.findall(VERSION_SEARCH, string)
         splitversion = re.split(DELIMITERS, version)
-        delimiters = re.sub('[0-9]', '', version)
+        delimiters = re.sub('[0-9a-z]', '', version)
         for match in matches:
             if match != '':
                 try: replace = eval('splitversion[%s]' % match)

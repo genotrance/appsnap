@@ -31,6 +31,11 @@ class adder:
 
     # Add application wizard
     def add_application(self, app_name, addon=False):
+        # Skip apps already in database
+        if app_name in self.configuration.get_sections():
+            print 'Application \'%s\' already in database' % app_name
+            return
+
         # Initialize
         self.apps[app_name] = {}
 
