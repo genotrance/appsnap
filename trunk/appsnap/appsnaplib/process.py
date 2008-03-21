@@ -349,6 +349,7 @@ class process:
     
         # Save installed version
         self.global_config.save_installed_version(self.app, self.latestversion)
+        self.installedversion = ''
 
         # Execute post-install command if any
         if self.execute_script(APP_POSTINSTALL) != True:
@@ -591,7 +592,7 @@ class process:
             install_dir = os.path.join(self.global_config.user['install_dir'], self.app)
 
         # Replace install directory
-        string = re.sub(INSTALL_DIR, install_dir, string)
+        string = string.replace(INSTALL_DIR, install_dir)
 
         return self.global_config.expand_env(string)
 
@@ -676,7 +677,7 @@ class process:
         letters = re.findall('[a-z]', version)
 
         # Convert version to a number without the letters
-        nversion = string.atoi(re.sub('[ a-z]', '0', version))
+        nversion = int(re.sub('[ a-z]', '0', version))
 
         # Convert the letters into a numeric value
         decimal = 0.0

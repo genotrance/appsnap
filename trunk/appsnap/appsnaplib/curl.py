@@ -65,7 +65,7 @@ class curl:
                     # Set proxy server and port
                     self.curl[i].setopt(pycurl.PROXY, socket.getfqdn(proxy_server.__str__()))
                     if proxy_port != None:
-                        self.curl[i].setopt(pycurl.PROXYPORT, string.atoi(proxy_port))
+                        self.curl[i].setopt(pycurl.PROXYPORT, int(string.join([s for s in proxy_port if s in '0123456789'], '')))
     
                     self.curl[i].setopt(pycurl.PROXYUSERPWD, '%s:%s' % (self.global_config.user[config.PROXY_USER], self.global_config.user[config.PROXY_PASSWORD]))
                     self.curl[i].setopt(pycurl.PROXYAUTH, defines.CURLOPT_PROXY_ANY)
