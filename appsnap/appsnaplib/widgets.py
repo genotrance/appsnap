@@ -311,7 +311,7 @@ class ApplicationPanel(wx.Panel):
                 else: return self.error_out(strings.DOWNLOAD_FAILED)
             self.cancel.Hide()
 
-        if action == process.ACT_UNINSTALL or (action == process.ACT_UPGRADE and self.process.app_config[process.APP_UPGRADES] == 'true'):
+        if action == process.ACT_UNINSTALL or (action == process.ACT_UPGRADE and self.process.app_config[process.APP_UPGRADES] == 'false'):
             # Perform the uninstall, use lock to ensure only one install/uninstall at a time
             self.set_status_text(strings.UNINSTALLING + ' ...')
             self.event.lock.acquire()

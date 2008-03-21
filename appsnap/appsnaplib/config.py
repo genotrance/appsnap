@@ -64,7 +64,7 @@ class config:
         try:
             self.db = ConfigParser.SafeConfigParser()
             self.db.read(DB_INI)
-        except ConfigParser.MissingSectionHeaderError:
+        except ConfigParser.MissingSectionHeaderError, ConfigParser.ParsingError:
             print strings.APPSNAP_DATABASE_CORRUPT + '\n'
             pass
 
@@ -73,7 +73,7 @@ class config:
             self.userdb = ConfigParser.SafeConfigParser()
             self.userdb.read(USERDB_INI)
             self.merge_user_db()
-        except ConfigParser.MissingSectionHeaderError:
+        except ConfigParser.MissingSectionHeaderError, ConfigParser.ParsingError:
             print strings.USER_DATABASE_CORRUPT + '\n'
             pass
 

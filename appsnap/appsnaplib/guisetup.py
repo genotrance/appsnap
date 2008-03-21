@@ -696,6 +696,8 @@ class Events:
         """
         self.resources['gui'].parse_and_run(schema)
 
+        self.update_status_bar(strings.LOADING + ' ...', '')
+
         row = 0
         children = []
         for item in self.resources['gui'].objects['bsizer'].GetChildren():
@@ -705,7 +707,6 @@ class Events:
             if app_panel.app_name in filtered_sections:
                 item.Show(True)
                 if category == config.UPGRADEABLE:
-                    self.refresh_section_list()
                     children.append(threading.Thread(target=app_panel.display_if_upgradeable, args=[item]))
                     children[row].start()
                 else:
@@ -718,7 +719,6 @@ class Events:
         if category == config.UPGRADEABLE:
             for child in children:
                 child.join()
-                self.refresh_section_list()
             # Recolour rows
             row = 0
             for item in self.resources['gui'].objects['bsizer'].GetChildren():
@@ -727,6 +727,7 @@ class Events:
                     row = row + 1
 
         self.refresh_section_list()
+        self.update_status_bar('', '')
         
         # Enable GUI
         self.enable_gui()

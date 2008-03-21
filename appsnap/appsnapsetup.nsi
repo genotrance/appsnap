@@ -130,8 +130,10 @@ Section Uninstall
   Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\*.log"
   Delete "$INSTDIR\*.lib"
-  Delete "$INSTDIR\db.ini"
+  Delete "$INSTDIR\appsnap.html"
+  Delete "$INSTDIR\cacert.pem"
   Delete "$INSTDIR\config.ini"
+  Delete "$INSTDIR\db.ini"
   Delete "$INSTDIR\version.dat"
   RMDir "$INSTDIR"
 
