@@ -88,7 +88,7 @@ class process:
         self.versions = None
         self.splitversions = None
         self.width = 0
-        
+
         self.get_installed_version()
 
     # ***
@@ -157,7 +157,7 @@ class process:
         else:
             # Get installed version from file
             installed_version = self.global_config.get_installed_version(self.app)
-            
+
             # Check if app is still installed
             app_uninstall, matchobj = self.parse_uninstall_entry()
             uninstall_string = self.get_uninstall_string(app_uninstall, installed_version)
@@ -168,11 +168,11 @@ class process:
                     self.installedversion = strings.NOT_AVAILABLE
                 else:
                     self.installedversion = installed_version
-            
+
         if self.app_config[APP_CATEGORY] != config.REMOVABLE:
             if self.installedversion != '': self.global_config.add_installed_version(self.app, self.installedversion)
             else: self.global_config.delete_installed_version(self.app)
-        
+
         return self.installedversion
 
     # Get the install directory of the application
@@ -225,7 +225,7 @@ class process:
 
         # Get cached location to save file to
         cached_filename = self.curl_instance.get_cached_name(filename, rename)
-        
+
         # Download file depending on conditions below
         cache_timeout = int(self.global_config.cache['cache_timeout']) * defines.NUM_SECONDS_IN_DAY
         perform_download = False
@@ -246,7 +246,7 @@ class process:
                     if rename == rename_orig:
                         # No version information in rename
                         perform_download = True
-                    
+
         if perform_download == True:
             # Delete any older cached versions
             if test == False: self.delete_older_versions()
@@ -279,7 +279,7 @@ class process:
         # Download the latest version if required
         cached_filename = self.download_latest_version(progress_callback)
         if cached_filename == False: return False
-        
+
         # Execute pre-install command if any
         if self.execute_script(APP_PREINSTALL) != True:
             return False
@@ -325,14 +325,14 @@ class process:
                     command += ' ' + self.replace_install_dir(self.app_config[APP_INSTPARAM])
                 except KeyError:
                     pass
-    
+
             # Add the install directory if available
             try:
                 if self.app_config[APP_CHINSTDIR] != '':
                     command += ' ' + self.replace_install_dir(self.app_config[APP_CHINSTDIR])
             except KeyError:
                 pass
-    
+
             # Run the installer, check return value
             try: retval = os.popen('"' + command + '"').close()
             except IOError: retval = 2
@@ -346,7 +346,7 @@ class process:
             directory = self.replace_install_dir(INSTALL_DIR)
             command = 'explorer "' + directory + '"'
             os.popen('"' + command + '"').close()
-    
+
         # Save installed version
         self.global_config.save_installed_version(self.app, self.latestversion)
         self.installedversion = ''
@@ -369,7 +369,7 @@ class process:
         # Execute pre-uninstall command if any
         if self.execute_script(APP_PREUNINSTALL) != True:
             return False
-        
+
         # Process uninstall string if required
         app_uninstall, matchobj = self.parse_uninstall_entry()
 
@@ -383,22 +383,22 @@ class process:
             if self.global_config.user[config.SILENT_INSTALL] == 'True':
                 # Ensure MSIExec is executed with /x to automatically uninstall
                 uninstall_string = re.sub(re.compile('msiexec.exe /i', re.IGNORECASE), 'msiexec.exe /x', uninstall_string)
-                
+
                 try:
                     uninstparam = ' ' + self.replace_install_dir(self.app_config[APP_UNINSTPARAM])
                 except KeyError:
                     pass
-            
+
             # Fix uninstall string quotes
             if uninstall_string[0] != '"': uninstall_string = '"' + re.sub(re.compile('\.exe', re.IGNORECASE), '.exe"', uninstall_string)
 
-            # Run uninstaller, check return value    
+            # Run uninstaller, check return value
             retval = os.popen('"' + uninstall_string + uninstparam + '"').close()
             if  retval != None:
                 # MSI returns non-zero as success too
                 if (retval == 1641 or retval == 3010): pass
                 else: return False
-    
+
             # Delete installed version
             self.global_config.delete_installed_version(self.app)
             self.installedversion = ''
@@ -416,7 +416,7 @@ class process:
                     # ZIP file with no embedded installer
                     directory = self.replace_install_dir(INSTALL_DIR)
                     self.delete_tree(directory)
-                    
+
                     # Delete installed version
                     self.global_config.delete_installed_version(self.app)
                     self.installedversion = ''
@@ -468,9 +468,9 @@ class process:
                 _winreg.CloseKey(key)
             except WindowsError:
                 return None
-            
+
         return uninstall_string
-    
+
     # Upgrade to latest version
     def upgrade_version(self, progress_callback=None):
         cont = True
@@ -483,13 +483,13 @@ class process:
             return False
 
         return cont
-    
+
     # Execute commands for pre/post install/uninstall
     def execute_script(self, type):
         try: commands = self.app_config[type].split(',')
         except KeyError:
             return True
-        
+
         # Latest version for installation
         if type == APP_PREINSTALL or type == APP_POSTINSTALL:
             version = None
@@ -498,7 +498,7 @@ class process:
             version = self.get_installed_version()
             if version == '':
                 version = None
-        
+
         # Execute the commands
         for command in commands:
             command = self.replace_version(command, version)
@@ -506,7 +506,7 @@ class process:
             retval = os.popen('"' + command + '"').close()
             if retval != None:
                 return False
-            
+
         return True
 
     # ***
@@ -518,7 +518,7 @@ class process:
             if self.latestversion == None or self.latestversion == strings.NOT_AVAILABLE: return string
             version = self.latestversion
         elif version == '': return string
-        
+
         # Deprecated version replacements to use VERSION[x] replacement
         string = re.sub(MAJOR_VERSION, VERSION_REPLACE % '0', string)
         string = re.sub(MINOR_VERSION, VERSION_REPLACE % '1', string)
@@ -545,9 +545,9 @@ class process:
                 except IndexError: replace = ''
 
                 if type(replace) != types.StringType:
-                    try: delimiters = eval('delimiters[%s]' % match)
-                    except IndexError: delimiters = ''
-                    replace = self.combine_multipart_version_with_delimiters([replace], delimiters)[0]
+                    try: dl = eval('delimiters[%s]' % match)
+                    except IndexError: dl = ''
+                    replace = self.combine_multipart_version_with_delimiters([replace], dl)[0]
                     if replace[-1] in DELIMITERS:
                         replace = replace[:-1]
             else:
@@ -607,18 +607,18 @@ class process:
 
         # Return a list of potential versions
         return versions
-    
+
     # Handle multipart versions
     def handle_multipart_versions(self, versions, version_key):
         if len(versions) and type(versions[0]) == types.TupleType:
             # Multipart versions, get delimiters if any
             delimiters = self.get_multipart_version_delimiters(self.app_config[version_key])
-            
+
             # Combine with delimiters
             versions = self.combine_multipart_version_with_delimiters(versions, delimiters)
 
         return versions
-    
+
     # Get multipart version delimiters from application version regex
     # (?#xxxx) becomes ['x', 'x', 'x', 'x']
     def get_multipart_version_delimiters(self, string):
@@ -639,7 +639,7 @@ class process:
                 if j < len(delimiters):
                     combined_version += delimiters[j]
             versions[i] = combined_version
-            
+
         return versions
 
     # Split the versions into separate columns
@@ -718,27 +718,27 @@ class process:
         self.width = self.get_width()
 
         return True
-    
+
     # Unzip a ZIP file to specified directory
     def unzip_file(self, file):
         # Check if a supported zipfile
         if not zipfile.is_zipfile(file):
             return False
-        
+
         # Check if ZIP file with extract only
         try:
             test = self.app_config[APP_INSTALLER]
             directory = file[:-4]
         except KeyError:
             directory = self.replace_install_dir(INSTALL_DIR)
-        
+
         # Create directory to extract to
         if os.path.isdir(directory):
             self.delete_tree(directory)
         try: os.mkdir(directory)
         except WindowsError:
             pass
-        
+
         zip = zipfile.ZipFile(file, 'r')
         for cfile in zip.namelist():
             if cfile[-1] == '/':
@@ -756,9 +756,9 @@ class process:
                     ufile.write(data)
                     data = buffer.read(buflen)
                 ufile.close()
-            
+
         return True
-    
+
     # Delete a directory tree
     def delete_tree(self, directory):
         files = glob.glob(os.path.join(directory, '*'))
