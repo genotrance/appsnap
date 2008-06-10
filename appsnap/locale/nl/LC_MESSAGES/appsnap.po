@@ -1,0 +1,471 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: AppSnap\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-06-09 23:56-0600\n"
+"PO-Revision-Date: 2008-06-09 23:56-0600\n"
+"Last-Translator: Jürgen Baute <jurgen.baute@n3wjack.net>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Basepath: ..\\..\\..\n"
+"X-Poedit-SearchPath-0: .\\\n"
+
+#: .\/appsnaplib/strings.py:16
+msgid "All"
+msgstr "Alle"
+
+#: .\/appsnaplib/strings.py:17
+msgid "Application"
+msgstr "Applicatie"
+
+#: .\/appsnaplib/strings.py:18
+msgid "Application names, comma separated or * to filter"
+msgstr "Applicatie namen, gescheiden door comma's of * om te filteren"
+
+#: .\/appsnaplib/strings.py:19
+msgid "Application specific functions"
+msgstr "Applicatie specifieke functies"
+
+#: .\/appsnaplib/strings.py:20
+msgid "AppSnap database corrupt. Update AppSnap to restore the database."
+msgstr "De AppSnap database is corrupt. Update AppSnap om de database te herstellen."
+
+#: .\/appsnaplib/strings.py:21
+msgid "Available Categories"
+msgstr "Beschikbare categorieën"
+
+#: .\/appsnaplib/strings.py:25
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: .\/appsnaplib/strings.py:26
+msgid "Category"
+msgstr "Categorie"
+
+#: .\/appsnaplib/strings.py:27
+msgid "Only check for updates"
+msgstr "Controleer enkel op updates"
+
+#: .\/appsnaplib/strings.py:28
+msgid "Checking for AppSnap updates"
+msgstr "AppSnap updates aan het controleren"
+
+#: .\/appsnaplib/strings.py:29
+msgid "Click update to download and install"
+msgstr "Klik update om af te halen en te installeren"
+
+#: .\/appsnaplib/strings.py:30
+msgid "Comparing"
+msgstr "Aan het vergelijken"
+
+#: .\/appsnaplib/strings.py:34
+msgid "Default"
+msgstr "Standaard"
+
+#: .\/appsnaplib/strings.py:35
+msgid "Description"
+msgstr "Omschrijving"
+
+#: .\/appsnaplib/strings.py:36
+msgid "Done"
+msgstr "Voltooid"
+
+#: .\/appsnaplib/strings.py:37
+msgid "Download"
+msgstr "Afhalen"
+
+#: .\/appsnaplib/strings.py:38
+msgid "Downloaded"
+msgstr "Afgehaald"
+
+#: .\/appsnaplib/strings.py:39
+msgid "Downloading"
+msgstr "Aan het afhalen"
+
+#: .\/appsnaplib/strings.py:40
+msgid "Download cancelled"
+msgstr "Afhalen geannuleerd"
+
+#: .\/appsnaplib/strings.py:41
+msgid "Download selected applications"
+msgstr "Afhalen geselecteerde applicaties"
+
+#: .\/appsnaplib/strings.py:42
+msgid "Download failed"
+msgstr "Afhalen is mislukt"
+
+#: .\/appsnaplib/strings.py:43
+msgid "Download succeeded"
+msgstr "Afhalen succesvol"
+
+#: .\/appsnaplib/strings.py:47
+msgid "Error"
+msgstr "Fout"
+
+#: .\/appsnaplib/strings.py:51
+msgid "Failed to create cache location"
+msgstr "Kon cache lokatie niet aanmaken"
+
+#: .\/appsnaplib/strings.py:52
+msgid "Failed to connect"
+msgstr "Kon geen verbinding maken"
+
+#: .\/appsnaplib/strings.py:53
+msgid "Filter"
+msgstr "Filter"
+
+#: .\/appsnaplib/strings.py:54
+msgid "Filter applications by category"
+msgstr "Filter applicaties op categorie"
+
+#: .\/appsnaplib/strings.py:55
+msgid "Filter applications by string"
+msgstr "Filter applicaties op tekst"
+
+#: .\/appsnaplib/strings.py:56
+msgid "Filter list by category"
+msgstr "Filter lijst op categorie"
+
+#: .\/appsnaplib/strings.py:57
+msgid "Filter list by string"
+msgstr "Filter lijst op tekst"
+
+#: .\/appsnaplib/strings.py:62
+msgid "Get latest version"
+msgstr "Haal de laatste versie op"
+
+#: .\/appsnaplib/strings.py:63
+msgid "Global functions"
+msgstr "Globale functies"
+
+#: .\/appsnaplib/strings.py:67
+msgid "Help"
+msgstr "Help"
+
+#: .\/appsnaplib/strings.py:68
+msgid "Open documentation"
+msgstr "Open documentatie"
+
+#: .\/appsnaplib/strings.py:72
+msgid "Install"
+msgstr "Installeren"
+
+#: .\/appsnaplib/strings.py:73
+msgid "Installed"
+msgstr "Geïnstalleerd"
+
+#: .\/appsnaplib/strings.py:74
+msgid "Installed Applications"
+msgstr "Gëinstalleerde Applicaties"
+
+#: .\/appsnaplib/strings.py:75
+msgid "Failed to update installed.ini. Is it writable?"
+msgstr "Kon installed.ini niet aanpassen. Is het overschrijfbaar?"
+
+#: .\/appsnaplib/strings.py:76
+msgid "Installed Version"
+msgstr "Geïnstalleerde Versie"
+
+#: .\/appsnaplib/strings.py:77
+msgid "Installing"
+msgstr "Aan het installeren"
+
+#: .\/appsnaplib/strings.py:78
+msgid "Download and install selected applications"
+msgstr "Geselecteerde applicaties afhalen en installeren"
+
+#: .\/appsnaplib/strings.py:79
+msgid "Install failed"
+msgstr "Installatie mislukt"
+
+#: .\/appsnaplib/strings.py:80
+msgid "implies -d"
+msgstr "impliceert -d "
+
+#: .\/appsnaplib/strings.py:81
+msgid "Install succeeded"
+msgstr "Installatie is gelukt"
+
+#: .\/appsnaplib/strings.py:85
+msgid "Key"
+msgstr "Sleutel"
+
+#: .\/appsnaplib/strings.py:89
+msgid "Failed to update latest.ini. Is it writable?"
+msgstr "Kon latest.ini niet aanpassen. Is het overschrijfbaar?"
+
+#: .\/appsnaplib/strings.py:90
+msgid "Latest Version"
+msgstr "Laatste Versie"
+
+#: .\/appsnaplib/strings.py:91
+msgid "List all application categories"
+msgstr "Toon alle applicatie categorieën"
+
+#: .\/appsnaplib/strings.py:92
+msgid "List supported applications"
+msgstr "Toon alle ondersteunde applicaties"
+
+#: .\/appsnaplib/strings.py:93
+msgid "Loading"
+msgstr "Aan het laden"
+
+#: .\/appsnaplib/strings.py:94
+msgid "Loading database"
+msgstr "Database aan het laden"
+
+#: .\/appsnaplib/strings.py:98
+msgid "Neither 'scrape' nor 'download' specified"
+msgstr "Noch 'scrape' noch 'download' werd opgegeven"
+
+#: .\/appsnaplib/strings.py:99
+msgid "Missing section key in db.ini"
+msgstr "Ontbrekende sectie sleutel in db.ini"
+
+#: .\/appsnaplib/strings.py:100
+msgid "Missing key 'version' when 'scrape' specified"
+msgstr "Ontbrekende sleutel 'version' wanneer 'scrape' gespecifieerd is"
+
+#: .\/appsnaplib/strings.py:104
+msgid "Name"
+msgstr "Naam"
+
+#: .\/appsnaplib/strings.py:105
+msgid "New AppSnap build required. Please update using installer."
+msgstr "Nieuwe AppSnap build is vereist. Gelieve te updaten met de installer."
+
+#: .\/appsnaplib/strings.py:106
+msgid "No changes found"
+msgstr "Geen wijzigingen gevonden"
+
+#: .\/appsnaplib/strings.py:107
+msgid "No such application"
+msgstr "Geen zo'n applicatie"
+
+#: .\/appsnaplib/strings.py:108
+msgid "Not available"
+msgstr "Niet beschikbaar"
+
+#: .\/appsnaplib/strings.py:109
+msgid "Not Installed"
+msgstr "Niet geïnstalleerd"
+
+#: .\/appsnaplib/strings.py:110
+msgid "Not Installed Applications"
+msgstr "Niet Geïnstalleerde Applicaties"
+
+#: .\/appsnaplib/strings.py:114
+msgid "Processing"
+msgstr "Aan het verwerken"
+
+#: .\/appsnaplib/strings.py:115
+msgid "Proxy authentication failed. Check config.ini"
+msgstr "Proxy authentificatie mislukt. Controleer config.ini"
+
+#: .\/appsnaplib/strings.py:119
+msgid "Reload"
+msgstr "Herlaad"
+
+#: .\/appsnaplib/strings.py:120
+msgid "Reloading AppSnap"
+msgstr "AppSnap aan het herladen"
+
+#: .\/appsnaplib/strings.py:121
+msgid "Reloading database"
+msgstr "Database aan het herladen"
+
+#: .\/appsnaplib/strings.py:122
+msgid "Reload configuration"
+msgstr "Herladen configuratie"
+
+#: .\/appsnaplib/strings.py:123
+msgid "Removable"
+msgstr "Verwijderbaar"
+
+#: .\/appsnaplib/strings.py:124
+msgid "Report Bug"
+msgstr "Bug rapporteren"
+
+#: .\/appsnaplib/strings.py:125
+msgid "Report a bug"
+msgstr "Rapporteer een bug"
+
+#: .\/appsnaplib/strings.py:129
+msgid "Section"
+msgstr "Sectie"
+
+#: .\/appsnaplib/strings.py:130
+msgid "Starting"
+msgstr "Aan het starten"
+
+#: .\/appsnaplib/strings.py:131
+msgid "Status"
+msgstr "Status"
+
+#: .\/appsnaplib/strings.py:132
+msgid "String"
+msgstr "Tekst"
+
+#: .\/appsnaplib/strings.py:133
+msgid "Supported Applications"
+msgstr "Ondersteunde Applicaties"
+
+#: .\/appsnaplib/strings.py:137
+msgid "Test download only"
+msgstr "Test alleen het afhalen"
+
+#: .\/appsnaplib/strings.py:138
+msgid "Testing"
+msgstr "Aan het testen"
+
+#: .\/appsnaplib/strings.py:139
+msgid "This help screen"
+msgstr "Dit helpscherm"
+
+#: .\/appsnaplib/strings.py:144
+msgid "Unable to read AppSnap files"
+msgstr "Kan AppSnap bestanden niet lezen"
+
+#: .\/appsnaplib/strings.py:145
+msgid "Unable to write to AppSnap files"
+msgstr "Kan AppSnap bestanden niet opslaan"
+
+#: .\/appsnaplib/strings.py:146
+msgid "A fatal exception has occurred. Please report this bug to the AppSnap issue tracker: http://code.google.com/p/appsnap/issues/entry. Sorry for the inconvenience."
+msgstr "Een fatal exception deed zich voor. Rapporteer deze bug a.u.b. in de AppSnap issue tracker :  http://code.google.com/p/appsnap/issues/entry. Excuses voor het ongemak."
+
+#: .\/appsnaplib/strings.py:147
+msgid "Uninstall"
+msgstr "Deïnstalleren"
+
+#: .\/appsnaplib/strings.py:148
+msgid "Uninstalling"
+msgstr "Aan het deïnstalleren"
+
+#: .\/appsnaplib/strings.py:149
+msgid "Uninstall selected applications"
+msgstr "Deïnstalleer geselecteerde applicaties"
+
+#: .\/appsnaplib/strings.py:150
+msgid "Uninstall failed"
+msgstr "Deïnstallatie mislukt"
+
+#: .\/appsnaplib/strings.py:151
+msgid "Uninstall succeeded"
+msgstr "Deïnstallatie gelukt"
+
+#: .\/appsnaplib/strings.py:152
+msgid "AppSnap update failed"
+msgstr "AppSnap update is mislukt"
+
+#: .\/appsnaplib/strings.py:153
+msgid "AppSnap update succeeded"
+msgstr "AppSnap update is gelukt"
+
+#: .\/appsnaplib/strings.py:154
+msgid "Update"
+msgstr "Update"
+
+#: .\/appsnaplib/strings.py:155
+msgid "Update AppSnap and database"
+msgstr "Update AppSnap en de database"
+
+#: .\/appsnaplib/strings.py:156
+msgid "implies -i, -x if not upgradeable"
+msgstr "impliceert -i, -x als niet bijwerkbaar"
+
+#: .\/appsnaplib/strings.py:157
+msgid "AppSnap updates available"
+msgstr "AppSnap updates zijn beschikbaar"
+
+#: .\/appsnaplib/strings.py:158
+msgid "Updating AppSnap"
+msgstr "AppSnap aan het updaten"
+
+#: .\/appsnaplib/strings.py:159
+msgid "Upgrade"
+msgstr "Bijwerken"
+
+#: .\/appsnaplib/strings.py:160
+msgid "Upgradeable"
+msgstr "Bijwerkbaar"
+
+#: .\/appsnaplib/strings.py:161
+msgid "Upgrade selected applications"
+msgstr "Bijwerken van de geselecteerde applicaties"
+
+#: .\/appsnaplib/strings.py:162
+msgid "Upgrade failed"
+msgstr "Bijwerken mislukt"
+
+#: .\/appsnaplib/strings.py:163
+msgid "Upgrade succeeded"
+msgstr "Bijwerken gelukt"
+
+#: .\/appsnaplib/strings.py:164
+msgid "Upgrading"
+msgstr "Aan het bijwerken"
+
+#: .\/appsnaplib/strings.py:165
+msgid "User database corrupt. Check userdb.ini syntax."
+msgstr "Gebruikers database corrupt. Controleer userdb.ini syntax."
+
+#: .\/appsnaplib/strings.py:169
+msgid "Display download status"
+msgstr "Toon status afhalen"
+
+#: .\/appsnaplib/strings.py:173
+msgid "Waiting"
+msgstr "Aan het wachten"
+
+#: .\/appsnaplib/strings.py:174
+msgid "Website"
+msgstr "Website"
+
+#: .\/appsnaplib/strings.py:180
+msgid "Build executable using Py2Exe"
+msgstr "Build uitvoerbaar bestand met Py2Exe"
+
+#: .\/appsnaplib/strings.py:181
+msgid "Build failed."
+msgstr "Build is mislukt"
+
+#: .\/appsnaplib/strings.py:185
+msgid "Compress executables using UPX"
+msgstr "Comprimeer uitvoerbare bestanden met UPX"
+
+#: .\/appsnaplib/strings.py:186
+msgid "Create NSIS package"
+msgstr "NSIS pakket aanmaken"
+
+#: .\/appsnaplib/strings.py:187
+msgid "Create ZIP package"
+msgstr "ZIP pakket aanmaken"
+
+#: .\/appsnaplib/strings.py:191
+msgid "NSIS not available"
+msgstr "NSIS niet beschikbaar"
+
+#: .\/appsnaplib/strings.py:195
+msgid "OPTIONS"
+msgstr "OPTIES"
+
+#: .\/appsnaplib/strings.py:199
+msgid "Rezip shared library using 7-Zip"
+msgstr "Hercomprimeer de gedeelde bibliotheek met 7-Zip"
+
+#: .\/appsnaplib/strings.py:203
+msgid "7-Zip not available"
+msgstr "7-Zip niet beschikbaar"
+
+#: .\/appsnaplib/strings.py:207
+msgid "UPX not available"
+msgstr "UPX niet beschikbaar"
+
+#: .\/appsnaplib/strings.py:208
+msgid "Usage"
+msgstr "Gebruik"
+
