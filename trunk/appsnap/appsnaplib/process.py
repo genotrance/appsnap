@@ -8,10 +8,16 @@ import re
 import string
 import strings
 import StringIO
+import sys
 import time
 import types
-import _winreg
 import zipfile
+
+# Windows only
+try:
+    import _winreg
+except ImportError:
+    pass
 
 # Shortcut to convert versions with letters in them
 ALPHABET = 'a b c d e f g h i j k l m n o p q r s t u v w x y z'.split(' ')
@@ -453,21 +459,24 @@ class process:
         return self.uninstall_key, self.uninstall_matchobj
 
     def get_uninstall_string(self, app_uninstall, installed_version):
-        try:
-            # Get uninstall string from registry - LOCAL_MACHINE
-            uninstall = self.replace_version(app_uninstall, installed_version)
-            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
-            uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
-            _winreg.CloseKey(key)
-        except WindowsError:
+        uninstall_string = None
+
+        if sys.platform == 'win32':
             try:
-                # Get uninstall string from registry - CURRENT_USER
+                # Get uninstall string from registry - LOCAL_MACHINE
                 uninstall = self.replace_version(app_uninstall, installed_version)
-                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
+                key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
                 uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
                 _winreg.CloseKey(key)
             except WindowsError:
-                return None
+                try:
+                    # Get uninstall string from registry - CURRENT_USER
+                    uninstall = self.replace_version(app_uninstall, installed_version)
+                    key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall)
+                    uninstall_string, temp = _winreg.QueryValueEx(key, 'UninstallString')
+                    _winreg.CloseKey(key)
+                except WindowsError:
+                    uninstall_string = None
 
         return uninstall_string
 
