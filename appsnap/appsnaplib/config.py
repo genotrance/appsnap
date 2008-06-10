@@ -11,7 +11,12 @@ import sys
 import threading
 import time
 import version
-import _winreg
+
+# Windows only
+try:
+    import _winreg
+except ImportError:
+    pass
 
 # Configuration file
 DB_INI        = 'db.ini'
@@ -21,7 +26,8 @@ INSTALLED_INI = 'installed.ini'
 LATEST_INI    = 'latest.ini'
 
 # Paths
-SYSTEM_PATH   = '%ALLUSERSPROFILE%\Application Data\AppSnap'
+SYSTEM_PATH_W = '%ALLUSERSPROFILE%\Application Data\AppSnap'
+SYSTEM_PATH_L = '/var/cache/appsnap'
 
 # Config.ini entries
 USER           = 'user'
@@ -98,7 +104,10 @@ class config:
         self.copy_database_to_cache()
 
         # Ensure system path exists
-        self.system_path = self.expand_env(SYSTEM_PATH)
+        if sys.platform == 'win32':
+            self.system_path = self.expand_env(SYSTEM_PATH_W)
+        else:
+            self.system_path = self.expand_env(SYSTEM_PATH_L)
         if not os.path.exists(self.system_path):
             os.makedirs(self.system_path)
 
@@ -121,7 +130,10 @@ class config:
         self.latest.read(self.latest_ini)
         
         # Load Add/Remove programs list
-        self.arp_list = self.load_arp()
+        if sys.platform == 'win32':
+            self.arp_list = self.load_arp()
+        else:
+            self.arp_list = {}
 
     #####
     # Get
@@ -372,7 +384,12 @@ class config:
     def expand_env(self, string):
         if string == '': return string
         
-        pipe = os.popen("cmd /c echo " + string)
+        if sys.platform == 'win32':
+            cli = 'cmd /c echo '
+        else:
+            cli = 'echo '
+            
+        pipe = os.popen(cli + string)
         exp_string = pipe.read()
         pipe.close()
 
@@ -420,19 +437,22 @@ class config:
     def registry_search_uninstall_entry(self, name, value):
         uninstall_key = ''
         matchobj = None
-        try:
-            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-            uninstall_keys = self.registry_search(key, name, value, True)
-            _winreg.CloseKey(key)
-        except WindowsError:
-            pass
-        
-        try:
-            key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
-            uninstall_keys.update(self.registry_search(key, name, value, True))
-            _winreg.CloseKey(key)
-        except WindowsError:
-            pass
+
+        uninstall_keys = {}
+        if sys.platform == 'win32':
+            try:
+                key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+                uninstall_keys = self.registry_search(key, name, value, True)
+                _winreg.CloseKey(key)
+            except WindowsError:
+                pass
+            
+            try:
+                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall')
+                uninstall_keys.update(self.registry_search(key, name, value, True))
+                _winreg.CloseKey(key)
+            except WindowsError:
+                pass
 
         # Return only latest version or last found
         for u_key in uninstall_keys.keys():
@@ -444,26 +464,27 @@ class config:
         
     # Search for name value provided under uninstall location in registry with specified key
     def registry_search_uninstall_location(self, uninstall_key, name, value):
-        try:
-            key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
-            subvalue, temp = _winreg.QueryValueEx(key, name)
-            _winreg.CloseKey(key)
-        except WindowsError:
-            subvalue = ''
-        
-        if subvalue == '':
+        if sys.platform == 'win32':
             try:
-                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
+                key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
                 subvalue, temp = _winreg.QueryValueEx(key, name)
                 _winreg.CloseKey(key)
             except WindowsError:
                 subvalue = ''
-                
-        if subvalue != '':
-            try: matchobj = re.match(value, subvalue)
-            except TypeError: matchobj = None
-            if matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
-                return matchobj
+            
+            if subvalue == '':
+                try:
+                    key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, 'Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\' + uninstall_key)
+                    subvalue, temp = _winreg.QueryValueEx(key, name)
+                    _winreg.CloseKey(key)
+                except WindowsError:
+                    subvalue = ''
+                    
+            if subvalue != '':
+                try: matchobj = re.match(value, subvalue)
+                except TypeError: matchobj = None
+                if matchobj != None and len(matchobj.groups()) and matchobj.groups()[0] != None:
+                    return matchobj
             
         return ''
     

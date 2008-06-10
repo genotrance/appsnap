@@ -10,7 +10,12 @@ import sys
 import threading
 import time
 import urllib
-import _winreg
+
+# Windows only
+try:
+    import _winreg
+except ImportError:
+    pass
 
 # Don't quote these characters
 QUOTE = ':./?=&'
@@ -42,34 +47,45 @@ class curl:
             self.web_data.append(None)
             self.download_data.append(None)
     
-            # Get proxy settings from IE if possible
-            try:
-                key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, INTERNET_SETTINGS_KEY)
-                proxy_enabled, temp = _winreg.QueryValueEx(key, PROXY_ENABLE)
-                proxy_info, temp = _winreg.QueryValueEx(key, PROXY_SERVER)
-                _winreg.CloseKey(key)
-    
-                if proxy_enabled == 1:
-                    # Get rid of protocol if specified
-                    if proxy_info[:7] == 'http://': proxy_info = proxy_info[7:]
-                    if proxy_info[:6] == 'ftp://': proxy_info = proxy_info[6:]
-                    
-                    try:
-                        # Split server and port
-                        proxy_server, proxy_port = proxy_info.rsplit(':', 1)
-                    except ValueError:
-                        # Only server available
-                        proxy_server = proxy_info
-                        proxy_port = None
-    
-                    # Set proxy server and port
-                    self.curl[i].setopt(pycurl.PROXY, socket.getfqdn(proxy_server.__str__()))
-                    if proxy_port != None:
-                        self.curl[i].setopt(pycurl.PROXYPORT, int(string.join([s for s in proxy_port if s in '0123456789'], '')))
-    
-                    self.curl[i].setopt(pycurl.PROXYUSERPWD, '%s:%s' % (self.global_config.user[config.PROXY_USER], self.global_config.user[config.PROXY_PASSWORD]))
-                    self.curl[i].setopt(pycurl.PROXYAUTH, defines.CURLOPT_PROXY_ANY)
-            except WindowsError: pass
+            # Get proxy settings
+            proxy_enabled = 0
+            proxy_info = ''
+            if sys.platform == 'win32':
+                # From IE if available
+                try:
+                    key = _winreg.OpenKey(_winreg.HKEY_CURRENT_USER, INTERNET_SETTINGS_KEY)
+                    proxy_enabled, temp = _winreg.QueryValueEx(key, PROXY_ENABLE)
+                    proxy_info, temp = _winreg.QueryValueEx(key, PROXY_SERVER)
+                    _winreg.CloseKey(key)
+                except WindowsError: 
+                    pass
+            else:
+                # From shell if available
+                proxy_info = global_config.expand_env('$http_proxy')
+                if proxy_info != '':
+                    proxy_enabled = 1
+
+            # Proxy info found
+            if proxy_enabled == 1:
+                # Get rid of protocol if specified
+                if proxy_info[:7] == 'http://': proxy_info = proxy_info[7:]
+                if proxy_info[:6] == 'ftp://': proxy_info = proxy_info[6:]
+                
+                try:
+                    # Split server and port
+                    proxy_server, proxy_port = proxy_info.rsplit(':', 1)
+                except ValueError:
+                    # Only server available
+                    proxy_server = proxy_info
+                    proxy_port = None
+            
+                # Set proxy server and port
+                self.curl[i].setopt(pycurl.PROXY, socket.getfqdn(proxy_server.__str__()))
+                if proxy_port != None:
+                    self.curl[i].setopt(pycurl.PROXYPORT, int(string.join([s for s in proxy_port if s in '0123456789'], '')))
+
+                self.curl[i].setopt(pycurl.PROXYUSERPWD, '%s:%s' % (self.global_config.user[config.PROXY_USER], self.global_config.user[config.PROXY_PASSWORD]))
+                self.curl[i].setopt(pycurl.PROXYAUTH, defines.CURLOPT_PROXY_ANY)
     
             self.curl[i].setopt(pycurl.FOLLOWLOCATION, True)
             self.curl[i].setopt(pycurl.MAXREDIRS, defines.NUM_MAX_REDIRECTIONS)
