@@ -31,6 +31,7 @@ LOCALES = [
            'de',
            'en',
            'fr',
+           'nl',
            'ru'
            ]
 
