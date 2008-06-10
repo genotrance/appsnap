@@ -20,7 +20,7 @@ class ApplicationPanel(wx.Panel):
         self.app_url = url
         self.selected = False
         self.process = False
-        
+
         # Widgets
         self.label = wx.StaticText(self, -1, re.sub(config.ARP_ID, '', label))
         self.label.SetFont(self.gui.objects['sectionfont'])
@@ -30,34 +30,34 @@ class ApplicationPanel(wx.Panel):
 
         self.version = wx.StaticText(self, -1, '')
         self.installed_version = wx.StaticText(self, -1, '')
-        
+
         self.url = wx.StaticText(self, -1, '>>')
         self.url.SetFont(self.gui.objects['urlfont'])
         self.url.SetToolTipString(url)
         self.url.SetForegroundColour(self.gui.objects['bluecolour'])
         if url == '': self.url.Hide()
-        
+
         self.status = wx.StaticText(self, -1, '')
-        
+
         self.cancelled = False
         self.cancel = wx.StaticText(self, -1, strings.CANCEL)
         self.cancel.SetForegroundColour(self.gui.objects['bluecolour'])
         self.cancel.SetFont(self.gui.objects['cancelfont'])
         self.cancel.Hide()
-        
+
         # Size
         self.SetMinSize(size)
         self.SetMaxSize(size)
-        
+
         # Events
         self.setup_click_event([self, self.label, self.description, self.version, self.installed_version])
         wx.EVT_CHECKBOX(self.gui.objects['frame'], self.checkbox.GetId(), self.on_checkbox_click)
         wx.EVT_LEFT_DOWN(self.url, self.on_url_click)
         wx.EVT_LEFT_DOWN(self.cancel, self.on_cancel)
-    
+
     #####
     # Setup helpers
-    
+
     # Set the position of all elements
     def set_position(self):
         self.label.SetPosition((40, 10))
@@ -75,7 +75,7 @@ class ApplicationPanel(wx.Panel):
     # Set event object
     def set_event(self, event, items):
         self.event = event
-        
+
         # Create process object
         self.process = process.process(self.event.configuration, self.event.curl_instance, self.app_name, items)
 
@@ -84,7 +84,7 @@ class ApplicationPanel(wx.Panel):
         for widget in widgets:
             wx.EVT_LEFT_DOWN(widget, self.on_click)
             wx.EVT_LEFT_DCLICK(widget, self.on_click)
-        
+
     # Set the colour of panel based on row number
     def set_colour_by_row(self, row):
         self.save_colour_by_row(row)
@@ -112,12 +112,12 @@ class ApplicationPanel(wx.Panel):
                 self.installed_version.SetPosition((40, 60))
             else:
                 self.installed_version.SetPosition((40, 45))
-                
+
     # Hide installed version
     def unset_installed_version(self):
         self.installed_version.SetLabel('')
         self.installed_version.SetPosition((0, 0))
-        
+
     # Set status text
     def set_status_text(self, text):
         self.status.SetLabel(strings.STATUS + ' : ' + text)
@@ -137,7 +137,7 @@ class ApplicationPanel(wx.Panel):
                     self.status.SetPosition((40, 45))
             self.set_status_text(strings.STARTING + ' ...')
             self.update_layout()
-            
+
     # Hide status information
     def hide_status(self):
         self.status.SetLabel('')
@@ -155,15 +155,15 @@ class ApplicationPanel(wx.Panel):
         # Display latest version text
         if self.process.app_config[process.APP_CATEGORY] != config.REMOVABLE:
             self.set_version(strings.LATEST_VERSION + ' : ' + strings.LOADING + ' ...')
-        
+
         # Update layout
         self.Thaw()
         self.update_layout()
 
         child = threading.Thread(target=self.populate_latest_version)
         child.setDaemon(True)
-        child.start()        
-        
+        child.start()
+
     # Get latest version and display
     def populate_latest_version(self):
         # Get the latest version
@@ -185,19 +185,19 @@ class ApplicationPanel(wx.Panel):
     def update_layout(self):
         # Get event lock
         self.event.lock.acquire()
-        
+
         height = defines.SECTION_HEIGHT
         if self.version.GetLabel() != '': height += defines.SECTION_HEIGHT_INCREMENT
         if self.installed_version.GetLabel() != '': height += defines.SECTION_HEIGHT_INCREMENT
         if self.status.GetLabel() != '': height += defines.SECTION_HEIGHT_INCREMENT
-        
+
         self.SetMinSize((self.GetMinWidth(), height))
         self.SetMaxSize((self.GetMinWidth(), height))
         self.Refresh()
         self.gui.objects['bsizer'].Layout()
         self.gui.objects['bsizer'].FitInside(self.gui.objects['scrollwindow'])
         self.gui.objects['scrollwindow'].Refresh()
-        
+
         # Release lock
         self.event.lock.release()
 
@@ -205,7 +205,7 @@ class ApplicationPanel(wx.Panel):
     def display_if_upgradeable(self, sizeritem):
         # Get the version information populated
         self.select(True)
-        
+
         installed_version = self.process.get_installed_version()
         latest_version = self.process.get_latest_version()
         if installed_version >= latest_version or installed_version == strings.NOT_AVAILABLE or latest_version == strings.NOT_AVAILABLE:
@@ -230,7 +230,7 @@ class ApplicationPanel(wx.Panel):
             self.SetBackgroundColour(self.row_colour)
             self.checkbox.SetValue(False)
             self.hide_info()
-        
+
     # Reset state
     def reset(self):
         self.selected = False
@@ -239,7 +239,7 @@ class ApplicationPanel(wx.Panel):
         self.unset_installed_version()
         self.hide_status()
         self.SetMinSize((self.GetMinWidth(), defines.SECTION_HEIGHT))
-        
+
     # Save row colour
     def save_colour_by_row(self, row):
         # Color
@@ -252,13 +252,13 @@ class ApplicationPanel(wx.Panel):
 
     #####
     # Event methods
-    
+
     # When panel or text is clicked
     def on_click(self, event):
         child = threading.Thread(target=self.click)
         child.setDaemon(True)
-        child.start()        
-    
+        child.start()
+
     # When panel or text is clicked
     def click(self):
         self.SetFocus()
@@ -266,12 +266,12 @@ class ApplicationPanel(wx.Panel):
             self.select(False)
         elif self.selected == False and self.checkbox.IsChecked() == False:
             self.select(True)
-        
+
     # When checkbox is clicked
     def on_checkbox_click(self, event):
         child = threading.Thread(target=self.checkbox_click, args=[event])
         child.setDaemon(True)
-        child.start()        
+        child.start()
 
     # When checkbox is clicked
     def checkbox_click(self, event):
@@ -280,11 +280,13 @@ class ApplicationPanel(wx.Panel):
             self.select(True)
         else:
             self.select(False)
-            
+
     # When url is clicked
     def on_url_click(self, event):
-        os.startfile(self.app_url)
-        
+        try: os.startfile(self.app_url)
+        except:
+            pass
+
     # When cancel is clicked
     def on_cancel(self, event):
         self.cancelled = True
@@ -294,11 +296,11 @@ class ApplicationPanel(wx.Panel):
     def do_action(self, action):
         # Display status field
         self.display_status()
-        
+
         # Wait until latest version is available
         while self.version.GetLabel() == (strings.LATEST_VERSION + ' : ' + strings.LOADING + ' ...'):
             time.sleep(0.5)
-        
+
         if action == process.ACT_DOWNLOAD or action == process.ACT_INSTALL or action == process.ACT_UPGRADE:
             # Download latest version
             self.set_status_text(strings.WAITING + ' ...')
@@ -335,7 +337,7 @@ class ApplicationPanel(wx.Panel):
 
         # Succeeded so unselect
         self.select(False)
-        
+
     # Callback function for PyCurl
     def update_download_status(self, dl_total, dl_current, ul_total, ul_current):
         # Create current string
@@ -349,7 +351,7 @@ class ApplicationPanel(wx.Panel):
             dl_total_string = '%.2f KB' % (dl_total / 1024)
         else:
             dl_total_string = '%.2f MB' % (dl_total / 1024 / 1024)
-            
+
         # Percentage string
         if dl_total != 0:
             percentage_string = ' [%d%%]' % (dl_current / dl_total * 100)
@@ -358,7 +360,7 @@ class ApplicationPanel(wx.Panel):
 
         self.set_status_text('%s %s / %s %s' % (strings.DOWNLOADED, dl_current_string, dl_total_string, percentage_string))
         self.cancel.SetPosition((40 + self.status.GetSize().GetWidth() + 10, -1))
-            
+
         if self.cancelled == True:
             return 1
 
@@ -366,6 +368,6 @@ class ApplicationPanel(wx.Panel):
     def error_out(self, action):
         # Mark as failed
         self.set_status_text(action)
-        
+
         # Return
         return False

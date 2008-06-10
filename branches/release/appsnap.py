@@ -20,11 +20,16 @@ import traceback
 import types
 import unittest
 import urllib
-import _winreg
 import wx
 import wx.lib.dialogs
 import yaml
 import zipfile
+
+# Windows only
+try: 
+    import _winreg
+except ImportError:
+    pass
 
 def appsnap_main(mode='cli'):
     # Add directory to path
