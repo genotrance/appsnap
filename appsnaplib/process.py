@@ -384,6 +384,10 @@ class process:
             uninstall_string = self.get_uninstall_string(app_uninstall, installed_version)
             if uninstall_string == None: raise WindowsError
 
+            # Delete NSIS uninstaller if necessary
+            nsis_cleanup = False
+            nsis_uninstaller = uninstall_string
+
             # Add uninstparam flags if available and if silent install requested
             uninstparam = ''
             if self.global_config.user[config.SILENT_INSTALL] == 'True':
@@ -392,6 +396,10 @@ class process:
 
                 try:
                     uninstparam = ' ' + self.replace_install_dir(self.app_config[APP_UNINSTPARAM])
+
+                    # Check if NSIS
+                    if '_?=#INSTALL_DIR#' in self.app_config[APP_UNINSTPARAM]:
+                        nsis_cleanup = True
                 except KeyError:
                     pass
 
@@ -404,6 +412,15 @@ class process:
                 # MSI returns non-zero as success too
                 if (retval == 1641 or retval == 3010): pass
                 else: return False
+
+            # Delete NSIS uninstaller
+            if nsis_cleanup == True:
+                try:
+                    # Delete uninstaller and directory if not empty
+                    nsis_uninstaller = nsis_uninstaller.replace('"', '')
+                    os.remove(nsis_uninstaller)
+                    os.rmdir(os.path.dirname(nsis_uninstaller))
+                except: pass
 
             # Delete installed version
             self.global_config.delete_installed_version(self.app)
