@@ -66,7 +66,7 @@ schema = """
 
     - name : dropdownfont
       type : wx.Font
-      pointSize : 10
+      pointSize : 9
       family : wx.FONTFAMILY_SWISS
       style : wx.FONTSTYLE_NORMAL
       weight : wx.FONTWEIGHT_NORMAL
@@ -116,7 +116,7 @@ schema = """
       type : wx.Choice
       parent : panel
       size : (%s, -1)
-      pos : (0, -1)
+      pos : (0, 1)
       methods:
       - method : SetFont
         font : ~dropdownfont
