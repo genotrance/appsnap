@@ -165,15 +165,25 @@ class process:
             installed_version = self.global_config.get_installed_version(self.app)
 
             # Check if app is still installed
-            app_uninstall, matchobj = self.parse_uninstall_entry()
-            uninstall_string = self.get_uninstall_string(app_uninstall, installed_version)
-            if uninstall_string == None:
-                self.installedversion = ''
-            else:
-                if installed_version == '':
-                    self.installedversion = strings.NOT_AVAILABLE
+            if self.app_config.has_key(APP_UNINSTALL):
+                app_uninstall, matchobj = self.parse_uninstall_entry()
+                uninstall_string = self.get_uninstall_string(app_uninstall, installed_version)
+                if uninstall_string == None:
+                    self.installedversion = ''
                 else:
-                    self.installedversion = installed_version
+                    if installed_version == '':
+                        self.installedversion = strings.NOT_AVAILABLE
+                    else:
+                        self.installedversion = installed_version
+            else:
+                filename = self.get_filename_or_rename()
+                if filename[-3:] == 'zip':
+                    try:
+                        # ZIP file with installer
+                        test = self.app_config[APP_INSTALLER]
+                    except KeyError:
+                        # ZIP file without installer
+                        self.installedversion = installed_version
 
         if self.app_config[APP_CATEGORY] != config.REMOVABLE:
             if self.installedversion != '': self.global_config.add_installed_version(self.app, self.installedversion)
@@ -426,10 +436,7 @@ class process:
             self.global_config.delete_installed_version(self.app)
             self.installedversion = ''
         except (WindowsError, KeyError):
-            filename = self.app_config[APP_FILENAME]
-            try: rename = self.app_config[APP_RENAME]
-            except KeyError: rename = ''
-            if rename != '': filename = rename
+            filename = self.get_filename_or_rename()
             if filename[-3:] == 'zip':
                 try:
                     # Installer didn't provide uninstall method
@@ -797,3 +804,13 @@ class process:
         try: os.rmdir(directory)
         except WindowsError:
             pass
+
+    # Get filename or rename if it is present
+    def get_filename_or_rename(self):
+        filename = self.app_config[APP_FILENAME]
+        try: rename = self.app_config[APP_RENAME]
+        except KeyError: rename = ''
+        if rename != '': filename = rename
+
+        return filename
+
