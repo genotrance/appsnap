@@ -201,7 +201,7 @@ def appsnap_start():
 
     # Parse command line arguments
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'a:cdDf:ghiln:s:tuUvVwx')
+        opts, args = getopt.getopt(sys.argv[1:], 'a:cdDf:Fghiln:s:tuUvVwx')
     except getopt.GetoptError:
         print help
         sys.exit(defines.ERROR_GETOPT)
@@ -212,6 +212,7 @@ def appsnap_start():
     download = False
     database_only = False
     categoryfilter = ''
+    fixapps = False
     getversion = True
     install = False
     list = False
@@ -231,6 +232,7 @@ def appsnap_start():
         if o == '-d': download = True
         if o == '-D': database_only = True
         if o == '-f': categoryfilter = a
+        if o == '-F': fixapps = True
         if o == '-g': getversion = True
         if o == '-h':
             print help
@@ -412,11 +414,10 @@ def appsnap_start():
         # Clear out threads
         curl_instance.clear_threads(children)
 
-        # Print out all failed apps on test
-        if test == True and len(failed_apps):
-            print '\nFailed Apps'
-            for app in failed_apps:
-                print '  %s' % app
+        # Fix all failed apps if requested
+        if fixapps == True and len(failed_apps):
+            fix_apps = adder.adder(configuration, curl_instance)
+            fix_apps.fix_applications(failed_apps)
 
     # Test AppSnap
     elif test == True and names == None:
