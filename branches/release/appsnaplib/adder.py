@@ -108,9 +108,14 @@ class adder:
             print 'Is installed version no longer being detected?',
             self.try_appsnap(app_name)
 
+        # Update master database
+        self.post_process(app_name)
+
+    # Post processing after adding/fixing apps
+    def post_process(self, apps):
         # Export -V
         print '- Exporting app config'
-        os.system('%s -n "%s" -V | vim' % (self.appsnap, app_name))
+        os.system('%s -n "%s" -V | vim' % (self.appsnap, apps))
 
         # Open Zoho
         print '- Opening Zoho database',
@@ -129,8 +134,25 @@ class adder:
         self.try_appsnap('', '-U -D')
 
         # Try version (-n)
-        print 'Is app now in the official database?',
-        self.try_appsnap(app_name)
+        print 'Is official database updated?',
+        self.try_appsnap(apps)
+
+    # Fix failed applications
+    def fix_applications(self, failed_apps):
+        print '\nFailed applications'
+        print '-------------------\n'
+        for app in failed_apps:
+            # Try download (-n -d -v -t)
+            print 'Fix %s\n' % app
+            self.try_appsnap(app, '-d -v -t')
+
+        # List failed apps
+        print 'Failed applications'
+        for app in failed_apps:
+            print app
+
+        # Update master database
+        self.post_process(string.join(failed_apps, ','))
 
     # Get line from stdin
     def getline(self):
@@ -143,9 +165,9 @@ class adder:
         # Sourceforge scrape
         if type == process.APP_SCRAPE:
             try:
-                [key, value] = string.split(':')
+                [key, group, package] = string.split(':')
                 if key == 'SOURCEFORGE':
-                    return 'http://sourceforge.net/projects/%s/download/' % value
+                    return 'http://sourceforge.net/project/showfiles.php?group_id=%s&package_id=%s' % (group, package)
             except ValueError: pass
 
         # Sourceforge download
@@ -220,7 +242,7 @@ upgrades        = true
         return out
 
     # Try app config
-    def try_appsnap(self, app_name='', command=''):
+    def try_appsnap(self, app_name='', command='', ask=True):
         if app_name != '':
             command = '%s -n "%s" %s' % (self.appsnap, app_name, command)
         else:
@@ -231,9 +253,12 @@ upgrades        = true
             print '--------'
             os.system(command)
             print '--------'
-            print '> Try again? (y/N) ',
-            yn = self.getline()
-            if yn != 'y' and yn != 'Y': break
+            if ask == True:
+                print '> Try again? (y/N) ',
+                yn = self.getline()
+                if yn != 'y' and yn != 'Y': break
+            else:
+                break
         print
 
         # Reload app config if changed
