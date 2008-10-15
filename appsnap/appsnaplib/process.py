@@ -371,6 +371,12 @@ class process:
         if self.execute_script(APP_POSTINSTALL) != True:
             return False
 
+        # If cache_timeout = 0, delete installer
+        try: cache_timeout = int(self.global_config.cache[config.CACHE_TIMEOUT])
+        except: cache_timeout = defines.NUM_DEFAULT_CACHE_TIMEOUT
+        if cache_timeout == 0:
+            self.delete_older_versions()
+
         # Return
         return True
 
@@ -508,8 +514,15 @@ class process:
     def upgrade_version(self, progress_callback=None):
         cont = True
         try:
-            if self.app_config[APP_UPGRADES] == 'false':
+            # Download first
+            cont = self.download_latest_version(progress_callback)
+            if cont != False: cont = True
+
+            # Uninstall existing version
+            if cont == True and self.app_config[APP_UPGRADES] == 'false':
                 cont = self.uninstall_version()
+
+            # Install new version
             if cont == True:
                 cont = self.install_latest_version(progress_callback)
         except KeyError:
