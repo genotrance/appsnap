@@ -38,6 +38,7 @@ SILENT_INSTALL = 'silent_install'
 CACHE          = 'cache'
 CACHE_LOCATION = 'cache_location'
 CACHE_TIMEOUT  = 'cache_timeout'
+SYSTEM_PATH    = 'system_path'
 DATABASE       = 'database'
 LOCATION       = 'location'
 STARTUP_CHECK  = 'startup_check'
@@ -104,10 +105,13 @@ class config:
         self.copy_database_to_cache()
 
         # Ensure system path exists
-        if sys.platform == 'win32':
-            self.system_path = self.expand_env(SYSTEM_PATH_W)
-        else:
-            self.system_path = self.expand_env(SYSTEM_PATH_L)
+        try:
+            self.system_path = self.expand_env(self.cache[SYSTEM_PATH])
+        except:
+            if sys.platform == 'win32':
+                self.system_path = self.expand_env(SYSTEM_PATH_W)
+            else:
+                self.system_path = self.expand_env(SYSTEM_PATH_L)
         if not os.path.exists(self.system_path):
             os.makedirs(self.system_path)
 
@@ -293,7 +297,10 @@ class config:
     # Get cached latest version
     def get_cached_latest_version(self, section):
         if self.latest.has_section(section) == True:
-            if time.time() - float(self.latest.get(section, TIMESTAMP)) < int(self.cache[CACHE_TIMEOUT]) * defines.NUM_SECONDS_IN_DAY:
+            try: cache_timeout = int(self.cache[CACHE_TIMEOUT])
+            except: cache_timeout = defines.NUM_DEFAULT_CACHE_TIMEOUT
+
+            if time.time() - float(self.latest.get(section, TIMESTAMP)) < cache_timeout * defines.NUM_SECONDS_IN_DAY:
                 return self.latest.get(section, process.APP_VERSION)
         return None
 
@@ -523,7 +530,8 @@ class config:
                     continue
                 except TypeError:
                     continue
-                matchobj = re.match(value, subvalue)
+                try: matchobj = re.match(value, subvalue)
+                except TypeError: matchobj = None
                 if matchobj != None:
                     if all == False: return subkey_name, matchobj
                     else: matching[subkey_name] = matchobj
